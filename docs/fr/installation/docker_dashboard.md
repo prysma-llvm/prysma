@@ -93,6 +93,6 @@ python3 save_perf_results.py ../prysma/prysma/perf_run_data.json
 **Exemple de sortie réussie :**
 ```text
 Importing results for commit: unknown
-Database updated: /home/zyph/dashboard-prysma/prysma_perf.db
+Database updated: $HOME/dashboard-prysma/prysma_perf.db
 Successfully removed temporary results file: ../prysma/prysma/perf_run_data.json
 ```

@@ -61,7 +61,8 @@ jobs:
 
       - name: Import results and Discord notification
         env:
-          PRYSMA_DB_PATH: "/home/zyph/dashboard-prysma/prysma_perf.db"
+          PRYSMA_DB_PATH: "$HOME/dashboard-prysma/prysma_perf.db"
+          PRYSMA_CONFIG_PATH: "$HOME/dashboard-prysma/dashboard/dashboard_config.json"
         run: python3 tests/save_perf_results.py
 
       - name: Disable Laboratory Mode

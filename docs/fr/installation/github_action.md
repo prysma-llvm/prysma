@@ -33,7 +33,8 @@ jobs:
 
       - name: Importation des résultats et notification Discord
         env:
-          PRYSMA_DB_PATH: "/home/zyph/dashboard-prysma/prysma_perf.db"
+          PRYSMA_DB_PATH: "$HOME/dashboard-prysma/prysma_perf.db"
+          PRYSMA_CONFIG_PATH: "$HOME/dashboard-prysma/dashboard/dashboard_config.json"
         run: python3 tests/save_perf_results.py
 
       - name: Désactivation du Mode Laboratoire
@@ -49,4 +50,5 @@ jobs:
 ```
 
 > [!NOTE]
-> Le chemin `PRYSMA_DB_PATH` doit correspondre exactement à l'emplacement de la base de données utilisée par votre conteneur dashboard (ici `/home/zyph/dashboard-prysma/prysma_perf.db`) pour que le dashboard affiche immédiatement les nouveaux résultats.
+> * `PRYSMA_DB_PATH` : Emplacement de la base de données utilisée par le dashboard (ex : `$HOME/dashboard-prysma/prysma_perf.db`).
+> * `PRYSMA_CONFIG_PATH` : Emplacement du fichier de configuration sécurisé contenant vos jetons Discord secrets (ex : `$HOME/dashboard-prysma/dashboard/dashboard_config.json`), évitant ainsi d'exposer vos secrets dans le dépôt Git public.

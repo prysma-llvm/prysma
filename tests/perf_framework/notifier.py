@@ -8,7 +8,8 @@ import requests
 class DiscordBotNotifier:
     
     def __init__(self, root_dir):
-        config_path = os.path.join(root_dir, "dashboard", "dashboard_config.json")
+        config_path = os.environ.get("PRYSMA_CONFIG_PATH", os.path.join(root_dir, "dashboard", "dashboard_config.json"))
+        config_path = os.path.expanduser(os.path.expandvars(config_path))
         try:
             with open(config_path, "r") as f:
                 self.config = json.load(f)
