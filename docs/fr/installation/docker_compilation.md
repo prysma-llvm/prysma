@@ -17,14 +17,14 @@ docker build -t prysma-compiler -f Dockerfile .
 La commande doit être lancée depuis le dossier `~/prysma` sur le serveur :
 
 ```bash
-docker run --rm --privileged --cpuset-cpus="1-3" \
+docker run --rm --cap-add=SYS_ADMIN --cpuset-cpus="1-3" \
   -v "$HOME/prysma":/prysma \
   -v "$(pwd)":/workspace \
   prysma-compiler <nom_de_la_branche>
 ```
 
 * **`--rm`** : Supprime le conteneur à la fin de l'exécution.
-* **`--privileged`** : Accorde l'accès aux compteurs matériels de performance (PMU) du processeur hôte.
+* **`--cap-add=SYS_ADMIN`** : Accorde la capacité d'accéder aux compteurs matériels de performance (PMU) du processeur hôte sans accorder les privilèges système complets.
 * **`--cpuset-cpus="1-3"`** : Assigne l'exécution aux cœurs stabilisés et isolés par le Mode Laboratoire.
 * **`-v "$HOME/prysma":/prysma`** : Monte le dossier hôte dans lequel le dépôt de la branche à tester sera temporairement cloné.
 * **`-v "$(pwd)":/workspace`** : Monte le dossier de travail courant (par exemple le workspace de build) pour récupérer le fichier `perf_run_data.json` généré.

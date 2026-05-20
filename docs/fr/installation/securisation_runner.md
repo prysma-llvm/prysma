@@ -19,7 +19,7 @@ ALLOWED_PATTERNS = [
     r'^cp docker/server/compiler/entrypoint.sh (\$HOME|.+)/prysma/entrypoint.sh$',
     r'^docker build -t prysma-compiler docker/server/compiler$',
     r'^docker run --rm --privileged --pid=host -v /var/run/docker\.sock:/var/run/docker\.sock optiplex-lab-mode enable$',
-    r'^docker run --rm --privileged --cpuset-cpus="1-3" -v "(\$HOME|.+)/prysma":/prysma -v ".+":/workspace prysma-compiler ".+"$',
+    r'^docker run --rm --cap-add=SYS_ADMIN --cpuset-cpus="1-3" -v "(\$HOME|.+)/prysma":/prysma -v ".+":/workspace prysma-compiler ".+"$',
     r'^python3 tests/save_perf_results\.py$',
     r'^docker run --rm --privileged --pid=host -v /var/run/docker\.sock:/var/run/docker\.sock optiplex-lab-mode disable$',
     r'^docker run --rm -v ".+":/workspace alpine chown -R \d+:\d+ /workspace$'
@@ -80,12 +80,54 @@ if __name__ == '__main__':
 
 ## 2. configurer le serveur
 
-faire ça en root :
+Exécuter ces étapes sur le serveur (en tant que `root` ou avec `sudo` depuis votre compte administrateur) :
 
+### A. Création de l'utilisateur dédié
 ```bash
-chmod +x /usr/local/bin/prysma-safe-shell
-echo "/usr/local/bin/prysma-safe-shell" >> /etc/shells
-chsh -s /usr/local/bin/prysma-safe-shell actions-runner
+# 1. Créer l'utilisateur isolé (sans mot de passe)
+sudo adduser --disabled-password --gecos "" actions-runner
+
+# 2. L'ajouter au groupe docker pour lui permettre de lancer les conteneurs de test
+sudo usermod -aG docker actions-runner
+```
+
+### B. Configuration du Safe Shell
+```bash
+# 1. Rendre le script exécutable
+sudo chmod +x /usr/local/bin/prysma-safe-shell
+
+# 2. Enregistrer le script dans la liste des shells système autorisés
+sudo sh -c 'echo "/usr/local/bin/prysma-safe-shell" >> /etc/shells'
+
+# 3. Définir le safe-shell comme shell par défaut pour l'utilisateur
+sudo chsh -s /usr/local/bin/prysma-safe-shell actions-runner
+```
+
+### C. Déploiement et droits d'accès
+Si le runner a déjà été installé dans un autre répertoire (par exemple `/home/zyph/actions-runner`), déplacez-le dans le dossier personnel de l'utilisateur dédié pour éviter les erreurs de droits d'accès au dossier parent (`CHDIR permission denied`) :
+```bash
+# 1. Aller dans l'ancien dossier et désinstaller le service existant
+cd /home/zyph/actions-runner
+sudo ./svc.sh stop || true
+sudo ./svc.sh uninstall || true
+
+# 2. Déplacer le dossier vers sa nouvelle maison
+sudo mv /home/zyph/actions-runner /home/actions-runner/
+
+# 3. Attribuer la propriété des fichiers à l'utilisateur actions-runner
+sudo chown -R actions-runner:actions-runner /home/actions-runner/actions-runner
+```
+
+### D. Enregistrement du service
+```bash
+# 1. Aller dans le nouveau dossier
+cd /home/actions-runner/actions-runner
+
+# 2. Installer le service systemd pour qu'il s'exécute sous l'utilisateur sécurisé
+sudo ./svc.sh install actions-runner
+
+# 3. Démarrer le service
+sudo ./svc.sh start
 ```
 
 ## 3. test de sécurité

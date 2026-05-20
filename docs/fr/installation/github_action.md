@@ -37,15 +37,15 @@ jobs:
 
       - name: Exécution des tests de performance (Haute Fidélité)
         run: |
-          docker run --rm --privileged --cpuset-cpus="1-3" \
+          docker run --rm --cap-add=SYS_ADMIN --cpuset-cpus="1-3" \
             -v "$HOME/prysma":/prysma \
             -v "${{ github.workspace }}":/workspace \
             prysma-compiler "${{ github.event.pull_request.head.ref || github.ref_name }}"
 
       - name: Importation des résultats et notification Discord
         env:
-          PRYSMA_DB_PATH: "$HOME/dashboard-prysma/prysma_perf.db"
-          PRYSMA_CONFIG_PATH: "$HOME/dashboard-prysma/dashboard/dashboard_config.json"
+          PRYSMA_DB_PATH: "/home/zyph/dashboard-prysma/prysma_perf.db"
+          PRYSMA_CONFIG_PATH: "/home/zyph/dashboard-prysma/dashboard/dashboard_config.json"
         run: python3 tests/save_perf_results.py
 
       - name: Désactivation du Mode Laboratoire
@@ -61,5 +61,5 @@ jobs:
 ```
 
 > [!NOTE]
-> * `PRYSMA_DB_PATH` : Emplacement de la base de données utilisée par le dashboard (ex : `$HOME/dashboard-prysma/prysma_perf.db`).
-> * `PRYSMA_CONFIG_PATH` : Emplacement du fichier de configuration sécurisé contenant vos jetons Discord secrets (ex : `$HOME/dashboard-prysma/dashboard/dashboard_config.json`), évitant ainsi d'exposer vos secrets dans le dépôt Git public.
+> * `PRYSMA_DB_PATH` : Emplacement de la base de données utilisée par le dashboard (ex : `/home/zyph/dashboard-prysma/prysma_perf.db`).
+> * `PRYSMA_CONFIG_PATH` : Emplacement du fichier de configuration sécurisé contenant vos jetons Discord secrets (ex : `/home/zyph/dashboard-prysma/dashboard/dashboard_config.json`), évitant ainsi d'exposer vos secrets dans le dépôt Git public.

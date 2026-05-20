@@ -63,3 +63,7 @@ sudo ./svc.sh status
 ```
 
 Une fois le service démarré, le runner apparaîtra en vert avec l'état `Idle` sur la plateforme GitHub (onglet **Settings** -> **Actions** -> **Runners**), prêt à recevoir et exécuter vos jobs d'intégration continue.
+
+> [!IMPORTANT]
+> **Sécurisation pour dépôt public :**
+> Si votre dépôt GitHub est public, exécuter le runner sous votre compte utilisateur principal présente un risque de sécurité critique (les contributeurs externes pourraient exécuter des commandes arbitraires). Il est fortement recommandé de suivre les étapes du guide de [Sécurisation du Runner](securisation_runner.md) pour l'isoler sous un utilisateur dédié et restreindre les commandes autorisées.
