@@ -36,18 +36,29 @@ Exécutez le script de configuration en remplaçant l'URL et le token par ceux a
 
 *Lors de la configuration, vous pouvez accepter toutes les options proposées par défaut en appuyant sur la touche **Entrée**.*
 
-## 4. Exécution permanente (Service Système)
+## 4. Exécution interactive (Test temporaire)
 
-Pour garantir que le runner s'exécute automatiquement en tâche de fond et survive aux redémarrages du serveur :
+Pour tester rapidement que le runner se connecte bien à GitHub, vous pouvez le lancer de manière interactive dans votre terminal :
+
+```bash
+./run.sh
+```
+
+> [!WARNING]
+> Ce mode est purement temporaire. Si vous fermez votre terminal ou si vous appuyez sur **Ctrl+C** (ce qui affichera le message `Exiting...`), le runner s'arrêtera immédiatement et se déconnectera de GitHub. Pour un usage de production, configurez le service permanent ci-dessous.
+
+## 5. Exécution permanente (Service Système)
+
+Pour garantir que le runner s'exécute automatiquement en tâche de fond (sans bloquer votre terminal) et survive aux redémarrages du serveur :
 
 ```bash
 # Installez le runner en tant que service systemd
 sudo ./svc.sh install
 
-# Démarrez le service
+# Démarrez le service en tâche de fond
 sudo ./svc.sh start
 
-# Vérifiez le statut du service
+# Vérifiez le statut du service (le statut doit être "active (running)")
 sudo ./svc.sh status
 ```
 
