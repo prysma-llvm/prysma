@@ -2,6 +2,8 @@
 
 L'exécution des tests de performance est automatisée avec un workflow GitHub Actions qui tourne sur un runner installé sur le serveur Debian 12.
 
+Pour installer et enregistrer ce runner sur votre serveur, suivez le guide dédié : [configuration_runner.md](configuration_runner.md).
+
 Le workflow exécute les opérations suivantes :
 1. Construction de l'image de compilation éphémère.
 2. Activation du Mode Laboratoire (isolation CPU, désactivation de l'ASLR, arrêt des services).

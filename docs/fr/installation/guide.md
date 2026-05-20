@@ -10,6 +10,7 @@ Ce document sert de feuille de route pour le déploiement du serveur Prysma. Sui
 
 ## Étape 3 : Automatisation avec GitHub Actions
 * [github_action.md](github_action.md)
+* [configuration_runner.md](configuration_runner.md)
 
 ## Étape 4 : Déploiement du Dashboard Streamlit
 * [docker_dashboard.md](docker_dashboard.md)

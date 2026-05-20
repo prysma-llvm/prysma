@@ -7,6 +7,8 @@ from perf_framework.profiler import Profiler
 
 def get_current_commit():
     try:
+        # Bypass Git dubious ownership security check inside Docker
+        subprocess.run(["git", "config", "--global", "--add", "safe.directory", "/workspace"], capture_output=True)
         return subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], text=True).strip()
     except Exception:
         return "unknown"
