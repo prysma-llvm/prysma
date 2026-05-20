@@ -48,8 +48,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Copy build files to host
+        run: |
+          cp docker/server/compiler/Dockerfile $HOME/prysma/Dockerfile
+          cp docker/server/compiler/entrypoint.sh $HOME/prysma/entrypoint.sh
+
       - name: Build ephemeral compiler image
-        run: docker build -t prysma-compiler -f docker/server/compiler/Dockerfile .
+        run: docker build -t prysma-compiler docker/server/compiler
 
       - name: Enable Laboratory Mode
         run: |
@@ -58,7 +63,11 @@ jobs:
             optiplex-lab-mode enable
 
       - name: Run performance benchmarks (High Fidelity)
-        run: docker run --rm --privileged --cpuset-cpus="1-3" -v "${{ github.workspace }}":/workspace prysma-compiler
+        run: |
+          docker run --rm --privileged --cpuset-cpus="1-3" \
+            -v "$HOME/prysma":/prysma \
+            -v "${{ github.workspace }}":/workspace \
+            prysma-compiler "${{ github.event.pull_request.head.ref || github.ref_name }}"
 
       - name: Import results and Discord notification
         env:

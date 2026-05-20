@@ -36,4 +36,7 @@ ENV PATH="/usr/lib/llvm-18/bin:/opt/venv/bin:$PATH"
 
 RUN pip install --no-cache-dir Jinja2 PyYAML
 
-CMD ["python3", "tests/run_perf_tests.py"]
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
