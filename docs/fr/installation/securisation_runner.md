@@ -130,6 +130,20 @@ sudo ./svc.sh install actions-runner
 sudo ./svc.sh start
 ```
 
+### E. Accès à la base de données du Dashboard (SQLite)
+Pour permettre à l'utilisateur isolé `actions-runner` d'enregistrer les résultats des tests de performance dans la base de données SQLite du dashboard (située dans le dossier de l'utilisateur principal `/home/zyph/dashboard-prysma/`), configurez les droits d'accès via les ACLs :
+```bash
+# 1. Installer le paquet acl sur le serveur
+sudo apt-get install acl -y
+
+# 2. Autoriser actions-runner à traverser le dossier personnel /home/zyph
+sudo setfacl -m u:actions-runner:x /home/zyph
+
+# 3. Donner les droits de lecture/écriture complets sur le dossier du dashboard et ses fichiers
+sudo setfacl -R -m u:actions-runner:rwx /home/zyph/dashboard-prysma
+sudo setfacl -R -d -m u:actions-runner:rwx /home/zyph/dashboard-prysma
+```
+
 ## 3. test de sécurité
 
 si dans le ci.yml y'a une commande suspecte comme ça :
