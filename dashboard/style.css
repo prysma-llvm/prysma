@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+.stApp, [data-testid="stAppViewContainer"] {
+    background-color: #0d1117 !important;
+    color: #c9d1d9 !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+/* Use the full width of the screen */
+.block-container {
+    max-width: 98% !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+}
+
+section[data-testid="stSidebar"] {
+    background-color: #090d13 !important;
+    border-right: 1px solid #21262d !important;
+}
+
+section[data-testid="stSidebar"] .stMarkdown {
+    color: #c9d1d9 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    letter-spacing: -0.02em;
+}
+
+h1 {
+    background: linear-gradient(to right, #58a6ff, #1f6feb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #21262d;
+}
+
+div[data-baseweb="input"], div[data-baseweb="select"], .stSelectbox, .stDateInput, .stTimeInput, .stTextInput {
+    background-color: #161b22 !important;
+    border: 1px solid #30363d !important;
+    border-radius: 6px !important;
+}
+
+button {
+    background-color: #21262d !important;
+    color: #c9d1d9 !important;
+    border: 1px solid #30363d !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+button:hover {
+    background-color: #30363d !important;
+    border-color: #8b949e !important;
+    color: #ffffff !important;
+}
+
+div[data-testid="stAlert"] {
+    background-color: #161b22 !important;
+    border: 1px solid #30363d !important;
+    border-radius: 8px !important;
+}
+
+div[data-testid="stDataFrame"] {
+    border: 1px solid #30363d !important;
+    border-radius: 8px !important;
+    background-color: #161b22 !important;
+}
+
+hr {
+    border-top: 1px solid #21262d !important;
+    margin: 25px 0 !important;
+}
+
+code, pre {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.85em !important;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #0d1117;
+}
+::-webkit-scrollbar-thumb {
+    background: #21262d;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #30363d;
+}
+
+/* Hide Streamlit deployment tools */
+#MainMenu {visibility: hidden !important;}
+footer {visibility: hidden !important;}
+header {visibility: hidden !important;}
+.stDeployButton {display: none !important;}
+div[data-testid="stDecoration"] {display: none !important;}
+div[data-testid="stToolbar"] {display: none !important;}

@@ -8,6 +8,9 @@
 #include <vector>
 #include <random>
 
+// Shared deterministic seed for generating test data
+constexpr uint64_t DEFAULT_SEED = 12345ULL;
+
 static std::string generateStressCode(uint64_t seed, size_t numTokens) {
     std::mt19937_64 rng(seed);
 
@@ -59,13 +62,63 @@ static std::string generateStressCode(uint64_t seed, size_t numTokens) {
     return code;
 }
 
-TEST_CASE("Lexer DFA Performance", "[benchmark]") {
-    constexpr uint64_t SEED = 0xDEADBEEF42ULL;
-    constexpr size_t NUM_TOKENS = 50000;
+static std::string generateKeywordsHeavyCode(uint64_t seed, size_t numTokens) {
+    std::mt19937_64 rng(seed);
+    const std::vector<std::string> keywords = {
+        "fn", "if", "for", "dec", "aff", "ref", "arg", "new", "ptr",
+        "else", "true", "void", "bool", "char", "call", "pass",
+        "while", "false", "scope", "unref", "int64", "int32", "float", "class",
+        "return", "string", "delete", "public", "include", "private", "protected"
+    };
+    std::string code;
+    code.reserve(numTokens * 8);
+    for (size_t i = 0; i < numTokens; ++i) {
+        code += keywords[rng() % keywords.size()];
+        code += (rng() % 10 == 0) ? '\n' : ' ';
+    }
+    return code;
+}
 
-    const std::string stress = generateStressCode(SEED, NUM_TOKENS);
+static std::string generateNumericLiteralsCode(uint64_t seed, size_t numTokens) {
+    std::mt19937_64 rng(seed);
+    const std::vector<std::string> literals = {
+        "0", "1", "42", "100", "255", "1024", "99999",
+        "3.14", "0.001", "2.718", "100.0"
+    };
+    std::string code;
+    code.reserve(numTokens * 8);
+    for (size_t i = 0; i < numTokens; ++i) {
+        code += literals[rng() % literals.size()];
+        code += (rng() % 10 == 0) ? '\n' : ' ';
+    }
+    return code;
+}
+
+TEST_CASE("Lexer DFA - Fused Tokens 50k", "[lexer][pmu]") {
+    constexpr size_t NUM_TOKENS = 50000;
+    const std::string stress = generateStressCode(DEFAULT_SEED, NUM_TOKENS);
 
     BENCHMARK("tokenize_50k_fused_tokens") {
+        auto tokens = Lexer::tokenize(stress);
+        return tokens;
+    };
+}
+
+TEST_CASE("Lexer DFA - Keywords Heavy", "[lexer][pmu]") {
+    constexpr size_t NUM_TOKENS = 50000;
+    const std::string stress = generateKeywordsHeavyCode(DEFAULT_SEED, NUM_TOKENS);
+
+    BENCHMARK("tokenize_50k_keywords_heavy") {
+        auto tokens = Lexer::tokenize(stress);
+        return tokens;
+    };
+}
+
+TEST_CASE("Lexer DFA - Numeric Literals", "[lexer][pmu]") {
+    constexpr size_t NUM_TOKENS = 50000;
+    const std::string stress = generateNumericLiteralsCode(DEFAULT_SEED, NUM_TOKENS);
+
+    BENCHMARK("tokenize_50k_numeric_literals") {
         auto tokens = Lexer::tokenize(stress);
         return tokens;
     };
