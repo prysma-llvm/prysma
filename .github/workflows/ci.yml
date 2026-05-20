@@ -75,4 +75,4 @@ jobs:
 
       - name: Fix workspace permissions
         if: always()
-        run: sudo chown -R $(id -u):$(id -g) "${{ github.workspace }}"
+        run: docker run --rm -v "${{ github.workspace }}":/workspace alpine chown -R $(id -u):$(id -g) /workspace
