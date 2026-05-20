@@ -27,10 +27,11 @@ docker run --rm --privileged --cpuset-cpus="1-3" -v "$(pwd)/prysma":/workspace p
 
 ## 3. Enregistrement des résultats
 
-Une fois le rapport `perf_run_data.json` généré par le conteneur, le script d'enregistrement est lancé directement depuis l'hôte :
+Une fois le rapport `perf_run_data.json` généré par le conteneur, le script d'enregistrement est lancé directement depuis le dossier du dashboard (`~/dashboard-prysma`) pour mettre à jour la base de données de production en lui fournissant le chemin vers le fichier de résultats :
 
 ```bash
-python3 prysma/tests/save_perf_results.py
+cd ~/dashboard-prysma
+python3 save_perf_results.py ../prysma/prysma/perf_run_data.json
 ```
 
 ## 4. Compteurs matériels (PMU) et Déverrouillage Local

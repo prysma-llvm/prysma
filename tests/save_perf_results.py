@@ -13,11 +13,19 @@ from perf_framework.notifier import DiscordBotNotifier
 ## this file allows saving the data to the database.
 
 def main():
-    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    if os.path.basename(script_dir) == "tests":
+        root_dir = os.path.dirname(script_dir)
+    else:
+        root_dir = script_dir
     
     # The database path can be configured by an environment variable
     db_path = os.environ.get("PRYSMA_DB_PATH", os.path.join(root_dir, "prysma_perf.db"))
-    json_path = os.path.join(root_dir, "perf_run_data.json")
+    
+    if len(sys.argv) > 1:
+        json_path = sys.argv[1]
+    else:
+        json_path = os.environ.get("PRYSMA_JSON_PATH", os.path.join(root_dir, "perf_run_data.json"))
     
     if not os.path.exists(json_path):
         print(f"Error: the results file {json_path} is missing.")

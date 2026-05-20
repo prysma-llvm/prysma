@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     wget \
+    time \
     clang-18 \
     llvm-18 \
     llvm-18-dev \

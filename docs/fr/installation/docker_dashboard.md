@@ -80,3 +80,19 @@ L'application est ensuite accessible sur le port **8501** (ex : `http://localhos
   ```bash
   docker-compose restart
   ```
+
+## 5. Exemple d'importation des résultats de tests
+
+Pour importer manuellement des données de performance générées par le compilateur dans la base de données du dashboard, exécutez la commande suivante depuis le dossier `~/dashboard-prysma` :
+
+```bash
+cd ~/dashboard-prysma
+python3 save_perf_results.py ../prysma/prysma/perf_run_data.json
+```
+
+**Exemple de sortie réussie :**
+```text
+Importing results for commit: unknown
+Database updated: /home/zyph/dashboard-prysma/prysma_perf.db
+Successfully removed temporary results file: ../prysma/prysma/perf_run_data.json
+```
