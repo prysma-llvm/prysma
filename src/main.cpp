@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later WITH Prysma-exception-1.0
 //
 //===----------------------------------------------------------------------===//
+
 #include "compiler/ast/utils/orchestrator_include/configuration_facade_environment.h"
 #include "compiler/ast/utils/orchestrator_include/orchestrator_include.h"
 #include "compiler/file_processing/builder_systeme.h"
