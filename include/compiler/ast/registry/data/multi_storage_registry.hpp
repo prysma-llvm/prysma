@@ -11,6 +11,7 @@
 #include "compiler/ast/registry/data/linear_table.hpp"
 #include "compiler/ast/registry/data/smart_storage.hpp"
 #include "compiler/ast/registry/data/storage_traits.hpp"
+#include "compiler/macros/prysma_nodiscard.h"
 #include <cstddef>
 #include <tuple>
 #include <utility>
@@ -26,8 +27,8 @@ protected:
     template<typename Up> using RegistryStorageStrategy = SmartStorage<Up, BytesPerStorage / sizeof(Up)>;
 
 public:
-    explicit MultiStorageRegistry(HandleProvider&& provider = {})
-        : handleProvider_(std::forward<HandleProvider>(provider)), storage_{}
+    explicit MultiStorageRegistry(HandleProvider provider = {}) // par copie
+        : handleProvider_(provider), storage_{}
     {}
 
     ~MultiStorageRegistry() noexcept { reset(); }
@@ -42,7 +43,7 @@ public:
 
         static_assert(
             !std::is_same_v<Result, PRYSMA_SENTINEL>,
-            "Unable to resolve the requested node type from the LinearTable."
+            "Unable to resolve the requested type from the LinearTable."
         );
 
         return std::get<RegistryStorageStrategy<Result>>(storage_);
@@ -50,14 +51,14 @@ public:
 
 public:
     template<typename Tp>
-    [[nodiscard]] const auto& get(const Tp* obj) const noexcept
+    PRYSMA_NODISCARD const auto& get(const Tp* obj) const noexcept
     {
         const auto& storage = resolve_storage<Tp>();
         return storage.get(handleProvider_(obj));
     }
 
     template<typename Up, typename Tp>
-    [[nodiscard]] const auto& get_for(const Tp* obj) const noexcept
+    PRYSMA_NODISCARD const auto& get_for(const Tp* obj) const noexcept
     {
         const auto& storage = std::get<RegistryStorageStrategy<Up>>(storage_);
         return storage.get(handleProvider_(obj));
@@ -65,14 +66,14 @@ public:
 
 public:
     template<typename Tp>
-    [[nodiscard]] auto& get(const Tp* obj) noexcept
+    PRYSMA_NODISCARD auto& get(const Tp* obj) noexcept
     {
         auto& storage = resolve_storage<Tp>();
         return storage.get(handleProvider_(obj));
     }
 
     template<typename Up, typename Tp>
-    [[nodiscard]] auto& get_for(const Tp* obj) noexcept
+    PRYSMA_NODISCARD auto& get_for(const Tp* obj) noexcept
     {
         auto& storage = std::get<RegistryStorageStrategy<Up>>(storage_);
         return storage.get(handleProvider_(obj));

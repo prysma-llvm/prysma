@@ -10,7 +10,6 @@
 #define PARSER_CLASS_CPP
 
 #include "compiler/ast/registry/data/node_data.hpp"
-#include "compiler/ast/registry/node_component_registry.h"
 #include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/manager_error.h"
 #include "compiler/ast/ast_genere.h"

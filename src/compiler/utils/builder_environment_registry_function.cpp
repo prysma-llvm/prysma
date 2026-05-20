@@ -8,7 +8,6 @@
 
 #include "compiler/ast/utils/builder_environment_registry_function.h"
 #include "compiler/ast/registry/context_gen_code.h"
-#include "compiler/ast/registry/node_component_registry.h"
 #include "compiler/ast/registry/registry_function.h"
 #include "compiler/ast/registry/registry_class.h"
 #include "../../../build/generationCode/include/compiler/ast/ast_genere_copy.txt"

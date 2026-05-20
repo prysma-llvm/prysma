@@ -11,6 +11,7 @@
 #pragma once
 
 #include "compiler/ast/registry/types/i_type.h"
+#include "compiler/macros/prysma_nodiscard.h"
 #include <atomic>
 #include <cstddef>
 

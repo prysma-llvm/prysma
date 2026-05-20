@@ -12,8 +12,6 @@
 #include "compiler/macros/prysma_nodiscard.h"
 #include <cstddef>
 
-/***************************************************************************/
-
 struct DefaultHandleProvider {
     template<typename Tp>
     PRYSMA_NODISCARD constexpr std::size_t operator()(const Tp* obj) {
@@ -26,5 +24,3 @@ struct NodeHandleProvider {
         return node->getNodeId();
     }
 };
-
-/***************************************************************************/

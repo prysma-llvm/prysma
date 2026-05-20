@@ -1,6 +1,5 @@
 #include "compiler/visitor/visitor_base_generale.h"
 #include "compiler/ast/registry/context_gen_code.h"
-#include "compiler/ast/registry/node_component_registry.h"
 #include "compiler/macros/prysma_maybe_unused.h"
 #include "compiler/ast/ast_genere.h"
 

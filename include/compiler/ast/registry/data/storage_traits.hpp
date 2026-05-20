@@ -12,8 +12,6 @@
 #include <tuple>
 #include <type_traits>
 
-/***************************************************************************/
-
 template<typename, template<typename...> typename>
 struct make_registry_storage;
 
@@ -26,5 +24,3 @@ struct make_registry_storage<LinearTable<Entries...>, StorageType> {
 
 template<typename Table, template<typename...> typename StorageType>
 using make_registry_storage_t = typename make_registry_storage<Table, StorageType>::type;
-
-/***************************************************************************/

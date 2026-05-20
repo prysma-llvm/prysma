@@ -1,6 +1,5 @@
 #include "compiler/visitor/ast_graph_viz/general_visitor_graph_viz.h"
 #include "compiler/ast/registry/context_gen_code.h"
-#include "compiler/ast/registry/node_component_registry.h"
 #include "compiler/visual_graph/output_visual_graph_text.h"
 #include "compiler/visitor/visitor_base_generale.h"
 #include "compiler/ast/ast_genere_copy.txt"

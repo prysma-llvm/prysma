@@ -13,40 +13,48 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <new>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <iostream>
-
-/***************************************************************************/
+#include <variant>
+#include "compiler/macros/prysma_nodiscard.h"
 
 template<typename Tp, std::size_t N>
 class SmartStorage final {
 protected:
     static constexpr std::uint16_t MaxStack = 1 << 14;
 
-    using RawBufferType = std::conditional_t<(N * sizeof(Tp) > MaxStack),
-                                              std::unique_ptr<std::byte[]>,
-                                              std::byte[N * sizeof(Tp)]>;
+    using OnlyIfStackEligible = std::conditional_t<(N * sizeof(Tp) <= MaxStack),
+                                                    std::byte[N * sizeof(Tp)],
+                                                    std::monostate>;
 
 public:
     SmartStorage() : is_constructed_{} {
-        if constexpr (N * sizeof(Tp) > MaxStack) {
-            raw_buffer_ = std::make_unique<std::byte[]>(N * sizeof(Tp));
-            buffer_ptr_ = raw_buffer_.get(); // heap alloc for std::unique_ptr<std::byte[]
+        if constexpr (is_heap_eligible_) {
+            buffer_ptr_ = static_cast<std::byte*>( // heap alloc
+                ::operator new(N * sizeof(Tp), std::align_val_t(alignof(Tp)))
+            );
         }
-        else { 
-            buffer_ptr_ = raw_buffer_; // stack alloc for std::byte[]
+        else { // stack alloc
+            buffer_ptr_ = &stack_buffer_[0];
         }
     }
 
-    ~SmartStorage() noexcept { reset(); }
+    ~SmartStorage() noexcept {
+        reset();
+        
+        if constexpr (is_heap_eligible_) {
+            ::operator delete(buffer_ptr_, std::align_val_t(alignof(Tp)));
+        }
+    }
 
 protected:
     void throw_if_out_of_range(std::size_t index) const {
         if (index >= N) [[unlikely]] {
             throw std::out_of_range(
-                "[PRYSMA::SmartStorage] index out of range: "
+                "[EXOTIC::SmartStorage] index out of range: "
                 + std::to_string(index) + " (valid range: 0.." + std::to_string(N - 1) + ")"
             );
         }
@@ -55,7 +63,7 @@ protected:
     void throw_if_existing(std::size_t index) const {
         if (is_constructed_[index]) [[unlikely]] {
             throw std::runtime_error(
-                "[PRYSMA::SmartStorage] construction conflict: slot already occupied at index "
+                "[EXOTIC::SmartStorage] construction conflict: slot already occupied at index "
                 + std::to_string(index)
             );
         }
@@ -64,21 +72,21 @@ protected:
     void throw_if_nonexistent(std::size_t index) const {
         if (!is_constructed_[index]) [[unlikely]] {
             throw std::runtime_error(
-                "[PRYSMA::SmartStorage] access violation: no object constructed at index "
+                "[EXOTIC::SmartStorage] access violation: no object constructed at index "
                 + std::to_string(index)
             );
         }
     }
 
 public:
-    [[nodiscard]] Tp& get(std::size_t index) {
+    PRYSMA_NODISCARD Tp& get(std::size_t index) {
         throw_if_out_of_range(index); throw_if_nonexistent(index);
-        return *reinterpret_cast<Tp*>(buffer_ptr_ + (index * sizeof(Tp)));
+        return *reinterpret_cast<Tp*>(buffer_ptr_ + index * sizeof(Tp));
     }
 
-    [[nodiscard]] const Tp& get(std::size_t index) const {
+    PRYSMA_NODISCARD const Tp& get(std::size_t index) const {
         throw_if_out_of_range(index); throw_if_nonexistent(index);
-        return *reinterpret_cast<const Tp*>(buffer_ptr_ + (index * sizeof(Tp)));
+        return *reinterpret_cast<const Tp*>(buffer_ptr_ + index * sizeof(Tp));
 
     }
 
@@ -88,12 +96,10 @@ public:
         noexcept(std::is_nothrow_constructible_v<std::decay<Tp>, Types&&...>)
     {
         std::cout << "buffer capacity: " << N * sizeof(Tp) << "\n";
-        std::cout << "sizeof T: " << sizeof(Tp) << "\n";
-
         throw_if_out_of_range(index);
         throw_if_existing(index);
 
-        Tp* ptr = reinterpret_cast<Tp*>(buffer_ptr_ + (index * sizeof(Tp)));
+        Tp* ptr = reinterpret_cast<Tp*>(buffer_ptr_ + index * sizeof(Tp));
         new (ptr) Tp(std::forward<Types>(args)...);
 
         is_constructed_[index] = true;
@@ -109,10 +115,10 @@ public:
     {
         throw_if_out_of_range(index);
 
-        Tp* ptr = reinterpret_cast<Tp*>(buffer_ptr_ + (index * sizeof(Tp)));
+        Tp* ptr = reinterpret_cast<Tp*>(buffer_ptr_ + index * sizeof(Tp));
 
         if (is_constructed_[index]) {
-            ptr = obj;
+            *ptr = obj;
         }
         else {
             new (ptr) Tp(obj);
@@ -130,7 +136,7 @@ public:
     {
         throw_if_out_of_range(index);
 
-        Tp* ptr = reinterpret_cast<Tp*>(buffer_ptr_ + (index * sizeof(Tp)));
+        Tp* ptr = reinterpret_cast<Tp*>(buffer_ptr_ + index * sizeof(Tp));
 
         if (is_constructed_[index]) {
             *ptr = obj;
@@ -150,7 +156,7 @@ public:
         throw_if_out_of_range(index);
         throw_if_nonexistent(index);
 
-        Tp* ptr = reinterpret_cast<Tp*>(buffer_ptr_ + (index * sizeof(Tp)));
+        Tp* ptr = reinterpret_cast<Tp*>(buffer_ptr_ + index * sizeof(Tp));
         ptr->~Tp();
 
         is_constructed_[index] = false;
@@ -162,7 +168,7 @@ public:
     {
         for (std::size_t i = 0; i < N; ++i) {
             if (is_constructed_[i]) {
-                Tp* ptr = reinterpret_cast<Tp*>(buffer_ptr_ + (i * sizeof(Tp)));
+                Tp* ptr = reinterpret_cast<Tp*>(buffer_ptr_ + i * sizeof(Tp));
                 ptr->~Tp();
                 is_constructed_[i] = false;
             }
@@ -172,13 +178,19 @@ public:
     }
 
 public:
-    [[nodiscard]] constexpr std::size_t capacity() const noexcept {
+    PRYSMA_NODISCARD constexpr std::size_t capacity() const noexcept {
         return N;
     }
 
 private:
+    alignas(Tp) OnlyIfStackEligible stack_buffer_;
+    std::byte* buffer_ptr_;
+
+    static constexpr bool is_heap_eligible_ =
+        std::is_same_v<OnlyIfStackEligible, std::monostate>;
+
     std::array<bool, N> is_constructed_;
 
-    alignas(T) RawBufferType raw_buffer_;
+    RawBufferType raw_buffer_;
     std::byte* buffer_ptr_;
 };

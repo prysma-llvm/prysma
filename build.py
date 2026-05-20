@@ -12,10 +12,10 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(script_dir)
 
-    #GeneratorAST(script_dir).generate() # pour tester les maquettes des noeuds, il faudra modifier les scripts Jinja2
+    #GeneratorAST(script_dir).generate() # NOTE: do not uncomment until the Jinja2 system is adapted to the new DoD architecture
     GeneratorInterfaceVisitor(script_dir).generate()
-    #GeneratorVisitorBaseGeneral(script_dir).generate() # pour tester les maquettes des noeuds, il faudra modifier les scripts Jinja2
-    #GeneratorGraphViz(script_dir).generate() # pour tester les maquettes des noeuds, il faudra modifier les scripts Jinja2
+    #GeneratorVisitorBaseGeneral(script_dir).generate() # NOTE: same thing here
+    #GeneratorGraphViz(script_dir).generate() # NOTE: same thing here
     GeneratorExpression(script_dir).generate()
     GeneratorParser(script_dir).generate()
 

@@ -11,7 +11,6 @@
 #include "compiler/ast/interfaces/i_builder_tree.h"
 #include "compiler/ast/nodes/interfaces/i_node.h"
 #include "compiler/ast/registry/data/node_data_registry.hpp"
-#include "compiler/ast/registry/node_component_registry.h"
 #include "compiler/ast/registry/registry_symbole.h"
 #include "compiler/ast/registry/registry_expression.h"
 #include "compiler/lexer/lexer.h"

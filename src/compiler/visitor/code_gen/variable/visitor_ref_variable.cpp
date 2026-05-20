@@ -7,7 +7,6 @@
 //===----------------------------------------------------------------------===//
 
 #include "compiler/ast/ast_genere.h"
-#include "compiler/ast/registry/node_component_registry.h"
 #include "compiler/ast/registry/stack/registry_variable.h"
 #include "compiler/lexer/lexer.h"
 #include "compiler/visitor/code_gen/visitor_general_gen_code.h"

@@ -11,7 +11,6 @@
 
 #include "compiler/ast/registry/data/id_generator.hpp"
 #include "compiler/ast/registry/data/node_data_registry.hpp"
-#include "compiler/ast/registry/node_component_registry.h"
 #include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/ast/interfaces/i_builder_tree.h"
 #include "compiler/ast/registry/context_parser.h"

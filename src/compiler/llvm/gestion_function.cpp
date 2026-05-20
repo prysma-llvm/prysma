@@ -10,7 +10,6 @@
 #include "compiler/ast/nodes/interfaces/i_node.h"
 #include "compiler/llvm/gestion_function.h"
 #include "compiler/ast/registry/context_gen_code.h"
-#include "compiler/ast/registry/node_component_registry.h"
 #include "compiler/ast/registry/stack/registry_variable.h"
 #include "compiler/ast/registry/registry_function.h"
 #include "compiler/lexer/lexer.h"

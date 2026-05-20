@@ -9,7 +9,6 @@
 #include "compiler/ast/utils/orchestrator_include/configuration_facade_environment.h"
 #include "compiler/ast/registry/data/id_generator.hpp"
 #include "compiler/ast/registry/data/node_data_registry.hpp"
-#include "compiler/ast/registry/node_component_registry.h"
 #include "compiler/macros/prysma_maybe_unused.h"
 
 #include "compiler/ast/registry/context_gen_code.h"

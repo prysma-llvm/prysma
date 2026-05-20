@@ -12,12 +12,12 @@ def main():
     dossier_script = os.path.dirname(os.path.abspath(__file__))
     os.chdir(dossier_script)
 
-    #GeneratorAST(dossier_script).generate() # pour tester les maquettes des noeuds, il faudra modifier les scripts Jinja2
+    #GeneratorAST(dossier_script).generate() # NOTE: do not uncomment until the Jinja2 system is adapted to the new DoD architecture
     GeneratorInterfaceVisitor(dossier_script).generate()
-    #GeneratorVisitorBaseGeneral(dossier_script).generate()
-    #GeneratorGraphViz(dossier_script).generate() # il faut injecter le registre de noeuds dans le visiteur graphviz
+    #GeneratorVisitorBaseGeneral(dossier_script).generate() # NOTE: same thing here
+    #GeneratorGraphViz(dossier_script).generate() # NOTE: same thing here
     GeneratorExpression(dossier_script).generate()
-    GeneratorParser(dossier_script).generate() # en attendant, il faut changer les parametres par std::size_t au lieu de INT
+    GeneratorParser(dossier_script).generate()
     
     cxxflags = (
         # # A RÉACTIVER "-fno-rtti -g3 -O0 " # Debug info max, aucune optimisation

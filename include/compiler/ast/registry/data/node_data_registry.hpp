@@ -14,8 +14,6 @@
 #include "compiler/ast/registry/data/linear_table.hpp"
 #include "compiler/ast/registry/data/node_data.hpp"
 
-// yen a encore la dedans qui sont peut etre des expressions
-
 using NodeDataRegistryTable = LinearTable<
     Entry<NodeInstruction,         InstructionNodeData>,
     Entry<NodeCallFunction,        FunctionCallNodeData>,
@@ -45,4 +43,4 @@ using NodeDataRegistryTable = LinearTable<
     Entry<NodeString,              StringNodeData>
 >;
 
-using NodeDataRegistry = MultiStorageRegistry<NodeDataRegistryTable, NodeHandleProvider, 1 << 20>; // 15
+using NodeDataRegistry = MultiStorageRegistry<NodeDataRegistryTable, NodeHandleProvider, 1 << 20>; // 1048576 / n entries
