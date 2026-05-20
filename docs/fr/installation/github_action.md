@@ -21,8 +21,13 @@ jobs:
       - name: Récupération du code
         uses: actions/checkout@v4
 
+      - name: Copie des fichiers de construction sur l'hôte
+        run: |
+          cp docker/server/compiler/Dockerfile $HOME/prysma/Dockerfile
+          cp docker/server/compiler/entrypoint.sh $HOME/prysma/entrypoint.sh
+
       - name: Construction de l'image éphémère
-        run: docker build -t prysma-compiler -f docker/server/compiler/Dockerfile .
+        run: docker build -t prysma-compiler docker/server/compiler
 
       - name: Activation du Mode Laboratoire
         run: |
@@ -31,7 +36,11 @@ jobs:
             optiplex-lab-mode enable
 
       - name: Exécution des tests de performance (Haute Fidélité)
-        run: docker run --rm --privileged --cpuset-cpus="1-3" -v "${{ github.workspace }}":/workspace prysma-compiler
+        run: |
+          docker run --rm --privileged --cpuset-cpus="1-3" \
+            -v "$HOME/prysma":/prysma \
+            -v "${{ github.workspace }}":/workspace \
+            prysma-compiler "${{ github.event.pull_request.head.ref || github.ref_name }}"
 
       - name: Importation des résultats et notification Discord
         env:
@@ -46,9 +55,9 @@ jobs:
             -v /var/run/docker.sock:/var/run/docker.sock \
             optiplex-lab-mode disable
 
-      - name: Fix workspace permissions
+      - name: Correction des permissions du workspace
         if: always()
-        run: sudo chown -R $(id -u):$(id -g) "${{ github.workspace }}"
+        run: docker run --rm -v "${{ github.workspace }}":/workspace alpine chown -R $(id -u):$(id -g) /workspace
 ```
 
 > [!NOTE]

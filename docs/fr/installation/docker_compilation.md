@@ -14,16 +14,21 @@ docker build -t prysma-compiler -f Dockerfile .
 
 ## 2. Exécution manuelle (débogage sur le serveur)
 
-La commande doit être lancée depuis le dossier `~/prysma` (contenant le sous-dossier de dépôt `prysma/`) :
+La commande doit être lancée depuis le dossier `~/prysma` sur le serveur :
 
 ```bash
-docker run --rm --privileged --cpuset-cpus="1-3" -v "$(pwd)/prysma":/workspace prysma-compiler
+docker run --rm --privileged --cpuset-cpus="1-3" \
+  -v "$HOME/prysma":/prysma \
+  -v "$(pwd)":/workspace \
+  prysma-compiler <nom_de_la_branche>
 ```
 
-* **`--rm`** : Supprime le conteneur à la fin du processus.
-* **`--privileged`** : Accès aux compteurs matériels du processeur hôte (PMU).
-* **`--cpuset-cpus="1-3"`** : Assigne l'exécution aux cœurs stabilisés par le Mode Laboratoire (le cœur 0 reste libre pour le système).
-* **`-v "$(pwd)/prysma":/workspace`** : Monte le sous-dossier `prysma/` dans le répertoire `/workspace` du conteneur pour que `tests/run_perf_tests.py` s'exécute correctement.
+* **`--rm`** : Supprime le conteneur à la fin de l'exécution.
+* **`--privileged`** : Accorde l'accès aux compteurs matériels de performance (PMU) du processeur hôte.
+* **`--cpuset-cpus="1-3"`** : Assigne l'exécution aux cœurs stabilisés et isolés par le Mode Laboratoire.
+* **`-v "$HOME/prysma":/prysma`** : Monte le dossier hôte dans lequel le dépôt de la branche à tester sera temporairement cloné.
+* **`-v "$(pwd)":/workspace`** : Monte le dossier de travail courant (par exemple le workspace de build) pour récupérer le fichier `perf_run_data.json` généré.
+* **`<nom_de_la_branche>`** : L'argument passé au conteneur indique la branche Git à cloner et tester (par exemple `main`).
 
 ## 3. Enregistrement des résultats
 

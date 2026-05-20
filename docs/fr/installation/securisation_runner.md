@@ -1,10 +1,10 @@
-# securiser le runner pour bloquer les commandes de merde
+# sécuriser le runner pour bloquer les commandes de merde
 
-si quelqu'un fait une pr et modifie le ci.yml pour essayer de hack le serveur, ce truc permet de tout bloquer direct. en gros on remplace le bash par defaut par un script python qui verifie que les commandes sont exactement celles qu'on veut. si c'est pas le cas, ça bloque.
+si quelqu'un fait une pr et modifie le ci.yml pour essayer de hack le serveur, ce truc permet de tout bloquer direct. en gros on remplace le bash par défaut par un script python qui vérifie que les commandes sont exactement celles qu'on veut. si c'est pas le cas, ça bloque.
 
-## 1. le script python de securite
+## 1. le script python de sécurité
 
-creer le fichier `/usr/local/bin/prysma-safe-shell` en root et copier ca :
+créer le fichier `/usr/local/bin/prysma-safe-shell` en root et copier ça :
 
 ```python
 #!/usr/bin/env python3
@@ -13,7 +13,7 @@ import os
 import subprocess
 import re
 
-# les commandes autorisees, si c'est pas la ca bloque direct
+# les commandes autorisées, si c'est pas là ça bloque direct
 ALLOWED_PATTERNS = [
     r'^cp docker/server/compiler/Dockerfile (\$HOME|.+)/prysma/Dockerfile$',
     r'^cp docker/server/compiler/entrypoint.sh (\$HOME|.+)/prysma/entrypoint.sh$',
@@ -72,7 +72,7 @@ def main():
             print(f"block command: {line}", file=sys.stderr)
             return 127
 
-    return subprocess.run(['/bin/bash'] + sys.argv[1:])
+    return subprocess.run(['/bin/bash'] + sys.argv[1:]).returncode
 
 if __name__ == '__main__':
     sys.exit(main())
@@ -88,7 +88,7 @@ echo "/usr/local/bin/prysma-safe-shell" >> /etc/shells
 chsh -s /usr/local/bin/prysma-safe-shell actions-runner
 ```
 
-## 3. test de securite
+## 3. test de sécurité
 
 si dans le ci.yml y'a une commande suspecte comme ça :
 
@@ -96,7 +96,7 @@ si dans le ci.yml y'a une commande suspecte comme ça :
 run: cat /etc/passwd && rm -rf /home/zyph/dashboard-prysma
 ```
 
-ça va bloquer direct et crash le step de git avec ça :
+ça va bloquer direct et crasher le step de git avec ça :
 
 ```text
 block command: cat /etc/passwd && rm -rf /home/zyph/dashboard-prysma
