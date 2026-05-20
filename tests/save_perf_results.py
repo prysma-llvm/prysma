@@ -13,7 +13,6 @@ from perf_framework.notifier import DiscordBotNotifier
 ## this file allows saving the data to the database.
 
 def main():
-    # 
     root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     
     # The database path can be configured by an environment variable
@@ -52,6 +51,12 @@ def main():
         db.insert_metrics(test_name, metrics, peak_rss, commit_hash=commit_hash)
         
     print(f"Database updated: {db_path}")
+    
+    try:
+        os.remove(json_path)
+        print(f"Successfully removed temporary results file: {json_path}")
+    except Exception as e:
+        print(f"Warning: Could not remove temporary results file: {e}")
 
 if __name__ == "__main__":
     main()

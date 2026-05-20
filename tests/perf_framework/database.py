@@ -92,11 +92,13 @@ class PerfDatabase:
             commit_hash = self.get_current_commit()
         timestamp = datetime.utcnow().isoformat() + "Z"
         
-        # Fallbacks if perf does not return everything (e.g. restricted rights)
         instructions = metrics.get("instructions", 0)
-        l2_misses = metrics.get("L2-cache-misses", 0) or int(instructions * 0.0006)
-        l3_misses = metrics.get("L3-cache-misses", metrics.get("LLC-misses", 0)) or int(instructions * 0.0002)
+        l2_misses = metrics.get("L2-cache-misses", 0)
+        l3_misses = metrics.get("L3-cache-misses", metrics.get("LLC-misses", 0))
         ram_accesses = metrics.get("RAM-accesses", 0) or l3_misses
+
+        if not metrics.get("cycles") or not instructions:
+            raise ValueError(f"Error: missing critical performance metrics (cycles or instructions) for {test_name}")
 
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()

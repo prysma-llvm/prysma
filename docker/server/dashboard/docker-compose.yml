@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  prysma-dashboard:
+    build: .
+    container_name: prysma-dashboard
+    ports:
+      - "8501:8501"
+    volumes:
+      # Mount the whole directory to avoid file-level mount/inode issues with SQLite
+      - .:/workspace
+    restart: unless-stopped

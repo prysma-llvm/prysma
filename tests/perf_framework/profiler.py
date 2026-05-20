@@ -22,19 +22,19 @@ class Profiler:
     def run_benchmark(self, test_name):
         print(f"\n---> Profiling: {test_name}")
         
-        # No perf installed, direct fallback
         if not self.perf_bin:
-            return self._get_fallback_metrics(test_name)
+            raise RuntimeError("Error: 'perf' binary not found. Real hardware measurements are required.")
 
         safe_name = "".join(c if c.isalnum() else "_" for c in test_name).strip("_")
         json_output = os.path.join(self.root_dir, f"perf_{safe_name}.json")
         cmd = [self.perf_bin, "stat", "-j", "-o", json_output, "-e", self.perf_events, self.exe, test_name]
 
-        # Try running perf normally, otherwise with sudo
-        ret = subprocess.run(cmd, cwd=self.root_dir, capture_output=True, text=True)
+        # Try running perf normally, otherwise with sudo (forcing standard C locale for valid JSON floats)
+        run_env = dict(os.environ, LC_ALL="C")
+        ret = subprocess.run(cmd, env=run_env, cwd=self.root_dir, capture_output=True, text=True)
         if ret.returncode != 0 or not os.path.exists(json_output):
             print("Failed without privileges, retrying with sudo...")
-            subprocess.run(["sudo"] + cmd, cwd=self.root_dir, capture_output=True, text=True)
+            ret = subprocess.run(["sudo", "env", "LC_ALL=C"] + cmd, env=run_env, cwd=self.root_dir, capture_output=True, text=True)
 
         metrics = {}
         if os.path.exists(json_output):
@@ -45,15 +45,20 @@ class Profiler:
                         if "event" in data and "counter-value" in data:
                             event = data["event"]
                             name = event.split('/')[-2] if '/' in event else event
-                            metrics[name] = metrics.get(name, 0) + int(float(data["counter-value"].replace(",", ".")))
+                            val_str = data["counter-value"].replace(",", ".").strip()
+                            # Check if the counter-value is numeric (ignore "<not counted>")
+                            if val_str.replace(".", "", 1).isdigit():
+                                metrics[name] = metrics.get(name, 0) + int(float(val_str))
                 os.remove(json_output)
-            except Exception:
-                pass
+                
+                # Normalize values to a single iteration (since we run a loop of 1000 iterations in C++)
+                for key in metrics:
+                    metrics[key] = int(round(metrics[key] / 1000.0))
+            except Exception as e:
+                raise RuntimeError(f"Error parsing perf output: {e}")
 
-        # If perf still failed, use Catch2 in XML for the execution time
         if not metrics or not metrics.get("cycles"):
-            print(f"perf stat failed. Catch2 XML fallback: {test_name}")
-            return self._get_fallback_metrics(test_name)
+            raise RuntimeError(f"Error: perf stat failed to retrieve hardware performance counters for {test_name}. Check permissions or execution environment.")
             
         return metrics
 
@@ -65,37 +70,7 @@ class Profiler:
                 parts = line.strip().split()
                 if parts and parts[-1].isdigit():
                     return int(parts[-1])
-        except Exception:
-            pass
-
-        # Fallback if /usr/bin/time does not work
-        if "Fused Tokens" in test_name: return 646000
-        if "Keywords Heavy" in test_name: return 652000
-        return 612000
-
-    def _get_fallback_metrics(self, test_name):
-        # If perf is not available, run binary with Catch2 in XML format
-        res = subprocess.run([self.exe, test_name, "-r", "xml"], cwd=self.root_dir, capture_output=True, text=True)
-        if not res.stdout:
-            return {}
-        try:
-            root = ET.fromstring(res.stdout)
-            mean_node = root.find(".//mean")
-            if mean_node is not None:
-                ns = float(mean_node.get("value", "0"))
-                if ns > 0:
-                    # Empirical estimates based on execution time
-                    cycles = int(ns * 3.0)
-                    instructions = int(cycles * 1.5)
-                    return {
-                        "cycles": cycles,
-                        "instructions": instructions,
-                        "L1-dcache-load-misses": int(instructions * 0.002),
-                        "L2-cache-misses": int(instructions * 0.0006),
-                        "L3-cache-misses": int(instructions * 0.0002),
-                        "RAM-accesses": int(instructions * 0.0002),
-                        "branch-misses": int(instructions * 0.005)
-                    }
         except Exception as e:
-            print(f"Error parsing XML: {e}")
-        return {}
+            raise RuntimeError(f"Error executing /usr/bin/time to get peak RSS: {e}")
+
+        raise RuntimeError(f"Error: /usr/bin/time failed to measure peak RSS for {test_name}.")

@@ -98,28 +98,28 @@ TEST_CASE("Lexer DFA - Fused Tokens 50k", "[lexer][pmu]") {
     constexpr size_t NUM_TOKENS = 50000;
     const std::string stress = generateStressCode(DEFAULT_SEED, NUM_TOKENS);
 
-    BENCHMARK("tokenize_50k_fused_tokens") {
+    for (int i = 0; i < 1000; ++i) {
         auto tokens = Lexer::tokenize(stress);
-        return tokens;
-    };
+        (void)tokens;
+    }
 }
 
 TEST_CASE("Lexer DFA - Keywords Heavy", "[lexer][pmu]") {
     constexpr size_t NUM_TOKENS = 50000;
     const std::string stress = generateKeywordsHeavyCode(DEFAULT_SEED, NUM_TOKENS);
 
-    BENCHMARK("tokenize_50k_keywords_heavy") {
+    for (int i = 0; i < 1000; ++i) {
         auto tokens = Lexer::tokenize(stress);
-        return tokens;
-    };
+        (void)tokens;
+    }
 }
 
 TEST_CASE("Lexer DFA - Numeric Literals", "[lexer][pmu]") {
     constexpr size_t NUM_TOKENS = 50000;
     const std::string stress = generateNumericLiteralsCode(DEFAULT_SEED, NUM_TOKENS);
 
-    BENCHMARK("tokenize_50k_numeric_literals") {
+    for (int i = 0; i < 1000; ++i) {
         auto tokens = Lexer::tokenize(stress);
-        return tokens;
-    };
+        (void)tokens;
+    }
 }
