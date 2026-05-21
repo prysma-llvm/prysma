@@ -27,9 +27,6 @@ def main():
         "-fomit-frame-pointer", # Free up a CPU register
         "-flto",                # Link Time Optimization (LTO)
         "-DNDEBUG",             # Completely disable assertions
-        "-frandom-seed=42",     # Prevents changing the seed when compiling functions that use randomness for binary generation
-        "-gno-record-gcc-switches",           # Removes build flags from debug symbols
-        f"-fdebug-prefix-map={script_dir}=."  # Replaces the absolute path with '.'
     ]
     
     ldflags_list = [
@@ -37,9 +34,6 @@ def main():
         "-Wl,--gc-sections",
         "-Wl,-s",
         "-fuse-ld=lld",
-        "-Wl,--build-id=none",                # Removes the random hash from the binary
-        "-Wl,--sort-sections=name",           # Deterministic sorting of sections
-        "-Wl,--hash-style=sysv"               # Stable hash style
     ]
 
     cxxflags = " ".join(cxxflags_list)
@@ -66,7 +60,3 @@ def main():
     
 if __name__ == "__main__":
     main()
-
-
-
-    ## 2. Le "Saut Quantique" : Désactiver l'Hyper-Threading (SMT)
