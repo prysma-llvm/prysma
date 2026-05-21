@@ -9,6 +9,7 @@
 #include "compiler/ast/registry/types/type_array.h"
 #include "compiler/ast/ast_genere.h"
 #include "compiler/ast/nodes/interfaces/i_node.h"
+#include "compiler/ast/registry/data/node_data_registry.hpp"
 #include "compiler/ast/registry/types/i_type.h"
 #include "compiler/utils/prysma_cast.h"
 #include <cstdint>
@@ -17,10 +18,11 @@
 #include <stdexcept>
 #include <string>
 
-TypeArray::TypeArray(IType* childType, INode* size)
-    : _childType(childType), _size(size)
-{
-}
+// Obligation de passer le registre ici. Il s'agirait de trouver une solution 
+// ce n'est pas très optimal comme design. Patch temporaire.
+TypeArray::TypeArray(IType* childType, INode* size, NodeDataRegistry* nodeDataRegistry)
+    : _childType(childType), _size(size), _nodeDataRegistry(nodeDataRegistry)
+{}
 
 auto TypeArray::generateLLVMType(llvm::LLVMContext& context) -> llvm::Type*
 {
@@ -42,7 +44,11 @@ auto TypeArray::generateLLVMType(llvm::LLVMContext& context) -> llvm::Type*
         throw std::runtime_error("Error: the array size must be an integer literal");
     }
 
-    auto size = static_cast<uint64_t>(std::stoull(std::string(literal->getToken().value)));
+    std::cout << "PASSED NODELITERAL NULLPTR CHECK\n";
+
+    auto& nodeLiteralData = _nodeDataRegistry->get(literal);
+
+    auto size = static_cast<uint64_t>(std::stoull(std::string(nodeLiteralData.getToken().value)));
     return llvm::ArrayType::get(elementType, size);
 }
 

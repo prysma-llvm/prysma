@@ -1,0 +1,572 @@
+[
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/builder_tree_equation.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/builder_tree_equation.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/builder_tree_equation.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/builder_tree_equation.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/builder_tree_instruction.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/builder_tree_instruction.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/builder_tree_instruction.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/builder_tree_instruction.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/array/expression_array_initialization.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/array/expression_array_initialization.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/array/expression_array_initialization.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/array/expression_array_initialization.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/function/expression_call_function.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/function/expression_call_function.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/function/expression_call_function.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/function/expression_call_function.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/instruction/expression_new.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/instruction/expression_new.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/instruction/expression_new.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/instruction/expression_new.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/math/expression_literal.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/math/expression_literal.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/math/expression_literal.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/math/expression_literal.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/math/expression_negation.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/math/expression_negation.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/math/expression_negation.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/math/expression_negation.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/math/expression_string.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/math/expression_string.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/math/expression_string.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/math/expression_string.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/object/expression_call_central.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/object/expression_call_central.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/object/expression_call_central.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/object/expression_call_central.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/object/expression_call_object.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/object/expression_call_object.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/object/expression_call_object.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/object/expression_call_object.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/variable/expression_identifiant.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/variable/expression_identifiant.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/variable/expression_identifiant.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/variable/expression_identifiant.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/variable/expression_ref_variable.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/variable/expression_ref_variable.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/variable/expression_ref_variable.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/variable/expression_ref_variable.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/variable/expression_un_ref_variable.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/variable/expression_un_ref_variable.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/expression/variable/expression_un_ref_variable.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/nodes/expression/variable/expression_un_ref_variable.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/nodes/node_instruction.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/node_instruction.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/nodes/node_instruction.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/nodes/node_instruction.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/registry/registry_argument.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/registry/registry_argument.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/registry/registry_argument.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/registry/registry_argument.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/registry/registry_variable.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/registry/registry_variable.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/registry/registry_variable.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/registry/registry_variable.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/registry/return_context_compilation.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/registry/return_context_compilation.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/registry/return_context_compilation.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/registry/return_context_compilation.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/registry/type_array.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/registry/type_array.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/registry/type_array.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/registry/type_array.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/registry/type_simple.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/registry/type_simple.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/registry/type_simple.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/registry/type_simple.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/ast/registry/types/type_complex.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/registry/types/type_complex.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/ast/registry/types/type_complex.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/ast/registry/types/type_complex.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/builder/equation/builder_equation_flottante.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/builder/equation/builder_equation_flottante.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/builder/equation/builder_equation_flottante.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/builder/equation/builder_equation_flottante.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/file_processing/builder_systeme.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/file_processing/builder_systeme.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/file_processing/builder_systeme.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/file_processing/builder_systeme.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/file_processing/file_reading.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/file_processing/file_reading.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/file_processing/file_reading.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/file_processing/file_reading.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/file_processing/file_writing.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/file_processing/file_writing.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/file_processing/file_writing.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/file_processing/file_writing.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/lexer/lexer.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/lexer/lexer.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/lexer/lexer.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/lexer/lexer.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/llvm/gestion_function.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/llvm/gestion_function.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/llvm/gestion_function.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/llvm/gestion_function.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/llvm/gestion_variable.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/llvm/gestion_variable.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/llvm/gestion_variable.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/llvm/gestion_variable.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/llvm/llvm_backend.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/llvm/llvm_backend.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/llvm/llvm_backend.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/llvm/llvm_backend.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/llvm/llvm_serializer.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/llvm/llvm_serializer.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/llvm/llvm_serializer.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/llvm/llvm_serializer.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/equation/chain_of_responsibility.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/equation/chain_of_responsibility.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/equation/chain_of_responsibility.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/equation/chain_of_responsibility.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/equation/manager_operator.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/equation/manager_operator.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/equation/manager_operator.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/equation/manager_operator.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/equation/service_parenthesis.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/equation/service_parenthesis.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/equation/service_parenthesis.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/equation/service_parenthesis.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/function/parser_arg_function.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/function/parser_arg_function.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/function/parser_arg_function.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/function/parser_arg_function.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/function/parser_call_function.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/function/parser_call_function.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/function/parser_call_function.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/function/parser_call_function.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/function/parser_declaration_function.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/function/parser_declaration_function.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/function/parser_declaration_function.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/function/parser_declaration_function.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/function/parser_return.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/function/parser_return.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/function/parser_return.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/function/parser_return.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/instruction/parser_delete.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/instruction/parser_delete.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/instruction/parser_delete.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/instruction/parser_delete.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/instruction/parser_if.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/instruction/parser_if.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/instruction/parser_if.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/instruction/parser_if.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/instruction/parser_include.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/instruction/parser_include.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/instruction/parser_include.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/instruction/parser_include.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/instruction/parser_while.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/instruction/parser_while.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/instruction/parser_while.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/instruction/parser_while.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/object/parser_call_central.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/object/parser_call_central.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/object/parser_call_central.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/object/parser_call_central.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/object/parser_call_object.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/object/parser_call_object.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/object/parser_call_object.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/object/parser_call_object.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/object/parser_class.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/object/parser_class.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/object/parser_class.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/object/parser_class.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/parser_base.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/parser_base.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/parser_base.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/parser_base.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/parser_type.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/parser_type.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/parser_type.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/parser_type.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/variable/parser_assignment_variable.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/variable/parser_assignment_variable.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/variable/parser_assignment_variable.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/variable/parser_assignment_variable.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/variable/parser_declaration_variable.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/variable/parser_declaration_variable.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/variable/parser_declaration_variable.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/variable/parser_declaration_variable.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/variable/parser_ref_variable.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/variable/parser_ref_variable.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/variable/parser_ref_variable.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/variable/parser_ref_variable.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/parser/variable/parser_un_ref_variable.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/variable/parser_un_ref_variable.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/parser/variable/parser_un_ref_variable.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/parser/variable/parser_un_ref_variable.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/registry/registry_file.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/registry/registry_file.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/registry/registry_file.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/registry/registry_file.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/utils/builder_environment_registry_function.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/utils/builder_environment_registry_function.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/utils/builder_environment_registry_function.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/utils/builder_environment_registry_function.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/utils/builder_environment_registry_variable.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/utils/builder_environment_registry_variable.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/utils/builder_environment_registry_variable.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/utils/builder_environment_registry_variable.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/utils/orchestrator_include/configuration_facade_environment.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/utils/orchestrator_include/configuration_facade_environment.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/utils/orchestrator_include/configuration_facade_environment.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/utils/orchestrator_include/configuration_facade_environment.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/utils/orchestrator_include/orchestrator_include.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/utils/orchestrator_include/orchestrator_include.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/utils/orchestrator_include/orchestrator_include.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/utils/orchestrator_include/orchestrator_include.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/utils/orchestrator_include/unit_compilation.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/utils/orchestrator_include/unit_compilation.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/utils/orchestrator_include/unit_compilation.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/utils/orchestrator_include/unit_compilation.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/array/visitor_assignment_array.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/array/visitor_assignment_array.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/array/visitor_assignment_array.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/array/visitor_assignment_array.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/array/visitor_reading_array.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/array/visitor_reading_array.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/array/visitor_reading_array.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/array/visitor_reading_array.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/class/visitor_class.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/class/visitor_class.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/class/visitor_class.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/class/visitor_class.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/condition/visitor_node_if.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/condition/visitor_node_if.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/condition/visitor_node_if.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/condition/visitor_node_if.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/delete/visitor_delete.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/delete/visitor_delete.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/delete/visitor_delete.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/delete/visitor_delete.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/function/visitor_arg_function.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/function/visitor_arg_function.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/function/visitor_arg_function.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/function/visitor_arg_function.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/function/visitor_call_function.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/function/visitor_call_function.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/function/visitor_call_function.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/function/visitor_call_function.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/function/visitor_declaration_function.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/function/visitor_declaration_function.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/function/visitor_declaration_function.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/function/visitor_declaration_function.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/function/visitor_return.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/function/visitor_return.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/function/visitor_return.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/function/visitor_return.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/helper/control_flow_helper.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/helper/control_flow_helper.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/helper/control_flow_helper.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/helper/control_flow_helper.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/helper/error_helper.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/helper/error_helper.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/helper/error_helper.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/helper/error_helper.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/helper/v_table_navigator.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/helper/v_table_navigator.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/helper/v_table_navigator.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/helper/v_table_navigator.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/loop/visitor_node_while.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/loop/visitor_node_while.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/loop/visitor_node_while.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/loop/visitor_node_while.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/new/visitor_new.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/new/visitor_new.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/new/visitor_new.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/new/visitor_new.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/object/visitor_access_attribute.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/object/visitor_access_attribute.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/object/visitor_access_attribute.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/object/visitor_access_attribute.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/object/visitor_call_object.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/object/visitor_call_object.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/object/visitor_call_object.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/object/visitor_call_object.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/operande/visitor_array_initialization.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/operande/visitor_array_initialization.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/operande/visitor_array_initialization.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/operande/visitor_array_initialization.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/operande/visitor_node_literal.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/operande/visitor_node_literal.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/operande/visitor_node_literal.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/operande/visitor_node_literal.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/operande/visitor_node_negation.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/operande/visitor_node_negation.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/operande/visitor_node_negation.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/operande/visitor_node_negation.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/operande/visitor_operation.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/operande/visitor_operation.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/operande/visitor_operation.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/operande/visitor_operation.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/variable/visitor_assignment_variable.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/variable/visitor_assignment_variable.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/variable/visitor_assignment_variable.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/variable/visitor_assignment_variable.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/variable/visitor_declaration_variable.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/variable/visitor_declaration_variable.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/variable/visitor_declaration_variable.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/variable/visitor_declaration_variable.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/variable/visitor_ref_variable.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/variable/visitor_ref_variable.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/variable/visitor_ref_variable.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/variable/visitor_ref_variable.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/variable/visitor_un_ref_variable.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/variable/visitor_un_ref_variable.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/variable/visitor_un_ref_variable.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/variable/visitor_un_ref_variable.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/visitor_general_gen_code.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/visitor_general_gen_code.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/visitor_general_gen_code.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/visitor_general_gen_code.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/visitor_instruction.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/visitor_instruction.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/code_gen/visitor_instruction.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/code_gen/visitor_instruction.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/extractors/arg_extractor_function.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/extractors/arg_extractor_function.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/extractors/arg_extractor_function.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/extractors/arg_extractor_function.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/extractors/members_extractor_class.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/extractors/members_extractor_class.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/extractors/members_extractor_class.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/extractors/members_extractor_class.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/visitor_filling_body_class/visitor_filling_body_class.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/visitor_filling_body_class/visitor_filling_body_class.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/visitor_filling_body_class/visitor_filling_body_class.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/visitor_filling_body_class/visitor_filling_body_class.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/visitor_filling_registry/visitor_filling_class.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/visitor_filling_registry/visitor_filling_class.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/visitor_filling_registry/visitor_filling_class.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/visitor_filling_registry/visitor_filling_class.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/visitor_filling_registry/visitor_filling_function.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/visitor_filling_registry/visitor_filling_function.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/visitor_filling_registry/visitor_filling_function.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/visitor_filling_registry/visitor_filling_function.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/visitor_filling_registry/visitor_filling_include.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/visitor_filling_registry/visitor_filling_include.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/visitor_filling_registry/visitor_filling_include.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/visitor_filling_registry/visitor_filling_include.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/visitor_filling_registry/visitor_filling_registry.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/visitor_filling_registry/visitor_filling_registry.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/visitor_filling_registry/visitor_filling_registry.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/visitor_filling_registry/visitor_filling_registry.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visitor/visitor_filling_registry/visitor_filling_variable.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/visitor_filling_registry/visitor_filling_variable.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visitor/visitor_filling_registry/visitor_filling_variable.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visitor/visitor_filling_registry/visitor_filling_variable.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/compiler/visual_graph/output_tree_visual_text.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visual_graph/output_tree_visual_text.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/compiler/visual_graph/output_tree_visual_text.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/compiler/visual_graph/output_tree_visual_text.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/lib/malloc.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/lib/malloc.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/lib/malloc.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/lib/malloc.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/lib/print.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/lib/print.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/lib/print.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/lib/print.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/src/main.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/main.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/src/main.cpp",
+  "output": "CMakeFiles/Prysma.dir/src/main.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/generationCode/src/compiler/visitor/ast_graph_viz/general_visitor_graph_viz.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/src/compiler/visitor/ast_graph_viz/general_visitor_graph_viz.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/src/compiler/visitor/ast_graph_viz/general_visitor_graph_viz.cpp",
+  "output": "CMakeFiles/Prysma.dir/generationCode/src/compiler/visitor/ast_graph_viz/general_visitor_graph_viz.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build",
+  "command": "/usr/bin/clang++ -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/include\" -I\"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/include\" -isystem /usr/lib/llvm-18/include -O3 -march=native -ffast-math -fno-rtti -fomit-frame-pointer -flto -DNDEBUG -O3 -DNDEBUG -std=gnu++17 -O2 -fcolor-diagnostics -ferror-limit=3 -fshow-column -fcaret-diagnostics -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor -Wnull-dereference -o CMakeFiles/Prysma.dir/generationCode/src/compiler/visitor/visitor_base_generale.cpp.o -c \"/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/src/compiler/visitor/visitor_base_generale.cpp\"",
+  "file": "/mnt/c/Users/Félix-Olivier Dumas/Documents/Programmation/Prysmaa/Prysma/build/generationCode/src/compiler/visitor/visitor_base_generale.cpp",
+  "output": "CMakeFiles/Prysma.dir/generationCode/src/compiler/visitor/visitor_base_generale.cpp.o"
+}
+]

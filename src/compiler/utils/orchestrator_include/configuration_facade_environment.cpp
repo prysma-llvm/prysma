@@ -7,6 +7,9 @@
 //===----------------------------------------------------------------------===//
 
 #include "compiler/ast/utils/orchestrator_include/configuration_facade_environment.h"
+#include "compiler/ast/registry/data/id_generator.hpp"
+#include "compiler/ast/registry/data/node_data_registry.hpp"
+#include "compiler/macros/prysma_maybe_unused.h"
 
 #include "compiler/ast/registry/context_gen_code.h"
 #include "compiler/ast/registry/context_expression.h"
@@ -66,7 +69,11 @@
 
 // NOLINTBEGIN(cppcoreguidelines-owning-memory)
 
-ConfigurationFacadeEnvironment::ConfigurationFacadeEnvironment(RegistryFunctionGlobal* registryFunctionGlobale, [[maybe_unused]] FileRegistry* fileRegistry)
+ConfigurationFacadeEnvironment::ConfigurationFacadeEnvironment( // all objects coming here are shared between threads 
+        //IdGenerator* globalIdGenerator, en attendant de trouver solution // rendre atomic et PROBABLEMENT METTRE SHARDED DEVANT MON REGISTRE, JE PENSES QU'IL DEVRA ETRE GLOBAL COMME LE ID GENERATOR AUSSI
+        RegistryFunctionGlobal* registryFunctionGlobale,
+        PRYSMA_MAYBE_UNUSED FileRegistry* fileRegistry
+    )
     : _registryFunctionGlobal(registryFunctionGlobale),
       // _registryFile(fileRegistry),
       _registryExpression(nullptr),
@@ -103,6 +110,7 @@ ConfigurationFacadeEnvironment::~ConfigurationFacadeEnvironment()
 void ConfigurationFacadeEnvironment::initialize(const std::string& filePath)
 {
     createRegistries();
+    createGenerators();
     createContext(filePath);
     registerExternalFunctions();
     registerBaseTypes();
@@ -120,6 +128,12 @@ void ConfigurationFacadeEnvironment::createRegistries()
     _returnContextCompilation = std::make_unique<ReturnContextCompilation>();
     _registryArgument = std::make_unique<RegistryArgument>();
     _registryClass = std::make_unique<RegistryClass>();
+    _nodeDataRegistry = std::make_unique<NodeDataRegistry>();
+}
+
+void ConfigurationFacadeEnvironment::createGenerators()
+{
+    _idGenerator = std::make_unique<IdGenerator>();
 }
 
 void ConfigurationFacadeEnvironment::createContext(const std::string& filePath)
@@ -131,6 +145,10 @@ void ConfigurationFacadeEnvironment::createContext(const std::string& filePath)
     _context = std::make_unique<ContextGenCode>(
         _registryType.get(),
         _backend.get(),
+        _nodeDataRegistry.get(),
+        
+        _idGenerator.get(), // pas totalement certain, je penses qu'il devrait être shared mais le nodeDataRegistry devrait l'être aussi
+
         _registryInstruction.get(),
         _registryVariable.get(),
         _registryFunctionGlobal,
@@ -242,7 +260,9 @@ void ConfigurationFacadeEnvironment::createContextParser()
         _builderTreeInstruction,
         _parserType,
         _registryVariable.get(),
-        _registryType.get()
+        _registryType.get(),
+        _nodeDataRegistry.get(),
+        _idGenerator.get()
     };
     _contextParser = new (_arena.Allocate<ContextParser>()) ContextParser(deps); // NOLINT(cppcoreguidelines-owning-memory)
 }
@@ -251,16 +271,16 @@ void ConfigurationFacadeEnvironment::registerExpressions()
 {
     // Build the orchestrators of the abstract syntax tree
     _builderTreeInstruction = new (_arena) // NOLINT(cppcoreguidelines-owning-memory)
-        BuilderTreeInstruction(_registryInstruction.get(), _arena); 
+        BuilderTreeInstruction(_registryInstruction.get(), _nodeDataRegistry.get(), _idGenerator.get(), _arena); 
 
     _registryExpression = new (_arena.Allocate<RegistryExpression>()) RegistryExpression(); // NOLINT(cppcoreguidelines-owning-memory)
 
     _builderEquation = new (_arena) // NOLINT(cppcoreguidelines-owning-memory)
-        BuilderFloatEquation(_registryExpression, _arena);
+        BuilderFloatEquation(_registryExpression, _nodeDataRegistry.get(), _idGenerator.get(), _arena);
 
     // Create the TypeParser with the registry
     _parserType = new (_arena.Allocate<TypeParser>()) // NOLINT(cppcoreguidelines-owning-memory)
-        TypeParser(_context->getRegistryType(), _builderEquation->getBuilderTree());
+        TypeParser(_context->getRegistryType(), _nodeDataRegistry.get(), _builderEquation->getBuilderTree());
 
     if (_contextParser == nullptr) {
         createContextParser();
@@ -273,7 +293,10 @@ void ConfigurationFacadeEnvironment::registerExpressions()
         _contextParser,
         &_arena,
         _registryVariable.get(),
-        _registryType.get()
+        _registryType.get(),
+        _nodeDataRegistry.get(),
+        
+        _context->getIdGenerator() // pas certain totalement, voir la note plus haut
     );
 
     auto* exprLitInt = new (_arena.Allocate<ExpressionLiteral>()) ExpressionLiteral(*_contextExpression); // // NOLINT(cppcoreguidelines-owning-memory)

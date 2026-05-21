@@ -14,6 +14,7 @@
 #include "compiler/ast/registry/context_expression.h"
 #include "compiler/lexer/lexer.h"
 #include "compiler/object/parser_call_object.h"
+#include <cstddef>
 #include <vector>
 
 ExpressionCallObject::ExpressionCallObject(ContextExpression& expressionContext)
@@ -26,7 +27,7 @@ ExpressionCallObject::~ExpressionCallObject()
 auto ExpressionCallObject::build(std::vector<Token>& equation) -> INode*
 {
     ParserCallObject parserCall(*_context.getContextParser());
-    int indexZero = 0;
+    std::size_t indexZero = 0;
     return parserCall.parse(equation, indexZero);
 }
 

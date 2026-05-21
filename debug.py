@@ -12,15 +12,15 @@ def main():
     dossier_script = os.path.dirname(os.path.abspath(__file__))
     os.chdir(dossier_script)
 
-    GeneratorAST(dossier_script).generate()
+    #GeneratorAST(dossier_script).generate() # NOTE: do not uncomment until the Jinja2 system is adapted to the new DoD architecture
     GeneratorInterfaceVisitor(dossier_script).generate()
-    GeneratorVisitorBaseGeneral(dossier_script).generate()
-    GeneratorGraphViz(dossier_script).generate()
+    #GeneratorVisitorBaseGeneral(dossier_script).generate() # NOTE: same thing here
+    #GeneratorGraphViz(dossier_script).generate() # NOTE: same thing here
     GeneratorExpression(dossier_script).generate()
     GeneratorParser(dossier_script).generate()
-
+    
     cxxflags = (
-        "-fno-rtti -g3 -O0 " # Debug info max, aucune optimisation
+        # # A RÉACTIVER "-fno-rtti -g3 -O0 " # Debug info max, aucune optimisation
         "-fsanitize=address -fsanitize=undefined " # Les détecteurs de bugs mémoire
         "-fstack-protector-all " # Ajout du protecteur de pile
         "-fno-omit-frame-pointer " # Pour des backtraces propres

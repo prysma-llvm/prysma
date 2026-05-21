@@ -16,6 +16,7 @@
 #include "compiler/ast/registry/types/i_type.h"
 #include "compiler/lexer/lexer.h"
 #include "compiler/lexer/token_type.h"
+#include <cstddef>
 #include <vector>
 
 
@@ -26,15 +27,18 @@ ParserArgFunction::ParserArgFunction(ContextParser& contextParser)
 ParserArgFunction::~ParserArgFunction()
 = default;
 
-auto ParserArgFunction::parse(std::vector<Token>& tokens, int& index) -> INode* 
+auto ParserArgFunction::parse(std::vector<Token>& tokens, std::size_t& index) -> INode* 
 {
-  consume(tokens, index, TOKEN_ARG, "Error: token is not 'arg'!");
+    consume(tokens, index, TOKEN_ARG, "Error: token is not 'arg'!");
 
-  IType* type = _contextParser.getTypeParser()->parse(tokens, index);
+    IType* type = _contextParser.getTypeParser()->parse(tokens, index);
 
-  Token name = consume(tokens, index, TOKEN_IDENTIFIER, "Error: not an identifier!");
+    Token name = consume(tokens, index, TOKEN_IDENTIFIER, "Error: not an identifier!");
 
-  return _contextParser.getBuilderTreeEquation()->allocate<NodeArgFunction>(type, name);
+    auto* new_node = _contextParser.getBuilderTreeEquation()->allocate<NodeArgFunction>(_contextParser.getIdGenerator()->next());
+    _contextParser.getNodeDataRegistry()->construct(new_node, type, name);
+
+    return new_node;
 }
 
 #endif /* PARSER_ARGFUNCTION_CPP */

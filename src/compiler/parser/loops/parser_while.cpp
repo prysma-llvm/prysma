@@ -16,6 +16,7 @@
 #include "compiler/lexer/lexer.h"
 #include "compiler/lexer/token_type.h"
 #include "compiler/visitor/interfaces/i_visitor.h"
+#include <cstddef>
 #include <llvm/ADT/ArrayRef.h>
 #include <vector>
 
@@ -26,24 +27,33 @@ ParserWhile::ParserWhile(ContextParser& contextParser)
 
 ParserWhile::~ParserWhile() = default;
 
-auto ParserWhile::parse(std::vector<Token>& tokens, int& index) -> INode*
+auto ParserWhile::parse(std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
     consume(tokens, index, TOKEN_WHILE, "Error, expected token 'while' ");
-
     consume(tokens, index, TOKEN_PAREN_OPEN, "Error, token is not '('! ");
     
     INode* condition = _contextParser.getBuilderTreeEquation()->build(tokens, index);
 
     consume(tokens, index, TOKEN_PAREN_CLOSE, "Error, token is not ')'! ");
-
     consume(tokens, index, TOKEN_BRACE_OPEN, "Error, token is not '{'");
+
     auto blockWhileChildren = consumeChildBody(tokens, index, _contextParser.getBuilderTreeInstruction(), TOKEN_BRACE_CLOSE);
-    INode* nodeBlockWhile = _contextParser.getBuilderTreeInstruction()->allocate<NodeInstruction>(blockWhileChildren);
+
+    auto* nodeBlockWhile = _contextParser.getBuilderTreeInstruction()->allocate<NodeInstruction>(_contextParser.getIdGenerator()->next()); 
+    _contextParser.getNodeDataRegistry()->construct(nodeBlockWhile, blockWhileChildren);
+
     consume(tokens, index, TOKEN_BRACE_CLOSE, "Error, token is not '}'");
 
-    INode* nodeBlockEndWhile = _contextParser.getBuilderTreeInstruction()->allocate<NodeInstruction>(llvm::ArrayRef<INode*>{});
+    auto* nodeBlockEndWhile = _contextParser.getBuilderTreeInstruction()->allocate<NodeInstruction>(_contextParser.getIdGenerator()->next()); 
+    _contextParser.getNodeDataRegistry()->construct(nodeBlockEndWhile, llvm::ArrayRef<INode*>{});
 
-    INode* nodeWhile = _contextParser.getBuilderTreeInstruction()->allocate<NodeWhile>(condition, nodeBlockWhile, nodeBlockEndWhile);
+    auto* nodeWhile = _contextParser.getBuilderTreeInstruction()->allocate<NodeWhile>(_contextParser.getIdGenerator()->next()); 
+    _contextParser.getNodeDataRegistry()->construct(
+        nodeWhile,
+        condition, 
+        nodeBlockWhile,
+        nodeBlockEndWhile
+    );
 
     return nodeWhile;
 }

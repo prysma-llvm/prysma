@@ -8,7 +8,9 @@
 
 #pragma once
 
+#include <cstddef>
 #include <llvm/IR/Value.h>
+#include "compiler/macros/prysma_nodiscard.h"
 
 class IVisitor;
 enum class NodeTypeGenerated;
@@ -25,5 +27,7 @@ public:
 
     virtual void accept(IVisitor* visitor) = 0;
     
-    [[nodiscard]] virtual auto getGeneratedType() const -> NodeTypeGenerated = 0;
+    PRYSMA_NODISCARD virtual auto getGeneratedType() const -> NodeTypeGenerated = 0;
+    PRYSMA_NODISCARD virtual auto getNodeId() const -> std::size_t = 0;
+
 };

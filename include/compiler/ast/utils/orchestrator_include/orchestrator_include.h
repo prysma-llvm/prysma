@@ -9,6 +9,7 @@
 #ifndef D2577958_A8A8_4878_AFA0_2B3478129911
 #define D2577958_A8A8_4878_AFA0_2B3478129911
 
+#include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/ast/utils/orchestrator_include/unit_compilation.h"
 #include <atomic>
 #include <mutex>
@@ -32,7 +33,7 @@ private:
    FileRegistry* _registryFile;
    llvm::ThreadPool _threads;
    std::vector<std::unique_ptr<UnitCompilation>> _compilationUnits;
-   
+      
    // A registry dedicated to source files (.p)
    std::set<std::string> _alreadyIncludedFiles; 
 
@@ -54,8 +55,8 @@ public:
    void compileProject(const std::string& filePath);
    void includeFile(const std::string& absolutePath);
    static void waitForPassEnd(llvm::ThreadPool& threads);
-   [[nodiscard]] auto hasErrors() const -> bool;
-   [[nodiscard]] auto isGraphVizEnabled() const -> bool;
+   PRYSMA_NODISCARD auto hasErrors() const -> bool;
+   PRYSMA_NODISCARD auto isGraphVizEnabled() const -> bool;
 };
 
 #endif /* D2577958_A8A8_4878_AFA0_2B3478129911 */

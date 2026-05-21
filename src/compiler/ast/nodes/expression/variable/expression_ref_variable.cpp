@@ -15,6 +15,7 @@
 #include "compiler/ast/registry/context_expression.h"
 #include "compiler/lexer/lexer.h"
 #include "compiler/lexer/token_type.h"
+#include <cstddef>
 #include <stdexcept>
 #include <vector>
 
@@ -30,7 +31,11 @@ auto ExpressionRefVariable::build(std::vector<Token>& equation) -> INode*
     if (equation.size() < 2 || equation[1].type != TOKEN_IDENTIFIER) {
         throw std::runtime_error("Error: 'ref' must be followed by an identifier");
     }
-    return _context.getBuilderTreeEquation()->allocate<NodeRefVariable>(equation[1]); 
+
+    auto* nodeRefVar = _context.getBuilderTreeEquation()->allocate<NodeRefVariable>(_context.getIdGenerator()->next());
+    _context.getNodeDataRegistry()->construct(nodeRefVar, equation[1]);
+
+    return nodeRefVar;
 }
 
 #endif /* EXPRESSION_REFVARIABLE_CPP */

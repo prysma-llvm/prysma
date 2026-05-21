@@ -9,6 +9,7 @@
 #ifndef F2141F07_2C85_4ADB_9BC9_A909EBD34394
 #define F2141F07_2C85_4ADB_9BC9_A909EBD34394
 
+#include "compiler/macros/prysma_nodiscard.h"
 #include "registry_generic.h"
 #include <llvm-18/llvm/ADT/StringRef.h>
 #include <llvm-18/llvm/IR/Function.h>
@@ -29,7 +30,7 @@ class IFunctionSymbolRegistry
         IFunctionSymbolRegistry(IFunctionSymbolRegistry&&) = delete;
         auto operator=(IFunctionSymbolRegistry&&) -> IFunctionSymbolRegistry& = delete;
         virtual ~IFunctionSymbolRegistry() = default;
-        [[nodiscard]] virtual SymbolType getType() const = 0;
+        PRYSMA_NODISCARD virtual SymbolType getType() const = 0;
 };
 
 // Acts as a struct to store global functions
@@ -40,8 +41,8 @@ public:
     IType* returnType = nullptr;
     NodeDeclarationFunction* node = nullptr;
     
-    [[nodiscard]] auto getType() const -> SymbolType override { return SymbolType::Global; }
-    [[nodiscard]] static auto classof(const IFunctionSymbolRegistry* s) -> bool { 
+    PRYSMA_NODISCARD auto getType() const -> SymbolType override { return SymbolType::Global; }
+    PRYSMA_NODISCARD static auto classof(const IFunctionSymbolRegistry* s) -> bool { 
         return s->getType() == SymbolType::Global; 
     }
 };
@@ -53,8 +54,8 @@ public:
     IType* returnType = nullptr;
     NodeDeclarationFunction* node = nullptr;
 
-    [[nodiscard]] auto getType() const -> SymbolType override { return SymbolType::Local; }
-    [[nodiscard]] static auto classof(const IFunctionSymbolRegistry* s) -> bool { 
+    PRYSMA_NODISCARD auto getType() const -> SymbolType override { return SymbolType::Local; }
+    PRYSMA_NODISCARD static auto classof(const IFunctionSymbolRegistry* s) -> bool { 
         return s->getType() == SymbolType::Local; 
     }
 };

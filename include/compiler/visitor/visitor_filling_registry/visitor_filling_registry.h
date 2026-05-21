@@ -21,7 +21,6 @@ class OrchestratorInclude;
 class FillingVisitorRegistry : public VisitorBaseGenerale
 {
 private:
-    ContextGenCode* _contextGenCode;
     OrchestratorInclude* _orchestrator;
     
 public:

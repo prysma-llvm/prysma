@@ -40,11 +40,11 @@ public:
         visitor->visiter(this);
     }
 
-    [[nodiscard]] NodeTypeGenerated getGeneratedType() const override {
+    PRYSMA_NODISCARD NodeTypeGenerated getGeneratedType() const override {
         return _nodeTypeGenerated;
     }
 
-    [[nodiscard]] static bool classof(const INode* node) {
+    PRYSMA_NODISCARD static bool classof(const INode* node) {
         return node->getGeneratedType() == NodeTypeGenerated::{{ classe.nom }};
     }
 
@@ -62,7 +62,7 @@ public:
 {%- endif %}
 
 {% for nom_champ, type_champ in classe.champs.items() %}
-    [[nodiscard]] {{ classe.getters[nom_champ] }} get{{ nom_champ[0]|upper }}{{ nom_champ[1:] }}() const { return _{{ nom_champ }}; }
+    PRYSMA_NODISCARD {{ classe.getters[nom_champ] }} get{{ nom_champ[0]|upper }}{{ nom_champ[1:] }}() const { return _{{ nom_champ }}; }
 {% endfor %}
 };
 

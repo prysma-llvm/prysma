@@ -12,10 +12,10 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(script_dir)
 
-    GeneratorAST(script_dir).generate()
+    #GeneratorAST(script_dir).generate() # NOTE: do not uncomment until the Jinja2 system is adapted to the new DoD architecture
     GeneratorInterfaceVisitor(script_dir).generate()
-    GeneratorVisitorBaseGeneral(script_dir).generate()
-    GeneratorGraphViz(script_dir).generate()
+    #GeneratorVisitorBaseGeneral(script_dir).generate() # NOTE: same thing here
+    #GeneratorGraphViz(script_dir).generate() # NOTE: same thing here
     GeneratorExpression(script_dir).generate()
     GeneratorParser(script_dir).generate()
 
@@ -23,7 +23,7 @@ def main():
         "-O3",                  # Raw speed (maximum optimization)
         "-march=native",        # Fully exploit your CPU's instructions
         "-ffast-math",          # Aggressive math calculations
-        "-fno-rtti",            # No runtime type information (RTTI off)
+        # A RÉACTIVER "-fno-rtti",            # No runtime type information (RTTI off) -> Afin d'assurer la compatibilité avec l'ABI de LLVM
         "-fomit-frame-pointer", # Free up a CPU register
         "-flto",                # Link Time Optimization (LTO)
         "-DNDEBUG"              # Completely disable assertions

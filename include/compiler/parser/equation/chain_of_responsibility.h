@@ -9,6 +9,7 @@
 #ifndef A58A7095_E8A1_4CAC_A3A8_3136BE3D2B27
 #define A58A7095_E8A1_4CAC_A3A8_3136BE3D2B27
 
+#include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/parser/equation/interfaces/i_manager_operator.h"
 #include "compiler/parser/equation/interfaces/i_manager_parenthesis.h"
 #include "compiler/lexer/lexer.h"
@@ -57,7 +58,7 @@ public:
      * @param equation The equation to analyze
      * @return The index of the operator, or -1 if none found
      */
-    [[nodiscard]] auto findOperator(const std::vector<Token>& equation) const -> int;
+    PRYSMA_NODISCARD auto findOperator(const std::vector<Token>& equation) const -> int;
 };
 
 #endif /* A58A7095_E8A1_4CAC_A3A8_3136BE3D2B27 */

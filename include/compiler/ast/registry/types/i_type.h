@@ -12,6 +12,7 @@
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Type.h>
+#include "compiler/macros/prysma_nodiscard.h"
 
 class IType {
 public:
@@ -25,11 +26,11 @@ public:
     virtual auto generateLLVMType(llvm::LLVMContext& context) -> llvm::Type* = 0;
     
     // Utility methods to determine the characteristics of the type
-    [[nodiscard]] virtual auto isFloating() const -> bool = 0;
-    [[nodiscard]] virtual auto isBoolean() const -> bool = 0;
-    [[nodiscard]] virtual auto isString() const -> bool = 0;
-    [[nodiscard]] virtual auto isArray() const -> bool = 0;
-    [[nodiscard]] virtual auto isComplex() const -> bool { return false; }
+    PRYSMA_NODISCARD virtual auto isFloating() const -> bool = 0;
+    PRYSMA_NODISCARD virtual auto isBoolean() const -> bool = 0;
+    PRYSMA_NODISCARD virtual auto isString() const -> bool = 0;
+    PRYSMA_NODISCARD virtual auto isArray() const -> bool = 0;
+    PRYSMA_NODISCARD virtual auto isComplex() const -> bool { return false; }
     virtual auto getVTableType(::llvm::LLVMContext& /*context*/) -> ::llvm::Type* { return nullptr; }
 };
 

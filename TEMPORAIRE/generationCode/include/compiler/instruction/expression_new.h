@@ -1,0 +1,19 @@
+#ifndef EXPRESSION_NEW_H
+#define EXPRESSION_NEW_H
+
+#include "compiler/ast/nodes/expression/i_expression_engine.h"
+#include "compiler/ast/registry/context_expression.h"
+
+class ExpressionNew : public IExpressionEngine
+{
+private:
+    ContextExpression& _context;
+
+public:
+    ExpressionNew(ContextExpression& expressionContext);
+    ~ExpressionNew() override;
+
+    auto build(std::vector<Token>& equation) -> INode* override;
+};
+
+#endif /* EXPRESSION_NEW_H */

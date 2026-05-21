@@ -9,6 +9,7 @@
 #include "compiler/parser/parser_type.h"
 #include "compiler/ast/interfaces/i_builder_tree.h"
 #include "compiler/ast/nodes/interfaces/i_node.h"
+#include "compiler/ast/registry/data/node_data_registry.hpp"
 #include "compiler/ast/registry/registry_type.h"
 #include "compiler/ast/registry/types/i_type.h"
 #include "compiler/ast/registry/types/type_simple.h"
@@ -22,45 +23,45 @@
 #include <llvm/IR/Type.h>
 #include <vector>
 
-TypeParser::TypeParser(RegistryType* registryType, IBuilderTree* builderTree)
-    : _registryType(registryType), _builderTree(builderTree)
+TypeParser::TypeParser(RegistryType* registryType, NodeDataRegistry* nodeDataRegistry, IBuilderTree* builderTree)
+    : _registryType(registryType), _builderTree(builderTree), _nodeDataRegistry(nodeDataRegistry)
 {
 }
 
-auto TypeParser::parse(std::vector<Token>& tokens, int& index) -> IType*
+auto TypeParser::parse(std::vector<Token>& tokens, std::size_t& index) -> IType*
 {
     // Check that the current token is a valid type
-    if (!isType(tokens[static_cast<size_t>(index)].type)) {
-        throw CompilationError("Error: expected type", Line(tokens[static_cast<size_t>(index)].line), Column(tokens[static_cast<size_t>(index)].column));
+    if (!isType(tokens[index].type)) {
+        throw CompilationError("Error: expected type", Line(tokens[index].line), Column(tokens[index].column));
     }
 
     IType* type = nullptr;
     
-    if (tokens[static_cast<size_t>(index)].type == TOKEN_IDENTIFIER) {
-        type = _builderTree->allocate<TypeComplex>(std::string(tokens[static_cast<size_t>(index)].value));
+    if (tokens[index].type == TOKEN_IDENTIFIER) {
+        type = _builderTree->allocate<TypeComplex>(std::string(tokens[index].value));
     } else {
-        llvm::Type* typeLLVM = _registryType->get(tokens[static_cast<size_t>(index)].type);
+        llvm::Type* typeLLVM = _registryType->get(tokens[index].type);
         type = _builderTree->allocate<TypeSimple>(typeLLVM);
     }
     index++;
 
-    if (tokens[static_cast<size_t>(index)].type == TOKEN_BRACKET_OPEN) {
+    if (index < tokens.size() && tokens[index].type == TOKEN_BRACKET_OPEN) {
     
         index++; // Consume the opening bracket
 
         INode* sizeEquation = nullptr;
         
         // Check if the size is specified or if the brackets are empty
-        if (tokens[static_cast<size_t>(index)].type != TOKEN_BRACKET_CLOSE) {
+        if (tokens[index].type != TOKEN_BRACKET_CLOSE) {
             sizeEquation = _builderTree->build(tokens, index);
         }
 
-        if (index >= static_cast<int>(tokens.size()) || tokens[static_cast<size_t>(index)].type != TOKEN_BRACKET_CLOSE) {
-            throw CompilationError("Error: ']' expected after array size", Line(tokens[static_cast<size_t>(index)].line), Column(tokens[static_cast<size_t>(index)].column));
+        if (index >= tokens.size() || tokens[index].type != TOKEN_BRACKET_CLOSE) {
+            throw CompilationError("Error: ']' expected after array size", Line(tokens[index].line), Column(tokens[index].column));
         }
         index++; // Consume the closing bracket
 
-        type = _builderTree->allocate<TypeArray>(type, sizeEquation);
+        type = _builderTree->allocate<TypeArray>(type, sizeEquation, _nodeDataRegistry);
     }
     return type;
 }

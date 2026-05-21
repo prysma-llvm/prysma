@@ -27,7 +27,7 @@ ParserDeclarationVariable::ParserDeclarationVariable(ContextParser& contextParse
 ParserDeclarationVariable::~ParserDeclarationVariable()
 = default;
 
-auto ParserDeclarationVariable::parse(std::vector<Token>& tokens, int& index) -> INode*
+auto ParserDeclarationVariable::parse(std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
     consume(tokens, index, TOKEN_DECL, "Error: expected type 'dec'");
     
@@ -42,12 +42,17 @@ auto ParserDeclarationVariable::parse(std::vector<Token>& tokens, int& index) ->
     
     consume(tokens, index, TOKEN_SEMICOLON, "Error: ';' expected at the end of the declaration");
 
-    return _contextParser.getBuilderTreeEquation()->allocate<NodeDeclarationVariable>(
+    auto* nodeDeclarationVar = _contextParser.getBuilderTreeInstruction()->allocate<NodeDeclarationVariable>(_contextParser.getIdGenerator()->next()); 
+    
+    _contextParser.getNodeDataRegistry()->construct(
+        nodeDeclarationVar,
         Token{},
         nameToken,
         type,
         expression
     );
+
+    return nodeDeclarationVar;
 }
 #endif /* PARSER_DECLARATIONVARIABLE_CPP */
 

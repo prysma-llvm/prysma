@@ -46,7 +46,6 @@ class NodeCallObject;
 class GeneralVisitorGenCode : public VisitorBaseGenerale
 {
 private:
-    ContextGenCode* _contextGenCode;
     OrchestratorInclude* _orchestratorInclude;
 
 public:

@@ -9,6 +9,7 @@
 #ifndef C747FE4B_9A53_40BA_A4BE_19C00508C8C4
 #define C747FE4B_9A53_40BA_A4BE_19C00508C8C4
 
+#include "compiler/macros/prysma_nodiscard.h"
 #include "i_type.h"
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/LLVMContext.h>
@@ -23,17 +24,17 @@ public:
     
     auto generateLLVMType(llvm::LLVMContext& context) -> llvm::Type* override;
     
-    [[nodiscard]] auto isFloating() const -> bool override;
-    [[nodiscard]] auto isBoolean() const -> bool override;
-    [[nodiscard]] auto isString() const -> bool override;
-    [[nodiscard]] auto isArray() const -> bool override;
-    [[nodiscard]] auto isComplex() const -> bool override;
+    PRYSMA_NODISCARD auto isFloating() const -> bool override;
+    PRYSMA_NODISCARD auto isBoolean() const -> bool override;
+    PRYSMA_NODISCARD auto isString() const -> bool override;
+    PRYSMA_NODISCARD auto isArray() const -> bool override;
+    PRYSMA_NODISCARD auto isComplex() const -> bool override;
 
-    [[nodiscard]] static auto classof(const IType* type) -> bool { return type->isComplex(); }
+    PRYSMA_NODISCARD static auto classof(const IType* type) -> bool { return type->isComplex(); }
     
     auto getVTableType(llvm::LLVMContext& context) -> llvm::Type* override;
     
-    [[nodiscard]] auto getClassName() const -> std::string;
+    PRYSMA_NODISCARD auto getClassName() const -> std::string;
 };
 
 #endif /* C747FE4B_9A53_40BA_A4BE_19C00508C8C4 */

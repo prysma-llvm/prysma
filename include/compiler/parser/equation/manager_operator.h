@@ -9,6 +9,7 @@
 #ifndef FF112DD1_03F3_41D3_8B8F_5E7E64C5467A
 #define FF112DD1_03F3_41D3_8B8F_5E7E64C5467A
 
+#include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/parser/equation/interfaces/i_manager_operator.h"
 #include "compiler/parser/equation/interfaces/i_manager_parenthesis.h"
 #include "compiler/lexer/lexer.h"
@@ -50,7 +51,7 @@ public:
      * @param equation The equation to analyze
      * @return The index of the operator, or -1
      */
-    [[nodiscard]] virtual int findOperator(const std::vector<Token>& equation) const;
+    PRYSMA_NODISCARD virtual int findOperator(const std::vector<Token>& equation) const;
     
     /**
      * @brief Handles the search for this operator or delegates to the next

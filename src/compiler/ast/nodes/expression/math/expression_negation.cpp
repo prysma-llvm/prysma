@@ -32,7 +32,11 @@ auto ExpressionNegation::build(std::vector<Token>& equation) -> INode*
 
     std::vector<Token> operand(equation.begin() + 1, equation.end());
     INode* exprOperand = _context.getBuilderTreeEquation()->build(operand);
-    return _context.getBuilderTreeEquation()->allocate<NodeNegation>(equation[0], exprOperand);
+
+    auto* nodeNegation = _context.getBuilderTreeEquation()->allocate<NodeNegation>(_context.getIdGenerator()->next());
+    _context.getNodeDataRegistry()->construct(nodeNegation, equation[0], exprOperand);
+
+    return nodeNegation;
 }
 
 #endif /* EXPRESSION_NEGATION_CPP */

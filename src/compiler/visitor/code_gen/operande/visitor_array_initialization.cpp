@@ -8,9 +8,9 @@
 
 #include "compiler/ast/registry/stack/registry_variable.h"
 #include "compiler/visitor/code_gen/visitor_general_gen_code.h"
-#include "compiler/ast/ast_genere.h"
+#include "compiler/macros/prysma_maybe_unused.h"
 
-void GeneralVisitorGenCode::visiter(NodeArrayInitialization* nodeInitialization [[maybe_unused]])
+void GeneralVisitorGenCode::visiter(NodeArrayInitialization* nodeInitialization PRYSMA_MAYBE_UNUSED)
 {
     // Cannot really initialize an array as a "temporary constant"
     // because arrays need to be allocated. This visitor will be called during

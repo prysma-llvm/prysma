@@ -29,7 +29,7 @@ public:
     ParserCallCentral(ParserCallCentral&&) = delete;
     auto operator=(ParserCallCentral&&) -> ParserCallCentral& = delete;
     
-    auto parse(std::vector<Token>& tokens, int& index) -> INode* override;
+    auto parse(std::vector<Token>& tokens, std::size_t& index) -> INode* override;
 };
 
 #endif /* PARSER_CALLCENTRAL_H */

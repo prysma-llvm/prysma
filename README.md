@@ -2,7 +2,7 @@
 <div align="center">
 
   <img src="img/prysma.svg" alt="Prysma Logo" width="250"/>
-
+ 
 <br>
 
 [![CI](https://github.com/Zyphorah/Prysma/actions/workflows/ci.yml/badge.svg)](https://github.com/Zyphorah/Prysma/actions/workflows/ci.yml)

@@ -9,6 +9,7 @@
 #ifndef D3CF3339_1CBC_4EEE_9EE7_B2E99140A4CB
 #define D3CF3339_1CBC_4EEE_9EE7_B2E99140A4CB
 
+#include "compiler/macros/prysma_nodiscard.h"
 #include "i_type.h"
 #include <llvm/IR/Type.h>
 
@@ -27,10 +28,10 @@ public:
 
     auto generateLLVMType(llvm::LLVMContext& context) -> llvm::Type* override;
     
-    [[nodiscard]] auto isFloating() const -> bool override;
-    [[nodiscard]] auto isBoolean() const -> bool override;
-    [[nodiscard]] auto isString() const -> bool override;
-    [[nodiscard]] auto isArray() const -> bool override { return false; }
+    PRYSMA_NODISCARD auto isFloating() const -> bool override;
+    PRYSMA_NODISCARD auto isBoolean() const -> bool override;
+    PRYSMA_NODISCARD auto isString() const -> bool override;
+    PRYSMA_NODISCARD auto isArray() const -> bool override { return false; }
 };
 
 #endif /* D3CF3339_1CBC_4EEE_9EE7_B2E99140A4CB */

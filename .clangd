@@ -10,7 +10,8 @@ InlayHints:
 
 CompileFlags:
   Add: 
-    - "-fno-rtti"
+    #- "-fno-rtti" // temporaire, pour le debug
+    - "-frtti"
     - "-std=c++17"
     - "-Wall"
     - "-Wextra"

@@ -9,6 +9,7 @@
 #ifndef DB7C496D_6A43_4B78_B490_52A0C21C5224
 #define DB7C496D_6A43_4B78_B490_52A0C21C5224
 
+#include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/ast/utils/orchestrator_include/configuration_facade_environment.h"
 #include "configuration_facade_environment.h"
 #include <string>
@@ -56,7 +57,7 @@ public:
     // Fills local registries (function, variable) from the complete global registry.
     void pass2();
 
-    [[nodiscard]] auto getPath() const -> std::string;
+    PRYSMA_NODISCARD auto getPath() const -> std::string;
 };
 
 #endif /* DB7C496D_6A43_4B78_B490_52A0C21C5224 */

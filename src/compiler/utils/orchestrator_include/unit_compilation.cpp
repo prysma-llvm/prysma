@@ -49,6 +49,9 @@ UnitCompilation::~UnitCompilation()
 }
 
 void UnitCompilation::pass1() {
+    std::cout << "\n\n\n PASS 1 \n\n\n";
+
+
     std::filesystem::path absolutePath = std::filesystem::absolute(_originalFilePath);
     
     if (!std::filesystem::exists(absolutePath) && !_currentDirectory.empty()) {
@@ -88,6 +91,9 @@ void UnitCompilation::pass1() {
 }
 
 void UnitCompilation::pass2() {
+std::cout << "\n\n\n PASS 2 \n\n\n";
+std::cout << "CTX addr pass1/pass2 = " << _context << "\n";
+
     if (_tree == nullptr) 
     {
         return;
@@ -108,7 +114,7 @@ void UnitCompilation::pass2() {
 
     if (_orchestrator->isGraphVizEnabled()) {
         OutputVisualGraphText outputVisualGraph(pathGraph + _fileName + ".dot");
-        auto visitorGraphViz = std::make_unique<GeneralVisitorGraphViz>(std::move(outputVisualGraph));
+        auto visitorGraphViz = std::make_unique<GeneralVisitorGraphViz>(_context, std::move(outputVisualGraph));
         _tree->accept(visitorGraphViz.get());
         visitorGraphViz->generate();
 

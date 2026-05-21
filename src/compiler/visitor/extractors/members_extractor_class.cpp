@@ -8,15 +8,25 @@
 
 #include "compiler/visitor/extractors/members_extractor_class.h"
 #include "compiler/ast/ast_genere.h"
+#include "compiler/ast/registry/context_gen_code.h"
+#include "compiler/visitor/visitor_base_generale.h"
 
-void MembersExtractorClass::visiter(NodeDeclarationFunction* node) { 
-    methods.push_back(node); 
+MembersExtractorClass::MembersExtractorClass(ContextGenCode* contextGenCode)
+    : VisitorBaseGenerale(contextGenCode) {}
+
+MembersExtractorClass::~MembersExtractorClass()
+= default;
+
+void MembersExtractorClass::visiter(NodeDeclarationFunction* nodeClass) { 
+    methods.push_back(nodeClass); 
 }
 
-void MembersExtractorClass::visiter(NodeDeclarationVariable* node) { 
-    variables.push_back(node); 
+void MembersExtractorClass::visiter(NodeDeclarationVariable* nodeClass) { 
+    variables.push_back(nodeClass); 
 }
 
-void MembersExtractorClass::visiter(NodeClass* node) { 
-    className = node->getNomClass().value; 
+void MembersExtractorClass::visiter(NodeClass* nodeClass) { 
+    auto& nodeClassData = _contextGenCode->getNodeDataRegistry()->get(nodeClass);
+
+    className = nodeClassData.getName().value; 
 }

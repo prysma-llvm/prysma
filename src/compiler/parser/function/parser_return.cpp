@@ -18,29 +18,35 @@
 #include <cstddef>
 #include <vector>
 
-
 ParserReturn::ParserReturn(ContextParser& contextParser) 
     : _contextParser(contextParser)
 {}
 
 ParserReturn::~ParserReturn() = default;
 
-auto ParserReturn::parse(std::vector<Token>& tokens, int& index) -> INode*
+auto ParserReturn::parse(std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
-  consume(tokens, index, TOKEN_RETURN, "Error: not the correct token! 'return'");
+    consume(tokens, index, TOKEN_RETURN, "Error: not the correct token! 'return'");
 
-  INode* returnValue = nullptr;
+    INode* returnValue = nullptr;
 
-  if (index < static_cast<int>(tokens.size()) && tokens[static_cast<size_t>(index)].type != TOKEN_SEMICOLON) {
-      returnValue = _contextParser.getBuilderTreeEquation()->build(tokens, index);
-  } else {
-      consume(tokens, index, TOKEN_SEMICOLON, "Error: semicolon expected after return");
-      return _contextParser.getBuilderTreeEquation()->allocate<NodeReturn>(returnValue);
-  }
-  
-  consume(tokens, index, TOKEN_SEMICOLON, "Error: ';' expected at the end of return");
+    if (index < tokens.size() && tokens[index].type != TOKEN_SEMICOLON) {
+        returnValue = _contextParser.getBuilderTreeEquation()->build(tokens, index);
+    } else {
+        consume(tokens, index, TOKEN_SEMICOLON, "Error: semicolon expected after return");
 
-  return _contextParser.getBuilderTreeEquation()->allocate<NodeReturn>(returnValue);
+        auto* new_node = _contextParser.getBuilderTreeEquation()->allocate<NodeReturn>(_contextParser.getIdGenerator()->next());
+       _contextParser.getNodeDataRegistry()->construct(new_node, returnValue);
+
+        return new_node;
+    }
+    
+    consume(tokens, index, TOKEN_SEMICOLON, "Error: ';' expected at the end of return");
+
+    auto* new_node = _contextParser.getBuilderTreeEquation()->allocate<NodeReturn>(_contextParser.getIdGenerator()->next());
+    _contextParser.getNodeDataRegistry()->construct(new_node, returnValue);
+
+    return new_node;
 }
 
 #endif /* PARSER_RETURN_CPP */

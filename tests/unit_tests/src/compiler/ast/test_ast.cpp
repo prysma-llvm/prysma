@@ -14,6 +14,8 @@
 #include <vector>
 #include <llvm-18/llvm/Support/Allocator.h>
 #include <llvm/Support/TargetSelect.h>
+#include "compiler/ast/registry/data/node_data_registry.hpp"
+#include "compiler/ast/registry/data/id_generator.hpp"
 #include "compiler/ast/registry/registry_type.h"
 #include "compiler/lexer/token_type.h"
 #include "catch.hpp"
@@ -26,7 +28,6 @@
 #include "compiler/ast/registry/context_parser.h"
 #include "compiler/ast/registry/stack/registry_variable.h"
 #include "compiler/ast/nodes/interfaces/i_node.h"
-#include "compiler/ast/ast_genere.h"
 
 // Expressions
 #include "compiler/math/expression_literal.h"
@@ -56,6 +57,9 @@
 
 using namespace std;
 
+// NOTE: L'architecture est à refaire afin de passer correctement l'accès au registre de données de noeuds. 
+//       J'ai patché le système mais ce n'est pas propre. Il fonctionne mais il sera à adapter.
+
 struct EnvironnementAST {
     std::list<std::string> codes;
     llvm::BumpPtrAllocator arena;
@@ -63,6 +67,9 @@ struct EnvironnementAST {
     std::unique_ptr<RegistryExpression> registryExpression;
     std::unique_ptr<RegistryType> registryType;
     std::unique_ptr<RegistryVariable> registryVariable;
+
+    std::unique_ptr<NodeDataRegistry> nodeDataRegistry;
+    std::unique_ptr<IdGenerator> idGenerator;
 
     BuilderTreeInstruction* builderTree = nullptr;
     BuilderFloatEquation* builderEquation = nullptr;
@@ -77,19 +84,22 @@ struct EnvironnementAST {
         registryType = std::make_unique<RegistryType>();
         registryVariable = std::make_unique<RegistryVariable>();
 
+        nodeDataRegistry = std::make_unique<NodeDataRegistry>();
+        idGenerator = std::make_unique<IdGenerator>();
+
         // Builder d'tree d'instruction 
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wmismatched-new-delete"
-        builderTree = new (arena) BuilderTreeInstruction(registryInstruction.get(), arena);
+        builderTree = new (arena) BuilderTreeInstruction(registryInstruction.get(), nodeDataRegistry.get(), idGenerator.get(), arena);
         #pragma GCC diagnostic pop
 
         //  Strategie d'équation 
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wmismatched-new-delete"
-        builderEquation = new (arena) BuilderFloatEquation(registryExpression.get(), arena);
+        builderEquation = new (arena) BuilderFloatEquation(registryExpression.get(), nodeDataRegistry.get(), idGenerator.get(), arena);
         #pragma GCC diagnostic pop
 
-        parserType = new (arena.Allocate<TypeParser>()) TypeParser(registryType.get(), builderEquation->getBuilderTree());
+        parserType = new (arena.Allocate<TypeParser>()) TypeParser(registryType.get(), nodeDataRegistry.get(), builderEquation->getBuilderTree());
 
         // Créer le ContextParser
         contextParser = new (arena.Allocate<ContextParser>()) ContextParser(ContextParser::Dependencies{
@@ -97,7 +107,9 @@ struct EnvironnementAST {
             builderTree,
             parserType,
             registryVariable.get(),
-            registryType.get()
+            registryType.get(),
+            nodeDataRegistry.get(),
+            idGenerator.get()
         });
 
         contexteExpression = new (arena.Allocate<ContextExpression>()) ContextExpression(
@@ -107,7 +119,9 @@ struct EnvironnementAST {
             contextParser,
             &arena,
             registryVariable.get(),
-            registryType.get()
+            registryType.get(),
+            nodeDataRegistry.get(),
+            idGenerator.get()
         );
 
         auto* exprLitInt = new (arena.Allocate<ExpressionLiteral>()) ExpressionLiteral(*contexteExpression);
@@ -208,20 +222,23 @@ TypeAttendu* verifierTypeEtCaster(TypeInputr* node) {
 }
 
 
-template<auto getter, typename TypeAttendu, typename TypeValeur, auto accessor = nullptr>
+template<auto getter, typename TypeAttendu, typename TypeValeur, auto accessor = nullptr> // done
 struct matcherNode
 {
     TypeValeur valeurAttendue;
+    EnvironnementAST& env;
     
-    matcherNode(TypeValeur p_valeurAttendue) : valeurAttendue(std::move(p_valeurAttendue)) {}
+    matcherNode(EnvironnementAST& env, TypeValeur p_valeurAttendue) : env(env), valeurAttendue(std::move(p_valeurAttendue)) {}
 
     template<typename typeBase>
     void operator()(typeBase* node) {
        auto* nodeCast = verifierTypeEtCaster<TypeAttendu>(node);
+        auto& nodeData = env.nodeDataRegistry->get(nodeCast);
+
        if constexpr (accessor == nullptr) {
-           REQUIRE((nodeCast->*getter)() == valeurAttendue);
+           REQUIRE((nodeData.*getter)() == valeurAttendue);
        } else {
-           REQUIRE(((nodeCast->*getter)().*accessor) == valeurAttendue);
+           REQUIRE(((nodeData.*getter)().*accessor) == valeurAttendue);
        }
     }
 };
@@ -234,20 +251,23 @@ struct matcherGeneralBinaire
     Droite verificateurDroite;
     TypeValeur valeurAttendue;
 
-    matcherGeneralBinaire(const TypeValeur& p_valeur, Gauche p_nodeGaucheAttendu, Droite p_nodeDroiteAttendu) 
-        : verificateurGauche(std::move(p_nodeGaucheAttendu)), verificateurDroite(std::move(p_nodeDroiteAttendu)), valeurAttendue(p_valeur) {}
+    EnvironnementAST& env;
+
+    matcherGeneralBinaire(EnvironnementAST& env, const TypeValeur& p_valeur, Gauche p_nodeGaucheAttendu, Droite p_nodeDroiteAttendu) 
+        : env(env), verificateurGauche(std::move(p_nodeGaucheAttendu)), verificateurDroite(std::move(p_nodeDroiteAttendu)), valeurAttendue(p_valeur) {}
 
     template<typename typeBase>
     void operator()(typeBase* node) {
         auto* nodeOperation = verifierTypeEtCaster<TypeCible>(node);
+        auto& nodeData = env.nodeDataRegistry->get(nodeOperation);
         
         if constexpr (accessor == nullptr) {
-            REQUIRE((nodeOperation->*getter)() == valeurAttendue);
+            REQUIRE((nodeData.*getter)() == valeurAttendue);
         } else {
-            REQUIRE(((nodeOperation->*getter)().*accessor) == valeurAttendue);
+            REQUIRE(((nodeData.*getter)().*accessor) == valeurAttendue);
         }
-        verificateurDroite(nodeOperation->getDroite());
-        verificateurGauche(nodeOperation->getGauche());
+        verificateurDroite(nodeData.getRight());
+        verificateurGauche(nodeData.getLeft());
     }
 };
 
@@ -257,14 +277,17 @@ struct matcherListsChild
 {
     std::tuple<Matchers...> verificateurs;
 
-    matcherListsChild(Matchers... p_verificateurs) : verificateurs(std::make_tuple(std::move(p_verificateurs)...)) {}
+    EnvironnementAST& env;
+
+    matcherListsChild(EnvironnementAST& env, Matchers... p_verificateurs) : env(env), verificateurs(std::make_tuple(std::move(p_verificateurs)...)) {}
 
     template<typename typeBase>
     void operator()(typeBase* node) {
         auto* nodeCast = verifierTypeEtCaster<TypeCible>(node);
-
+        auto& nodeData = env.nodeDataRegistry->get(nodeCast);
+        
         // Je ne dois pas faire que get child car il peux y avoir nodeIf nodeWhile
-        const auto& childs = (nodeCast->*getter)();
+        const auto& childs = (nodeData.*getter)();
         REQUIRE(childs.size() == sizeof...(Matchers));
         verifierChilds(childs, std::index_sequence_for<Matchers...>{});
     }
@@ -272,15 +295,15 @@ struct matcherListsChild
 
 
 // Faire les helper pour éviter d'avoir beaucoup de syntaxe dans les tests template 
-auto Literal(const std::string& valeur) {
-    return matcherNode<&NodeLiteral::getToken, NodeLiteral, std::string, &Token::value>(valeur);
+auto Literal(const std::string& valeur, EnvironnementAST& env) {
+    return matcherNode<&LiteralNodeData::getToken, NodeLiteral, std::string, &Token::value>(env, valeur);
 }
 
 // Helper pour les opérations
-auto operateur() {
-    return [](const std::string& type, auto gauche, auto droite) {
-        return matcherGeneralBinaire<NodeOperation, &NodeOperation::getToken, std::string, &Token::value, decltype(gauche), decltype(droite)>(
-            type, gauche, droite
+auto operateur(EnvironnementAST& env) {
+    return [&env](const std::string& type, auto gauche, auto droite) {
+        return matcherGeneralBinaire<NodeOperation, &OperationNodeData::getToken, std::string, &Token::value, decltype(gauche), decltype(droite)>(
+            env, type, gauche, droite
         );
     };
 }
@@ -289,10 +312,16 @@ auto operateur() {
 template<typename T, auto Method, typename M>
 struct matcherPropriete {
     M m;
-    matcherPropriete(M m) : m(std::move(m)) {}
+    EnvironnementAST& env;
+
+    matcherPropriete(EnvironnementAST& env, M m) : env(env), m(std::move(m)) {}
+
+
     void operator()(INode* n) {
         auto* t = verifierTypeEtCaster<T>(n);
-        m((t->*Method)()); 
+        auto& nodeData = env.nodeDataRegistry->get(t);
+
+        m((nodeData.*Method)()); 
     }
 };
 
@@ -300,7 +329,10 @@ struct matcherPropriete {
 template<typename T, typename... Ms>
 struct matcherCombine {
     std::tuple<Ms...> ms;
-    matcherCombine(Ms... ms) : ms(std::make_tuple(std::move(ms)...)) {}
+    EnvironnementAST& env;
+
+    matcherCombine(EnvironnementAST& env, Ms... ms) : env(env), ms(std::make_tuple(std::move(ms)...)) {}
+
     void operator()(INode* n) {
         auto* t = verifierTypeEtCaster<T>(n);
         // Applique chaque matcher au nœud casté
@@ -319,13 +351,13 @@ TEST_CASE("Construction Tree Equation Simple", "[AST]")
     INode* tree = construireEquationDepuisString(env, "1 + 10 * 50");
 
     auto verificateur = 
-    operateur()(
+    operateur(env)(
         "+", 
-        Literal("1"), 
-        operateur()(
+        Literal("1", env), 
+        operateur(env)(
             "*", 
-            Literal("10"), 
-            Literal("50")
+            Literal("10", env), 
+            Literal("50", env)
         ));
     
     verificateur(tree);
@@ -337,21 +369,23 @@ TEST_CASE("Builder Tree equation priorite", "[AST]")
     EnvironnementAST env;
     INode* tree = construireEquationDepuisString(env, "40 / 2 + 10 - 5 * 3");
     
+    // TODO: il faudrait faire une factory ou un builder spécifique qui injecte le registre automatiquement (env ici)
+
     auto verificateur = 
-    operateur()(
+    operateur(env)(
         "+", 
-        operateur()(
+        operateur(env)(
             "/", 
-            Literal("40"), 
-            Literal("2")
+            Literal("40", env), 
+            Literal("2", env)
         ), 
-        operateur()(
+        operateur(env)(
             "-", 
-            Literal("10"), 
-            operateur()(
+            Literal("10", env), 
+            operateur(env)(
                 "*", 
-                Literal("5"), 
-                Literal("3")
+                Literal("5", env), 
+                Literal("3", env)
             )
         )
     );
@@ -365,26 +399,26 @@ TEST_CASE("Builder Tree equation depth parenthèse", "[AST]")
     INode* tree = construireEquationDepuisString(env, "(((40/2 +10)+ 5 * 3)+10)");
 
     auto verificateur = 
-    operateur()(
+    operateur(env)(
         "+", 
-        operateur()(
+        operateur(env)(
             "+", 
-            operateur()(
+            operateur(env)(
                 "+", 
-                operateur()(
+                operateur(env)(
                     "/", 
-                    Literal("40"), 
-                    Literal("2")
+                    Literal("40", env), 
+                    Literal("2", env)
                 ), 
-                Literal("10")
+                Literal("10", env)
             ), 
-            operateur()(
+            operateur(env)(
                 "*", 
-                Literal("5"), 
-                Literal("3")
+                Literal("5", env), 
+                Literal("3", env)
             )
         ), 
-        Literal("10")
+        Literal("10", env)
     );
 
     verificateur(tree);
@@ -408,32 +442,42 @@ TEST_CASE("Construction Tree If simple avec else", "[AST][Branch]")
     // 1. Racine = NodeInstruction qui contient le if
     auto* racine = dynamic_cast<NodeInstruction*>(tree);
     REQUIRE(racine != nullptr);
-    REQUIRE(racine->getChildren().size() == 1);
+
+    auto& racineData = env.nodeDataRegistry->get(racine);
+    REQUIRE(racineData.getChildren().size() == 1);
+
 
     // 2. Premier child = NodeIf
-    auto* nodeIf = dynamic_cast<NodeIf*>(racine->getChildren()[0]);
+    auto* nodeIf = dynamic_cast<NodeIf*>(racineData.getChildren()[0]);
     REQUIRE(nodeIf != nullptr);
 
     // 3. Condition pas nulle
-    REQUIRE(nodeIf->getNodeCondition() != nullptr);
+    auto& nodeIfData = env.nodeDataRegistry->get(nodeIf);
+    REQUIRE(nodeIfData.getNodeCondition() != nullptr);
 
     // 4. Vérifier condition : opération '>'
-    auto* condition = dynamic_cast<NodeOperation*>(nodeIf->getNodeCondition());
+    auto* condition = dynamic_cast<NodeOperation*>(nodeIfData.getNodeCondition());
     REQUIRE(condition != nullptr);
-    REQUIRE(condition->getToken().type == TOKEN_GREATER);
+
+    auto& conditionData = env.nodeDataRegistry->get(condition);
+    REQUIRE(conditionData.getToken().type == TOKEN_GREATER);
 
     // 5. Bloc if existe et contient 1 instruction
-    auto* blocIf = dynamic_cast<NodeInstruction*>(nodeIf->getNodeBlocIf());
+    auto* blocIf = dynamic_cast<NodeInstruction*>(nodeIfData.getNodeBlocIf());
     REQUIRE(blocIf != nullptr);
-    REQUIRE(blocIf->getChildren().size() == 1);
+
+    auto& blocIfData = env.nodeDataRegistry->get(blocIf);
+    REQUIRE(blocIfData.getChildren().size() == 1);
 
     // 6. Bloc else existe et contient 1 instruction
-    auto* blocElse = dynamic_cast<NodeInstruction*>(nodeIf->getNodeBlocElse());
+    auto* blocElse = dynamic_cast<NodeInstruction*>(nodeIfData.getNodeBlocElse());
     REQUIRE(blocElse != nullptr);
-    REQUIRE(blocElse->getChildren().size() == 1);
+
+    auto& blocElseData = env.nodeDataRegistry->get(blocElse);
+    REQUIRE(blocElseData.getChildren().size() == 1);
 
     // 7. Bloc endif existe (node de output)
-    REQUIRE(nodeIf->getNodeBlocEndif() != nullptr);
+    REQUIRE(nodeIfData.getNodeBlocEndif() != nullptr);
 }
 
 // Test if sans else
@@ -451,25 +495,33 @@ TEST_CASE("Construction Tree If sans else", "[AST][Branch]")
     auto* racine = dynamic_cast<NodeInstruction*>(tree);
     REQUIRE(racine != nullptr);
 
+    auto& racineData = env.nodeDataRegistry->get(racine);
+
     // 1. NodeIf
-    auto* nodeIf = dynamic_cast<NodeIf*>(racine->getChildren()[0]);
+    auto* nodeIf = dynamic_cast<NodeIf*>(racineData.getChildren()[0]);
     REQUIRE(nodeIf != nullptr);
 
-    // 2. Condition == 
-    auto* condition = dynamic_cast<NodeOperation*>(nodeIf->getNodeCondition());
+    auto& nodeIfData = env.nodeDataRegistry->get(nodeIf);
+
+    // 2. Condition ==
+    auto* condition = dynamic_cast<NodeOperation*>(nodeIfData.getNodeCondition());
     REQUIRE(condition != nullptr);
-    REQUIRE(condition->getToken().type == TOKEN_EQUAL_EQUAL);
+
+    auto& conditionData = env.nodeDataRegistry->get(condition);
+    REQUIRE(conditionData.getToken().type == TOKEN_EQUAL_EQUAL);
 
     // 3. Bloc if a 1 child
-    auto* blocIf = dynamic_cast<NodeInstruction*>(nodeIf->getNodeBlocIf());
+    auto* blocIf = dynamic_cast<NodeInstruction*>(nodeIfData.getNodeBlocIf());
     REQUIRE(blocIf != nullptr);
-    REQUIRE(blocIf->getChildren().size() == 1);
+
+    auto& blocIfData = env.nodeDataRegistry->get(blocIf);
+    REQUIRE(blocIfData.getChildren().size() == 1);
 
     // 4. Pas de else
-    REQUIRE(nodeIf->getNodeBlocElse() == nullptr);
+    REQUIRE(nodeIfData.getNodeBlocElse() == nullptr);
 
     // 5. Endif existe quand même
-    REQUIRE(nodeIf->getNodeBlocEndif() != nullptr);
+    REQUIRE(nodeIfData.getNodeBlocEndif() != nullptr);
 }
 
 // Test if avec condition logique && 
@@ -487,23 +539,34 @@ TEST_CASE("Construction Tree If condition logique ET", "[AST][Branch]")
     auto* racine = dynamic_cast<NodeInstruction*>(tree);
     REQUIRE(racine != nullptr);
 
-    auto* nodeIf = dynamic_cast<NodeIf*>(racine->getChildren()[0]);
+    auto& racineData = env.nodeDataRegistry->get(racine);
+    REQUIRE(racineData.getChildren().size() == 1);
+
+    auto* nodeIf = dynamic_cast<NodeIf*>(racineData.getChildren()[0]);
     REQUIRE(nodeIf != nullptr);
 
+    auto& nodeIfData = env.nodeDataRegistry->get(nodeIf);
+
     // Condition racine = &&
-    auto* condition = dynamic_cast<NodeOperation*>(nodeIf->getNodeCondition());
+    auto* condition = dynamic_cast<NodeOperation*>(nodeIfData.getNodeCondition());
     REQUIRE(condition != nullptr);
-    REQUIRE(condition->getToken().type == TOKEN_AND);
+
+    auto& conditionData = env.nodeDataRegistry->get(condition);
+    REQUIRE(conditionData.getToken().type == TOKEN_AND);
 
     // Gauche du && = '>'
-    auto* gauche = dynamic_cast<NodeOperation*>(condition->getGauche());
+    auto* gauche = dynamic_cast<NodeOperation*>(conditionData.getLeft());
     REQUIRE(gauche != nullptr);
-    REQUIRE(gauche->getToken().type == TOKEN_GREATER);
+
+    auto& gaucheData = env.nodeDataRegistry->get(gauche);
+    REQUIRE(gaucheData.getToken().type == TOKEN_GREATER);
 
     // Droite du && = '<'
-    auto* droite = dynamic_cast<NodeOperation*>(condition->getDroite());
+    auto* droite = dynamic_cast<NodeOperation*>(conditionData.getRight());
     REQUIRE(droite != nullptr);
-    REQUIRE(droite->getToken().type == TOKEN_LESS);
+
+    auto& droiteData = env.nodeDataRegistry->get(droite);
+    REQUIRE(droiteData.getToken().type == TOKEN_LESS);
 }
 
 // Test while simple
@@ -520,24 +583,32 @@ TEST_CASE("Construction Tree While simple", "[AST][Branch]")
 
     auto* racine = dynamic_cast<NodeInstruction*>(tree);
     REQUIRE(racine != nullptr);
-    REQUIRE(racine->getChildren().size() == 1);
+
+    auto& racineData = env.nodeDataRegistry->get(racine);
+    REQUIRE(racineData.getChildren().size() == 1);
 
     // 1. NodeWhile
-    auto* nodeWhile = dynamic_cast<NodeWhile*>(racine->getChildren()[0]);
+    auto* nodeWhile = dynamic_cast<NodeWhile*>(racineData.getChildren()[0]);
     REQUIRE(nodeWhile != nullptr);
 
+    auto& nodeWhileData = env.nodeDataRegistry->get(nodeWhile);
+
     // 2. Condition '<'
-    auto* condition = dynamic_cast<NodeOperation*>(nodeWhile->getNodeCondition());
+    auto* condition = dynamic_cast<NodeOperation*>(nodeWhileData.getNodeCondition());
     REQUIRE(condition != nullptr);
-    REQUIRE(condition->getToken().type == TOKEN_LESS);
+
+    auto& conditionData = env.nodeDataRegistry->get(condition);
+    REQUIRE(conditionData.getToken().type == TOKEN_LESS);
 
     // 3. Bloc while a 1 instruction
-    auto* blocWhile = dynamic_cast<NodeInstruction*>(nodeWhile->getNodeBlocWhile());
+    auto* blocWhile = dynamic_cast<NodeInstruction*>(nodeWhileData.getNodeWhileBlock());
     REQUIRE(blocWhile != nullptr);
-    REQUIRE(blocWhile->getChildren().size() == 1);
+
+    auto& blocWhileData = env.nodeDataRegistry->get(blocWhile);
+    REQUIRE(blocWhileData.getChildren().size() == 1);
 
     // 4. Bloc fin while existe
-    REQUIRE(nodeWhile->getNodeBlocFinWhile() != nullptr);
+    REQUIRE(nodeWhileData.getNodeWhileEndBlock() != nullptr);
 }
 
 // Test while avec condition logique ||
@@ -555,23 +626,34 @@ TEST_CASE("Construction Tree While condition OU", "[AST][Branch]")
     auto* racine = dynamic_cast<NodeInstruction*>(tree);
     REQUIRE(racine != nullptr);
 
-    auto* nodeWhile = dynamic_cast<NodeWhile*>(racine->getChildren()[0]);
+    auto& racineData = env.nodeDataRegistry->get(racine);
+    REQUIRE(racineData.getChildren().size() == 1);
+
+    auto* nodeWhile = dynamic_cast<NodeWhile*>(racineData.getChildren()[0]);
     REQUIRE(nodeWhile != nullptr);
 
+    auto& nodeWhileData = env.nodeDataRegistry->get(nodeWhile);
+
     // Condition racine = ||
-    auto* condition = dynamic_cast<NodeOperation*>(nodeWhile->getNodeCondition());
+    auto* condition = dynamic_cast<NodeOperation*>(nodeWhileData.getNodeCondition());
     REQUIRE(condition != nullptr);
-    REQUIRE(condition->getToken().type == TOKEN_OR);
+
+    auto& conditionData = env.nodeDataRegistry->get(condition);
+    REQUIRE(conditionData.getToken().type == TOKEN_OR);
 
     // Gauche du || = '=='
-    auto* gauche = dynamic_cast<NodeOperation*>(condition->getGauche());
+    auto* gauche = dynamic_cast<NodeOperation*>(conditionData.getLeft());
     REQUIRE(gauche != nullptr);
-    REQUIRE(gauche->getToken().type == TOKEN_EQUAL_EQUAL);
+
+    auto& gaucheData = env.nodeDataRegistry->get(gauche);
+    REQUIRE(gaucheData.getToken().type == TOKEN_EQUAL_EQUAL);
 
     // Droite du || = '=='
-    auto* droite = dynamic_cast<NodeOperation*>(condition->getDroite());
+    auto* droite = dynamic_cast<NodeOperation*>(conditionData.getRight());
     REQUIRE(droite != nullptr);
-    REQUIRE(droite->getToken().type == TOKEN_EQUAL_EQUAL);
+
+    auto& droiteData = env.nodeDataRegistry->get(droite);
+    REQUIRE(droiteData.getToken().type == TOKEN_EQUAL_EQUAL);
 }
 
 // Test while avec plusieurs instructions dans le body
@@ -589,11 +671,18 @@ TEST_CASE("Construction Tree While plusieurs instructions", "[AST][Branch]")
     auto* racine = dynamic_cast<NodeInstruction*>(tree);
     REQUIRE(racine != nullptr);
 
-    auto* nodeWhile = dynamic_cast<NodeWhile*>(racine->getChildren()[0]);
+    auto& racineData = env.nodeDataRegistry->get(racine);
+    REQUIRE(racineData.getChildren().size() == 1);
+
+    auto* nodeWhile = dynamic_cast<NodeWhile*>(racineData.getChildren()[0]);
     REQUIRE(nodeWhile != nullptr);
 
+    auto& nodeWhileData = env.nodeDataRegistry->get(nodeWhile);
+
     // Bloc while contient 2 instructions (aff + aff)
-    auto* blocWhile = dynamic_cast<NodeInstruction*>(nodeWhile->getNodeBlocWhile());
+    auto* blocWhile = dynamic_cast<NodeInstruction*>(nodeWhileData.getNodeWhileBlock());
     REQUIRE(blocWhile != nullptr);
-    REQUIRE(blocWhile->getChildren().size() == 2);
+
+    auto& blocWhileData = env.nodeDataRegistry->get(blocWhile);
+    REQUIRE(blocWhileData.getChildren().size() == 2);
 }

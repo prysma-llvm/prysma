@@ -18,27 +18,27 @@
 #include <vector>
 
 namespace {
-    constexpr int DEFAULT_CHILDREN_CAPACITY = 32;
+    constexpr std::size_t DEFAULT_CHILDREN_CAPACITY = 32;
 }
 
-auto ParserBase::consume(std::vector<Token>& tokens, int& index, TokenType expectedType, const std::string& errorMessage) -> Token
+auto ParserBase::consume(std::vector<Token>& tokens, std::size_t& index, TokenType expectedType, const std::string& errorMessage) -> Token
 {
-    if (index < 0 || index >= static_cast<int>(tokens.size()) || tokens[static_cast<size_t>(index)].type != expectedType) {
-        if (index >= 0 && index < static_cast<int>(tokens.size())) {
-            throw CompilationError(errorMessage, Line(tokens[static_cast<size_t>(index)].line), Column(tokens[static_cast<size_t>(index)].column));
+    if (index < 0 || index >= tokens.size() || tokens[index].type != expectedType) {
+        if (index < tokens.size()) {
+            throw CompilationError(errorMessage, Line(tokens[index].line), Column(tokens[index].column));
         }
         throw CompilationError(errorMessage, Line(1), Column(1));
     }
-    return tokens[static_cast<size_t>(index++)];
+    return tokens[index++];
 }
 
-auto ParserBase::consumeChildBody(std::vector<Token>& tokens, int& index , IBuilderTree* builderTree, TokenType end) -> llvm::ArrayRef<INode*>
+auto ParserBase::consumeChildBody(std::vector<Token>& tokens, std::size_t& index , IBuilderTree* builderTree, TokenType end) -> llvm::ArrayRef<INode*>
 {
     llvm::SmallVector<INode*, DEFAULT_CHILDREN_CAPACITY> children;
-    while(index < static_cast<int>(tokens.size()) && tokens[static_cast<size_t>(index)].type != end)
+    while(index < tokens.size() && tokens[index].type != end)
     {
         // Ignore commas between elements
-        if(tokens[static_cast<size_t>(index)].type == TOKEN_COMMA)
+        if(tokens[index].type == TOKEN_COMMA)
         {
             index++;
             continue;
