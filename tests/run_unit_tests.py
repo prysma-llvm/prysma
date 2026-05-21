@@ -9,7 +9,7 @@ def main():
     unit_tests_dir = os.path.join(tests_dir, "unit_tests")
 
     print("[1/5] Building Prysma compiler (via debug.py with sanitizers)...")
-    subprocess.run(["python3", "build.py"], cwd=root_dir, check=True)
+    subprocess.run(["python3", "debug.py"], cwd=root_dir, check=True)
 
     print("[2/5] Configuring and building C++ unit tests (PrysmaTests)...")
     subprocess.run(["cmake", "-S", ".", "-B", "build"], cwd=unit_tests_dir, check=True)
