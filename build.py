@@ -26,7 +26,8 @@ def main():
         "-fno-rtti",            # No runtime type information (RTTI off)
         "-fomit-frame-pointer", # Free up a CPU register
         "-flto",                # Link Time Optimization (LTO)
-        "-DNDEBUG"              # Completely disable assertions
+        "-DNDEBUG",             # Completely disable assertions
+        "-frandom-seed=42"      # Prevents changing the seed when compiling functions that use randomness for binary generation
     ]
     
     ldflags_list = [
@@ -60,3 +61,7 @@ def main():
     
 if __name__ == "__main__":
     main()
+
+
+
+    ## 2. Le "Saut Quantique" : Désactiver l'Hyper-Threading (SMT)
