@@ -13,9 +13,20 @@ def main():
     os.chdir(dossier_script)
 
     #GeneratorAST(dossier_script).generate() # NOTE: do not uncomment until the Jinja2 system is adapted to the new DoD architecture
+    shutil.copytree("TEMPORAIRE/generationCode/include/compiler/ast", "build/generationCode/include/compiler/ast", dirs_exist_ok=True)
+    
     GeneratorInterfaceVisitor(dossier_script).generate()
+    
     #GeneratorVisitorBaseGeneral(dossier_script).generate() # NOTE: same thing here
+    os.makedirs("build/generationCode/include/compiler/visitor", exist_ok=True)
+    os.makedirs("build/generationCode/src/compiler/visitor", exist_ok=True)
+    shutil.copy("TEMPORAIRE/generationCode/include/compiler/visitor/visitor_base_generale.h", "build/generationCode/include/compiler/visitor/visitor_base_generale.h")
+    shutil.copy("TEMPORAIRE/generationCode/src/compiler/visitor/visitor_base_generale.cpp", "build/generationCode/src/compiler/visitor/visitor_base_generale.cpp")
+    
     #GeneratorGraphViz(dossier_script).generate() # NOTE: same thing here
+    shutil.copytree("TEMPORAIRE/generationCode/include/compiler/visitor/ast_graph_viz", "build/generationCode/include/compiler/visitor/ast_graph_viz", dirs_exist_ok=True)
+    shutil.copytree("TEMPORAIRE/generationCode/src/compiler/visitor/ast_graph_viz", "build/generationCode/src/compiler/visitor/ast_graph_viz", dirs_exist_ok=True)
+    
     GeneratorExpression(dossier_script).generate()
     GeneratorParser(dossier_script).generate()
     
