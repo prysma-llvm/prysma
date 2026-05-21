@@ -1,0 +1,29 @@
+#ifndef PARSEUR_WHILE_H
+#define PARSEUR_WHILE_H
+
+#include "compiler/ast/registry/context_parser.h"
+#include "compiler/lexer/lexer.h"
+#include "compiler/parser/interfaces/i_parser.h"
+#include "compiler/parser/parser_base.h"
+#include <cstddef>
+
+
+class ParserWhile : public IParser, public ParserBase
+{
+private:
+    ContextParser& _contextParser;
+    
+public: 
+
+    ParserWhile(ContextParser& contextParser);
+    ~ParserWhile();
+    
+    auto parse(std::vector<Token>& tokens, std::size_t& index) -> INode* override;
+};
+
+
+#endif /* PARSEUR_WHILE_H */
+
+
+
+

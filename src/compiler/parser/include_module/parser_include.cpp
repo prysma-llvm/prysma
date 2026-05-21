@@ -15,6 +15,7 @@
 #include "compiler/ast/registry/context_parser.h"
 #include "compiler/lexer/lexer.h"
 #include "compiler/lexer/token_type.h"
+#include <cstddef>
 #include <vector>
 
 
@@ -26,7 +27,7 @@ ParserInclude::~ParserInclude()
 = default;
 
 // Example: include "path"
-auto ParserInclude::parse(std::vector<Token>& tokens, int& index) -> INode*
+auto ParserInclude::parse(std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
     consume(tokens, index, TOKEN_INCLUDE, "Error: Include instruction must start with the 'include' keyword");
     consume(tokens, index, TOKEN_QUOTE, "Error: Include instruction must be followed by a string in quotes");
@@ -34,7 +35,10 @@ auto ParserInclude::parse(std::vector<Token>& tokens, int& index) -> INode*
     consume(tokens, index, TOKEN_QUOTE, "Error: Include instruction must be followed by a string in quotes");
     consume(tokens, index, TOKEN_SEMICOLON, "Error: Include instruction must end with a semicolon");
 
-    return _contextParser.getBuilderTreeEquation()->allocate<NodeInclude>(tokenPath);
+    auto* nodeInclude = _contextParser.getBuilderTreeInstruction()->allocate<NodeInclude>(_contextParser.getIdGenerator()->next()); 
+    _contextParser.getNodeDataRegistry()->construct(nodeInclude, tokenPath);
+
+    return nodeInclude;
 }
 
 #endif /* PARSER_INCLUDE_CPP */

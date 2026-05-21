@@ -6,8 +6,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "compiler/visitor/code_gen/visitor_general_gen_code.h"
 #include "compiler/ast/ast_genere.h"
+#include "compiler/visitor/code_gen/visitor_general_gen_code.h"
 #include "compiler/ast/registry/types/type_simple.h"
 #include <llvm/IR/Instructions.h>
 #include <llvm/IR/LLVMContext.h>
@@ -15,13 +15,15 @@
 
 void GeneralVisitorGenCode::visiter(NodeNegation* node)
 {
+    auto& nodeData = _contextGenCode->getNodeDataRegistry()->get(node);
+
     // Safety check
-    if (node == nullptr || node->getOperande() == nullptr) {
+    if (node == nullptr || nodeData.getOperand() == nullptr) {
         ErrorHelper::compilationError("NodeNegation or operand invalid");
     }
     
     // Evaluate the operand (must be boolean)
-    node->getOperande()->accept(this);
+    nodeData.getOperand()->accept(this);
     llvm::Value* operandVal = _contextGenCode->getTemporaryValue().getAddress();
 
     auto& builder = _contextGenCode->getBackend()->getBuilder();

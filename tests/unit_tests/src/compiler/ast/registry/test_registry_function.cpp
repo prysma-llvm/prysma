@@ -20,7 +20,6 @@ TEST_CASE("Enregistryr et get une function globale", "[RegistryFunction]") {
 
     auto symbole = make_unique<SymbolFunctionGlobal>();
     symbole->returnType = nullptr;
-    symbole->node = nullptr;
 
     registry.registerElement("maFunction", std::move(symbole));
 

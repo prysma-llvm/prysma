@@ -15,6 +15,7 @@
 #include "compiler/ast/registry/context_parser.h"
 #include "compiler/lexer/lexer.h"
 #include "compiler/lexer/token_type.h"
+#include <cstddef>
 #include <vector>
 
 
@@ -26,13 +27,16 @@ ParserDelete::~ParserDelete()
 = default;
 
 // Example: delete variableName;
-auto ParserDelete::parse(std::vector<Token>& tokens, int& index) -> INode*
+auto ParserDelete::parse(std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
     consume(tokens, index, TOKEN_DELETE, "Expected 'delete' at the beginning of the delete instruction.");
     Token identifierToken = consume(tokens, index, TOKEN_IDENTIFIER, "Expected an identifier after 'delete'.");
     consume(tokens, index, TOKEN_SEMICOLON, "Expected ';' after the identifier in the delete instruction.");
 
-    return _contextParser.getBuilderTreeInstruction()->allocate<NodeDelete>(identifierToken);
+    auto* nodeDelete = _contextParser.getBuilderTreeInstruction()->allocate<NodeDelete>(_contextParser.getIdGenerator()->next()); 
+    _contextParser.getNodeDataRegistry()->construct(nodeDelete, identifierToken);
+
+    return nodeDelete;  
 }
 
 #endif /* PARSER_DELETE_CPP */

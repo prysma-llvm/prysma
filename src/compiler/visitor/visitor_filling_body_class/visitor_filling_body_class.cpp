@@ -8,9 +8,9 @@
 
 #include "compiler/visitor/visitor_filling_body_class/visitor_filling_body_class.h"
 #include "compiler/ast/registry/context_gen_code.h"
-#include "compiler/ast/ast_genere.h"
 #include "compiler/ast/registry/registry_class.h"
 #include "compiler/ast/registry/registry_function.h"
+#include "compiler/ast/ast_genere.h"
 #include "compiler/visitor/visitor_base_generale.h"
 #include "compiler/visitor/extractors/members_extractor_class.h"
 #include "compiler/utils/prysma_cast.h"
@@ -27,7 +27,7 @@
 #include <vector>
 
 FillingVisitorBodyClass::FillingVisitorBodyClass(ContextGenCode* contextGenCode)
-    : _contextGenCode(contextGenCode)
+    : VisitorBaseGenerale(contextGenCode)
 {
 }
 
@@ -36,10 +36,13 @@ FillingVisitorBodyClass::~FillingVisitorBodyClass()
 
 void FillingVisitorBodyClass::visiter(NodeClass* nodeClass)
 {
-    std::string className = std::string(nodeClass->getNomClass().value);
+    auto& nodeClassData = _contextGenCode->getNodeDataRegistry()->get(nodeClass);
 
-    MembersExtractorClass classExtractor;
-    for (INode* member : nodeClass->getListMembers()) {
+    std::string className = std::string(nodeClassData.getName().value);
+
+    auto classExtractor = MembersExtractorClass{ _contextGenCode };
+
+    for (INode* member : nodeClassData.getMembers()) {
         if (member != nullptr) {
             member->accept(&classExtractor);
         }
@@ -68,7 +71,8 @@ void FillingVisitorBodyClass::visiter(NodeClass* nodeClass)
     // 4. Inherit parent fields and build the VTable
     if(parentHeritage != nullptr)
     {
-        MembersExtractorClass parentExtractor;
+        auto parentExtractor = MembersExtractorClass{ _contextGenCode };
+
         parentHeritage->accept(&parentExtractor);
         std::string parentName = parentExtractor.getClassName();
 
@@ -85,7 +89,8 @@ void FillingVisitorBodyClass::visiter(NodeClass* nodeClass)
             }
             auto* localSymbol = prysma::cast<SymbolFunctionLocal>(symbol.get());
             if (localSymbol->node != nullptr) {
-                MembersExtractorClass methodExtractor;
+                auto methodExtractor = MembersExtractorClass{ _contextGenCode };
+
                 localSymbol->node->accept(&methodExtractor);
                 if (!methodExtractor.getMethods().empty()) {
                     parentMethodList.push_back(methodExtractor.getMethods()[0]);
@@ -94,12 +99,24 @@ void FillingVisitorBodyClass::visiter(NodeClass* nodeClass)
         }
 
         // Check if parent methods exist in the current class, if not it's an error
+
+        // Ici, nous retrouvons une manifestation de l'un des désavantages de cette nouvelle architecture.
+        // L'indirection et le chasing causée par le lookup des données est très inéfficace lors de boucles 
+        // comme celle-ci. À chaque itération, il y a une latence, ce qui rends impossible certaines
+        // optimisations par exemple concernant la localité du cache.
+
+        // Il s'agirait de trouver une optimisation spécifique au problème. Par exemple, il serait bien plus efficace
+        // d'aller chercher toutes les composantes à l'avance avant la boucle afin d'éliminer l'indirection pendant la boucle.
         for(NodeDeclarationFunction* parentMethod : parentMethodList)
         {
+            auto& parentNodeData = _contextGenCode->getNodeDataRegistry()->get(parentMethod);
+
             bool found = false;
             for(NodeDeclarationFunction* classMethod : classExtractor.getMethods())
             {
-                if(classMethod->getNom().value == parentMethod->getNom().value)
+                auto& nodeDeclFuncData = _contextGenCode->getNodeDataRegistry()->get(classMethod);
+
+                if(nodeDeclFuncData.getName().value == parentNodeData.getName().value)
                 {
                     found = true;
                     break;
@@ -108,7 +125,12 @@ void FillingVisitorBodyClass::visiter(NodeClass* nodeClass)
 
             if(!found)
             {
-                throw std::runtime_error(llvm::formatv("Class {0} must implement the method {1} inherited from {2}", className, parentMethod->getNom().value, parentName).str());
+                throw std::runtime_error(
+                    llvm::formatv(
+                        "Class {0} must implement the method {1} inherited from {2}",
+                        className, parentNodeData.getName().value, parentName
+                    ).str()
+                );
             }
         }
     }
@@ -120,12 +142,14 @@ void FillingVisitorBodyClass::visiter(NodeClass* nodeClass)
     // Traverse members to get variables in declaration order
     for(NodeDeclarationVariable* declarationVariable : classExtractor.getVariables())
     {
-        IType* itype = declarationVariable->getType();
+        auto& nodeDeclVarData = _contextGenCode->getNodeDataRegistry()->get(declarationVariable);
+
+        IType* itype = nodeDeclVarData.getType();
         llvm::Type* variableType = itype->generateLLVMType(_contextGenCode->getBackend()->getContext());
         if (variableType != nullptr) {
             classBodyElements.push_back(variableType);
             // Register the index for Pass 3
-            classInfo->getMemberIndices()[std::string(declarationVariable->getNom().value)] = currentIndex;
+            classInfo->getMemberIndices()[std::string(nodeDeclVarData.getName().value)] = currentIndex;
             currentIndex++;
         }
     }

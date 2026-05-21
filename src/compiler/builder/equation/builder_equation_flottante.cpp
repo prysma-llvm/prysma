@@ -1,31 +1,26 @@
-//===-- builder_equation_flottante.cpp --------------------------*- C++ -*-===//
-//
-// Part of the Prysma Project, under the GNU GPL v3.0 or later.
-// See LICENSE at the project root for license information.
-// SPDX-License-Identifier: GPL-3.0-or-later WITH Prysma-exception-1.0
-//
-//===----------------------------------------------------------------------===//
 
+#include "compiler/ast/ast_genere.h"
 #include "compiler/ast/builder_tree_equation.h"
 #include "compiler/builder/equation/builder_equation_flottante.h"
 #include "compiler/ast/interfaces/i_builder_tree.h"
 #include "compiler/ast/nodes/interfaces/i_expression.h"
-#include "compiler/ast/ast_genere.h"
 #include "compiler/ast/nodes/interfaces/i_node.h"
+#include "compiler/ast/registry/data/id_generator.hpp"
+#include "compiler/ast/registry/data/node_data_registry.hpp"
 #include "compiler/ast/registry/registry_expression.h"
 #include "compiler/parser/equation/chain_of_responsibility.h"
 #include "compiler/parser/equation/manager_operator.h"
 #include "compiler/parser/equation/service_parenthesis.h"
 #include "compiler/lexer/token_type.h"
+#include <cstddef>
 #include <llvm/ADT/SmallVector.h>
 #include <llvm/Support/Allocator.h>
 #include <memory>
 #include <utility>
-#include <vector>
 
 // Floating-point equation builder
-BuilderFloatEquation::BuilderFloatEquation(RegistryExpression* expressionRegistry, llvm::BumpPtrAllocator& arena)
-    : _expressionRegistry(expressionRegistry), _arena(arena)
+BuilderFloatEquation::BuilderFloatEquation(RegistryExpression* expressionRegistry, NodeDataRegistry* nodeDataRegistry, IdGenerator* idGenerator, llvm::BumpPtrAllocator& arena)
+    : _nodeDataRegistry(nodeDataRegistry), _idGenerator(idGenerator), _expressionRegistry(expressionRegistry), _arena(arena)
 {
     _symbolRegistry = std::make_unique<RegistrySymbol>();
 
@@ -65,6 +60,7 @@ BuilderFloatEquation::BuilderFloatEquation(RegistryExpression* expressionRegistr
                     
     _builderTree = std::unique_ptr<IBuilderTree>(
         new (_arena) BuilderTreeEquation(
+            _nodeDataRegistry, // TODO: à probablement changer pour ExpressionDataRegistry
             _chainOfResponsibility.get(), 
             _symbolRegistry.get(), 
             _expressionRegistry,
@@ -76,49 +72,97 @@ BuilderFloatEquation::BuilderFloatEquation(RegistryExpression* expressionRegistr
     initializeRegistry();
 }
 
-void BuilderFloatEquation::initializeRegistry()
+void BuilderFloatEquation::initializeRegistry() // TODO: réduire massivement la redondance
 {
     _symbolRegistry->registerSymbol(TOKEN_PLUS, [this](Token token) -> IExpression* { 
-        return this->allocate<NodeOperation>(std::move(token)); 
+        auto* nodeOperation = this->allocate<NodeOperation>(_idGenerator->next()); // TODO: remplacer par le registre de expression
+        _nodeDataRegistry->construct(nodeOperation, std::move(token));
+
+        return nodeOperation;
     });
 
     _symbolRegistry->registerSymbol(TOKEN_MINUS, [this](Token token) -> IExpression* { 
-        return this->allocate<NodeOperation>(std::move(token)); 
+        auto* nodeOperation = this->allocate<NodeOperation>(_idGenerator->next());
+        _nodeDataRegistry->construct(nodeOperation, std::move(token));
+
+       return nodeOperation;
     });
 
     _symbolRegistry->registerSymbol(TOKEN_STAR, [this](Token token) -> IExpression* { 
-        return this->allocate<NodeOperation>(std::move(token)); 
+        auto* nodeOperation = this->allocate<NodeOperation>(_idGenerator->next());
+        _nodeDataRegistry->construct(nodeOperation, std::move(token));
+
+        return nodeOperation;
     });
 
     _symbolRegistry->registerSymbol(TOKEN_SLASH, [this](Token token) -> IExpression* { 
-        return this->allocate<NodeOperation>(std::move(token)); 
+         auto* nodeOperation = this->allocate<NodeOperation>(_idGenerator->next());
+        _nodeDataRegistry->construct(nodeOperation, std::move(token));
+
+        return nodeOperation;
     });
+
     _symbolRegistry->registerSymbol(TOKEN_LESS, [this](Token token) -> IExpression* { 
-        return this->allocate<NodeOperation>(std::move(token)); 
+        auto* nodeOperation = this->allocate<NodeOperation>(_idGenerator->next());
+        _nodeDataRegistry->construct(nodeOperation, std::move(token));
+
+        return nodeOperation;
     });
+
     _symbolRegistry->registerSymbol(TOKEN_GREATER, [this](Token token) -> IExpression* { 
-        return this->allocate<NodeOperation>(std::move(token)); 
+        auto* nodeOperation = this->allocate<NodeOperation>(_idGenerator->next());
+        _nodeDataRegistry->construct(nodeOperation, std::move(token));
+
+        return nodeOperation;
     });
+
     _symbolRegistry->registerSymbol(TOKEN_GREATER_EQUAL, [this](Token token) -> IExpression* { 
-        return this->allocate<NodeOperation>(std::move(token)); 
+        auto* nodeOperation = this->allocate<NodeOperation>(_idGenerator->next());
+        _nodeDataRegistry->construct(nodeOperation, std::move(token));
+
+        return nodeOperation;
     });
+
     _symbolRegistry->registerSymbol(TOKEN_LESS_EQUAL, [this](Token token) -> IExpression* { 
-        return this->allocate<NodeOperation>(std::move(token));
+        auto* nodeOperation = this->allocate<NodeOperation>(_idGenerator->next());
+        _nodeDataRegistry->construct(nodeOperation, std::move(token));
+
+        return nodeOperation;
     });
+
     _symbolRegistry->registerSymbol(TOKEN_MODULO, [this](Token token) -> IExpression* { 
-        return this->allocate<NodeOperation>(std::move(token));
+        auto* nodeOperation = this->allocate<NodeOperation>(_idGenerator->next());
+        _nodeDataRegistry->construct(nodeOperation, std::move(token));
+
+        return nodeOperation;
     });
+
     _symbolRegistry->registerSymbol(TOKEN_EQUAL_EQUAL, [this](Token token) -> IExpression* { 
-        return this->allocate<NodeOperation>(std::move(token));
+        auto* nodeOperation = this->allocate<NodeOperation>(_idGenerator->next());
+        _nodeDataRegistry->construct(nodeOperation, std::move(token));
+
+        return nodeOperation;
     });
+
     _symbolRegistry->registerSymbol(TOKEN_NOT_EQUAL, [this](Token token) -> IExpression* { 
-        return this->allocate<NodeOperation>(std::move(token));
+        auto* nodeOperation = this->allocate<NodeOperation>(_idGenerator->next());
+        _nodeDataRegistry->construct(nodeOperation, std::move(token));
+
+        return nodeOperation;
     });
+
     _symbolRegistry->registerSymbol(TOKEN_AND, [this](Token token) -> IExpression* { 
-        return this->allocate<NodeOperation>(std::move(token));
+        auto* nodeOperation = this->allocate<NodeOperation>(_idGenerator->next());
+        _nodeDataRegistry->construct(nodeOperation, std::move(token));
+
+        return nodeOperation;
     });
+
     _symbolRegistry->registerSymbol(TOKEN_OR, [this](Token token) -> IExpression* { 
-        return this->allocate<NodeOperation>(std::move(token));
+        auto* nodeOperation = this->allocate<NodeOperation>(_idGenerator->next());
+        _nodeDataRegistry->construct(nodeOperation, std::move(token));
+
+        return nodeOperation;
     });
 }
 
@@ -132,7 +176,7 @@ auto BuilderFloatEquation::getBuilderTree() const -> IBuilderTree*
     return _builderTree;
 }
 
-auto BuilderFloatEquation::build(std::vector<Token>& tokens, int& index) -> INode*
+auto BuilderFloatEquation::build(std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
     return _builderTree->build(tokens, index);
 }

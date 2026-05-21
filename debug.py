@@ -12,13 +12,24 @@ def main():
     dossier_script = os.path.dirname(os.path.abspath(__file__))
     os.chdir(dossier_script)
 
-    GeneratorAST(dossier_script).generate()
+    #GeneratorAST(dossier_script).generate() # NOTE: do not uncomment until the Jinja2 system is adapted to the new DoD architecture
+    shutil.copytree("TEMPORAIRE/generationCode/include/compiler/ast", "build/generationCode/include/compiler/ast", dirs_exist_ok=True)
+    
     GeneratorInterfaceVisitor(dossier_script).generate()
-    GeneratorVisitorBaseGeneral(dossier_script).generate()
-    GeneratorGraphViz(dossier_script).generate()
+    
+    #GeneratorVisitorBaseGeneral(dossier_script).generate() # NOTE: same thing here
+    os.makedirs("build/generationCode/include/compiler/visitor", exist_ok=True)
+    os.makedirs("build/generationCode/src/compiler/visitor", exist_ok=True)
+    shutil.copy("TEMPORAIRE/generationCode/include/compiler/visitor/visitor_base_generale.h", "build/generationCode/include/compiler/visitor/visitor_base_generale.h")
+    shutil.copy("TEMPORAIRE/generationCode/src/compiler/visitor/visitor_base_generale.cpp", "build/generationCode/src/compiler/visitor/visitor_base_generale.cpp")
+    
+    #GeneratorGraphViz(dossier_script).generate() # NOTE: same thing here
+    shutil.copytree("TEMPORAIRE/generationCode/include/compiler/visitor/ast_graph_viz", "build/generationCode/include/compiler/visitor/ast_graph_viz", dirs_exist_ok=True)
+    shutil.copytree("TEMPORAIRE/generationCode/src/compiler/visitor/ast_graph_viz", "build/generationCode/src/compiler/visitor/ast_graph_viz", dirs_exist_ok=True)
+    
     GeneratorExpression(dossier_script).generate()
     GeneratorParser(dossier_script).generate()
-
+    
     cxxflags = (
         "-fno-rtti -g3 -O0 " # Debug info max, aucune optimisation
         "-fsanitize=address -fsanitize=undefined " # Les détecteurs de bugs mémoire
@@ -29,7 +40,6 @@ def main():
         "-Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual "
         "-Wconversion -Wsign-conversion -Wnull-dereference -Wformat=2 "
         "-ffunction-sections -fdata-sections " # section pour le code mort 
-        " "
     )
 
     # 2. Les sanitizers doivent aussi être passés au Linker

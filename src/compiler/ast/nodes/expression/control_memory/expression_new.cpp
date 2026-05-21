@@ -29,17 +29,17 @@ ExpressionNew::~ExpressionNew()
 
 auto ExpressionNew::build(std::vector<Token>& equation) -> INode*
 {
-    int index = 0;
+    std::size_t index = 0;
     if (equation.empty() || equation[0].type != TOKEN_NEW) {
         throw CompilationError("Error: the 'new' token is expected", Line(0), Column(0));
     }
     index++;
 
-    if (index >= static_cast<int>(equation.size())) {
+    if (index >= equation.size()) {
         throw CompilationError("Error: no valid type for the object created with 'new'", Line(equation[0].line), Column(equation[0].column));
     }
 
-    Token typeName = equation[static_cast<size_t>(index)];
+    Token typeName = equation[index];
 
     if (typeName.type != TOKEN_TYPE_INT32 &&
         typeName.type != TOKEN_TYPE_INT64 &&
@@ -58,26 +58,31 @@ auto ExpressionNew::build(std::vector<Token>& equation) -> INode*
     if (typeName.type == TOKEN_IDENTIFIER) {
         index++; // Skip the type name
         
-        if (index < static_cast<int>(equation.size()) && equation[static_cast<size_t>(index)].type == TOKEN_PAREN_OPEN) {
+        if (index < equation.size() && equation[index].type == TOKEN_PAREN_OPEN) {
             index++; // Skip '('
 
-            while(index < static_cast<int>(equation.size()) && equation[static_cast<size_t>(index)].type != TOKEN_PAREN_CLOSE) {
+            while(index < equation.size() && equation[index].type != TOKEN_PAREN_CLOSE) {
                 arguments.push_back(_context.getContextParser()->getBuilderTreeEquation()->build(equation, index));
 
-                if (index < static_cast<int>(equation.size()) && equation[static_cast<size_t>(index)].type == TOKEN_COMMA) {
+                if (index < equation.size() && equation[index].type == TOKEN_COMMA) {
                     index++; // Skip the comma
                 }
             }
-            if (index < static_cast<int>(equation.size()) && equation[static_cast<size_t>(index)].type == TOKEN_PAREN_CLOSE) {
+            if (index < equation.size() && equation[index].type == TOKEN_PAREN_CLOSE) {
                 index++; // Skip ')'
             }
         }
     }
 
-    return _context.getBuilderTreeEquation()->allocate<NodeNew>(
-        _context.getBuilderTreeEquation()->allocateArray<INode*>(arguments), 
+    auto* nodeNew = _context.getBuilderTreeEquation()->allocate<NodeNew>(_context.getIdGenerator()->next());
+
+    _context.getNodeDataRegistry()->construct(
+        nodeNew,
+        _context.getBuilderTreeEquation()->allocateArray<INode*>(arguments),
         typeName
     );
+    
+    return nodeNew;
 }
 
 #endif /* EXPRESSION_NEW_CPP */

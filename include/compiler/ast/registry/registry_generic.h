@@ -9,6 +9,7 @@
 #ifndef E962F97C_7F79_445E_9F65_097981CC00B4
 #define E962F97C_7F79_445E_9F65_097981CC00B4
 
+#include <iostream>
 #include <map>
 #include <set>
 #include <stdexcept>
@@ -47,12 +48,14 @@ public:
 
     void registerElement(const TKey& key, TValue value) {
         std::lock_guard<TLock> guard(_lock);
+
         _elements[key] = std::move(value);
     }
 
     auto get(const TKey& key) const -> const TValue& {
         std::lock_guard<TLock> guard(_lock);
         auto iterator = _elements.find(key);
+   
         if (iterator == _elements.end()) {
             throw std::invalid_argument(generateInternalErrorMessage(key));
         }
@@ -81,6 +84,7 @@ protected:
 
 private:
     auto generateInternalErrorMessage(const TKey& key) const -> std::string {
+ 
         if (_errorMessageCallback) {
             return _errorMessageCallback(key);
         }

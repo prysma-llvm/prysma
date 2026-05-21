@@ -25,7 +25,11 @@ ExpressionLiteral::~ExpressionLiteral()
 
 auto ExpressionLiteral::build(std::vector<Token>& equation) -> INode*
 {
-    return _context.getBuilderTreeEquation()->allocate<NodeLiteral>(equation[0]);
+    auto* nodeLiteral = _context.getBuilderTreeEquation()->allocate<NodeLiteral>(_context.getIdGenerator()->next());
+
+    _context.getNodeDataRegistry()->construct(nodeLiteral, equation[0]);
+
+    return nodeLiteral;
 }
 
 #endif /* EXPRESSION_LITERAL_CPP */

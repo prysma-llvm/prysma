@@ -9,10 +9,14 @@
 #ifndef FLOATEQUATIONBUILDER_H
 #define FLOATEQUATIONBUILDER_H
 
+#include <cstddef>
 #include <llvm/Support/Allocator.h>
 #include <memory>
 #include <vector>
 
+#include "compiler/ast/registry/data/id_generator.hpp"
+#include "compiler/ast/registry/data/node_data_registry.hpp"
+#include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/ast/interfaces/i_builder_tree.h"
 #include "compiler/ast/nodes/interfaces/i_node.h"
 #include "compiler/parser/equation/chain_of_responsibility.h"
@@ -26,6 +30,9 @@ struct Token;
 class BuilderFloatEquation : public IBuilderTree
 {
 private:
+    NodeDataRegistry* _nodeDataRegistry;
+    IdGenerator* _idGenerator;
+
     RegistryExpression* _expressionRegistry;
     llvm::BumpPtrAllocator& _arena;
     std::unique_ptr<RegistrySymbol> _symbolRegistry;
@@ -53,7 +60,7 @@ private:
 
 public: 
 
-    BuilderFloatEquation(RegistryExpression* expressionRegistry, llvm::BumpPtrAllocator& arena);
+    BuilderFloatEquation(RegistryExpression* expressionRegistry, NodeDataRegistry* nodeDataRegistry, IdGenerator* idGenerator, llvm::BumpPtrAllocator& arena);
     
     ~BuilderFloatEquation() override;
 
@@ -63,10 +70,10 @@ public:
     auto operator=(BuilderFloatEquation&&) -> BuilderFloatEquation& = delete;
 
     auto build(std::vector<Token>& tokens) -> INode* override;
-    auto build(std::vector<Token>& tokens, int& index) -> INode* override;
+    auto build(std::vector<Token>& tokens, std::size_t& index) -> INode* override;
     auto getArena() -> llvm::BumpPtrAllocator& override;
     
-    [[nodiscard]] auto getBuilderTree() const -> IBuilderTree*;
+    PRYSMA_NODISCARD auto getBuilderTree() const -> IBuilderTree*;
 };
 
 #endif /* FLOATEQUATIONBUILDER_H */

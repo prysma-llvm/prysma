@@ -12,10 +12,21 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(script_dir)
 
-    GeneratorAST(script_dir).generate()
+    #GeneratorAST(script_dir).generate() # NOTE: do not uncomment until the Jinja2 system is adapted to the new DoD architecture
+    shutil.copytree("TEMPORAIRE/generationCode/include/compiler/ast", "build/generationCode/include/compiler/ast", dirs_exist_ok=True)
+    
     GeneratorInterfaceVisitor(script_dir).generate()
-    GeneratorVisitorBaseGeneral(script_dir).generate()
-    GeneratorGraphViz(script_dir).generate()
+    
+    #GeneratorVisitorBaseGeneral(script_dir).generate() # NOTE: same thing here
+    os.makedirs("build/generationCode/include/compiler/visitor", exist_ok=True)
+    os.makedirs("build/generationCode/src/compiler/visitor", exist_ok=True)
+    shutil.copy("TEMPORAIRE/generationCode/include/compiler/visitor/visitor_base_generale.h", "build/generationCode/include/compiler/visitor/visitor_base_generale.h")
+    shutil.copy("TEMPORAIRE/generationCode/src/compiler/visitor/visitor_base_generale.cpp", "build/generationCode/src/compiler/visitor/visitor_base_generale.cpp")
+    
+    #GeneratorGraphViz(script_dir).generate() # NOTE: same thing here
+    shutil.copytree("TEMPORAIRE/generationCode/include/compiler/visitor/ast_graph_viz", "build/generationCode/include/compiler/visitor/ast_graph_viz", dirs_exist_ok=True)
+    shutil.copytree("TEMPORAIRE/generationCode/src/compiler/visitor/ast_graph_viz", "build/generationCode/src/compiler/visitor/ast_graph_viz", dirs_exist_ok=True)
+    
     GeneratorExpression(script_dir).generate()
     GeneratorParser(script_dir).generate()
 
@@ -23,7 +34,7 @@ def main():
         "-O3",                  # Raw speed (maximum optimization)
         "-march=native",        # Fully exploit your CPU's instructions
         "-ffast-math",          # Aggressive math calculations
-        "-fno-rtti",            # No runtime type information (RTTI off)
+        # A RÉACTIVER "-fno-rtti",            # No runtime type information (RTTI off) -> Afin d'assurer la compatibilité avec l'ABI de LLVM
         "-fomit-frame-pointer", # Free up a CPU register
         "-flto",                # Link Time Optimization (LTO)
         "-DNDEBUG"              # Completely disable assertions

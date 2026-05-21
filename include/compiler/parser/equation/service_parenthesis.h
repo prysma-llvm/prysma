@@ -9,6 +9,7 @@
 #ifndef DA3AD58B_D7B7_44D3_AC56_E1DDCD78F54F
 #define DA3AD58B_D7B7_44D3_AC56_E1DDCD78F54F
 
+#include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/parser/equation/interfaces/i_manager_parenthesis.h"
 #include "compiler/ast/registry/registry_symbole.h"
 #include "compiler/lexer/lexer.h"
@@ -32,7 +33,7 @@ private:
      * @param index The index of the operator
      * @return true if it is a unary sign
      */
-    [[nodiscard]] auto isUnarySign(const std::vector<Token>& equation, int index) const -> bool;
+    PRYSMA_NODISCARD auto isUnarySign(const std::vector<Token>& equation, int index) const -> bool;
 
 public:
     /**

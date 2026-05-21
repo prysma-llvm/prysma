@@ -12,6 +12,8 @@
 #include <vector>
 #include "compiler/ast/nodes/interfaces/i_expression.h"
 #include "compiler/ast/nodes/interfaces/i_node.h"
+#include "compiler/ast/registry/data/node_data.hpp"
+#include "compiler/ast/registry/data/node_data_registry.hpp"
 #include "compiler/ast/registry/registry_expression.h"
 #include "compiler/ast/registry/registry_symbole.h"
 #include "compiler/parser/equation/chain_of_responsibility.h"
@@ -20,18 +22,20 @@
 #include "compiler/lexer/lexer.h"
 #include "compiler/lexer/token_type.h"
 
-BuilderTreeEquation::BuilderTreeEquation(
+BuilderTreeEquation::BuilderTreeEquation( // TODO: miger le naming scheme des membres vers _membre
+    NodeDataRegistry* nodeDataRegistry, // TODO: à possiblement changer pour un ExpressionComponentRegistry
     ChainOfResponsibility* chainOfResponsibility,
     RegistrySymbol* symbolRegistry,
     RegistryExpression* expressionRegistry,
     IManagerParenthesis* parenthesisManager,
     llvm::BumpPtrAllocator& arena)
-    : _chainOfResponsibility(chainOfResponsibility), 
-      _symbolRegistry(symbolRegistry), 
-      _expressionRegistry(expressionRegistry),
-      _parenthesisManager(parenthesisManager),
-      _arena(arena),
-      _lastToken{TOKEN_EOF, "", 1, 1}
+        : _nodeDataRegistry(nodeDataRegistry)
+        , _chainOfResponsibility(chainOfResponsibility)
+        ,  _symbolRegistry(symbolRegistry)
+        , _expressionRegistry(expressionRegistry)
+        , _parenthesisManager(parenthesisManager)
+        , _arena(arena)
+        , _lastToken{TOKEN_EOF, "", 1, 1}
 {
 }
 
@@ -43,7 +47,8 @@ auto BuilderTreeEquation::build(std::vector<Token> &tokens) -> INode* {
         throw CompilationError("Error: empty equation", Line(_lastToken.line), Column(_lastToken.column));
     }
     
-    int index = _chainOfResponsibility->findOperator(tokens);
+    std::size_t index = _chainOfResponsibility->findOperator(tokens); // TODO: 2 options -> adapt the api to support std::size_t or cast to an integer  
+                                                                               //                     there's a lot of integers where unsigned would be more relevant
 
     if (index == -1) {
         TokenType type = tokens[0].type;
@@ -55,22 +60,30 @@ auto BuilderTreeEquation::build(std::vector<Token> &tokens) -> INode* {
         throw CompilationError("Error: unrecognized token in the equation", Line(tokens[0].line), Column(tokens[0].column));
     }
     
-    IExpression* node = _symbolRegistry->getNode(tokens[static_cast<size_t>(index)]);
+    IExpression* node = _symbolRegistry->getNode(tokens[index]);
     std::vector<Token> left(tokens.begin(), tokens.begin() + index); 
     std::vector<Token> right(tokens.begin() + index + 1, tokens.end());
     
     INode* leftExpr = build(left);
     INode* rightExpr = build(right);
+
+    //auto& expressionData = _nodeComponentRegistry->get<NodeOperationComponents>(node->getNodeId());
+
+    auto& expressionData = _nodeDataRegistry->get_for<OperationNodeData>(node);
+    // TODO: à remplacer par le ExpressionOperationComponents
+
+    expressionData.addExpression(leftExpr, rightExpr);
     
-    node->addExpression(leftExpr, rightExpr);
+    //node->addExpression(leftExpr, rightExpr); // INFO: ancienne version avant le refactor temporaire
+
     return node;
 }
 
-auto BuilderTreeEquation::build(std::vector<Token>& tokens, int& index) -> INode* {
+auto BuilderTreeEquation::build(std::vector<Token>& tokens, std::size_t &index) -> INode* {
 
     // Save the current token position for error messages
-    if (index < static_cast<int>(tokens.size())) {
-        _lastToken = tokens[static_cast<size_t>(index)];
+    if (index < tokens.size()) {
+        _lastToken = tokens[index];
     }
 
     // Level system to calculate depth, mandatory to avoid issues with separation like 34+4)) otherwise the 
@@ -80,8 +93,8 @@ auto BuilderTreeEquation::build(std::vector<Token>& tokens, int& index) -> INode
     int parenthesisDepth = 0;
     int bracketDepth = 0;
 
-    while(index < static_cast<int>(tokens.size())) {
-        TokenType type = tokens[static_cast<size_t>(index)].type;
+    while(index < tokens.size()) {
+        TokenType type = tokens[index].type;
 
         if (type == TOKEN_PAREN_OPEN) {
             parenthesisDepth++;
@@ -110,7 +123,7 @@ auto BuilderTreeEquation::build(std::vector<Token>& tokens, int& index) -> INode
             }
         }
 
-        equationTokens.push_back(tokens[static_cast<size_t>(index)]);
+        equationTokens.push_back(tokens[index]);
         index++;
     }
 

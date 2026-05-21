@@ -6,23 +6,27 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "compiler/visitor/code_gen/visitor_general_gen_code.h"
 #include "compiler/ast/ast_genere.h"
+#include "compiler/visitor/code_gen/visitor_general_gen_code.h"
 #include "compiler/utils/prysma_cast.h"
+#include "compiler/visitor/interfaces/i_visitor.h"
 #include <string>
 
 void GeneralVisitorGenCode::visiter(NodeClass* nodeClass)
 {
     std::string previousClassName = _contextGenCode->getCurrentClassName();
-    _contextGenCode->setCurrentClassName(std::string(nodeClass->getNomClass().value));
 
-    for (auto* member : nodeClass->getListMembers()) {
+    auto& nodeData = _contextGenCode->getNodeDataRegistry()->get(nodeClass);
+
+    _contextGenCode->setCurrentClassName(std::string(nodeData.getName().value));
+
+    for (auto* member : nodeData.getMembers()) {
         if (prysma::isa<NodeDeclarationFunction>(member)) {
             member->accept(this);
         }
     }
 
-    for (auto* builder : nodeClass->getBuilder()) {
+    for (auto* builder : nodeData.getBuilder()) {
         builder->accept(this);
     }
 

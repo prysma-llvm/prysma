@@ -5,41 +5,33 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug C++",
+            "name": "Debug C++ (LLDB)",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Prysma",
+            "args": ["${workspaceFolder}/tests/prysma_code_tests/project_test_multi_thread_edge_case_file/test_depth/main.p"],
+            "stopOnEntry": false,
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "CMake: build"
+        },
+        {
+            "name": "Debug C++ (GDB)",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/Prysma",
-            "args": ["${workspaceFolder}/src/prysma_code_tests/main.p"],
-            "stopAtEntry": false,
+            "args": ["${workspaceFolder}/tests/prysma_code_tests/project_test_multi_thread_edge_case_file/test_depth/main.p"],
+            "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
-            "sourceFileMap": {
-                "${workspaceFolder}": "${workspaceFolder}",
-                ".": "${workspaceFolder}"
-            },
             "environment": [],
             "externalConsole": false,
+            "miDebuggerPath": "/usr/bin/gdb",
             "setupCommands": [
                 {
-                    "description": "Enable pretty printing",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Set disassembly flavor to Intel",
-                    "text": "-gdb-set disassembly-flavor intel",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Catch exceptions",
-                    "text": "catch throw",
+                    "description": "Disable debuginfod",
+                    "text": "-gdb-set debuginfod enabled off",
                     "ignoreFailures": true
                 }
             ],
-            "logging": {
-                "engineLogging": false,
-                "trace": false,
-                "traceResponse": false
-            },
             "MIMode": "gdb",
             "preLaunchTask": "CMake: build"
         },

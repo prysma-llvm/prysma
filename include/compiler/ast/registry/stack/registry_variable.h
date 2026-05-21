@@ -9,6 +9,7 @@
 #ifndef F7F44FF6_77D4_456C_A897_1A52149FDE53
 #define F7F44FF6_77D4_456C_A897_1A52149FDE53
 
+#include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/lexer/lexer.h"
 #include "compiler/ast/registry/types/i_type.h"
 #include <llvm-18/llvm/ADT/StringMap.h>
@@ -33,9 +34,9 @@ public:
     Symbol(llvm::Value* pAddress, IType* pType, llvm::Type* pPointedElementType)
         : address(pAddress), type(pType), pointedElementType(pPointedElementType) {}
 
-    [[nodiscard]] auto getAddress() const -> llvm::Value* { return address; }
-    [[nodiscard]] auto getType() const -> IType* { return type; }
-    [[nodiscard]] auto getPointedElementType() const -> llvm::Type* { return pointedElementType; }
+    PRYSMA_NODISCARD auto getAddress() const -> llvm::Value* { return address; }
+    PRYSMA_NODISCARD auto getType() const -> IType* { return type; }
+    PRYSMA_NODISCARD auto getPointedElementType() const -> llvm::Type* { return pointedElementType; }
 };
 
 class RegistryVariable 

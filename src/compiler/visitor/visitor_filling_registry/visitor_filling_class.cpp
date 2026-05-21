@@ -6,9 +6,9 @@
 //
 //===----------------------------------------------------------------------===//
 
+#include "compiler/ast/ast_genere.h"
 #include "compiler/lexer/lexer.h"
 #include "compiler/visitor/visitor_filling_registry/visitor_filling_registry.h"
-#include "compiler/ast/ast_genere.h"
 #include "compiler/ast/registry/registry_class.h"
 #include "compiler/ast/registry/stack/registry_variable.h"
 #include "compiler/ast/registry/registry_function.h"
@@ -27,8 +27,10 @@
 
 void FillingVisitorRegistry::visiter(NodeClass* nodeClass)
 {
+    auto& nodeClassData = _contextGenCode->getNodeDataRegistry()->get(nodeClass);
+
     // 1. Retrieve the class name from the declaration node
-    const Token& classNameToken = nodeClass->getNomClass();
+    const Token& classNameToken = nodeClassData.getName();
     std::string className = std::string(classNameToken.value);
 
     // 2. Create the "Opaque" type in LLVM
@@ -44,7 +46,7 @@ void FillingVisitorRegistry::visiter(NodeClass* nodeClass)
     classInfo->setStructType(opaqueTypeLLVM);
 
     // 5. Initialize inheritance
-    const auto& heritage = nodeClass->getHeritage();
+    const auto& heritage = nodeClassData.getInheritance();
     if (!heritage.empty()) {
         classInfo->setParentInheritance(heritage[0]);
     } else {
@@ -67,23 +69,25 @@ void FillingVisitorRegistry::visiter(NodeClass* nodeClass)
     std::string previousClass = _contextGenCode->getCurrentClassName();
     _contextGenCode->setCurrentClassName(className);
 
-    for (auto* member : nodeClass->getListMembers()) {
+    for (auto* member : nodeClassData.getMembers()) {
         if (prysma::isa<NodeDeclarationFunction>(member)) {
             member->accept(this);
         }
         else if (auto* declVar = prysma::dyn_cast<NodeDeclarationVariable>(member)) {
+            auto& nodeDeclData = _contextGenCode->getNodeDataRegistry()->get(declVar);
+
             Token token;
-            token.value = declVar->getNom().value;
-            classInfoPtr->getRegistryVariable()->registerVariable(token, Symbol(nullptr, declVar->getType()));
+            token.value = nodeDeclData.getName().value;
+            classInfoPtr->getRegistryVariable()->registerVariable(token, Symbol(nullptr, nodeDeclData.getType()));
             
-            if (declVar->getExpression() != nullptr) {
-                classInfoPtr->getMemberInitializers()[std::string(declVar->getNom().value)] = declVar->getExpression();
+            if (nodeDeclData.getExpression() != nullptr) {
+                classInfoPtr->getMemberInitializers()[std::string(nodeDeclData.getName().value)] = nodeDeclData.getExpression();
             }
         }
     }
 
     // Also visit builders if necessary:
-    for (auto* builder : nodeClass->getBuilder()) {
+    for (auto* builder : nodeClassData.getBuilder()) {
         builder->accept(this);
     }
 

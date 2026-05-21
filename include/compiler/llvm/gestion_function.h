@@ -9,6 +9,7 @@
 #ifndef D2944365_C1DD_41F8_A211_BFF33402A958
 #define D2944365_C1DD_41F8_A211_BFF33402A958
 
+#include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/ast/registry/context_gen_code.h"
 #include "compiler/ast/registry/registry_function.h"
 #include "compiler/visitor/interfaces/i_visitor.h"
@@ -43,9 +44,9 @@ public:
     FunctionDeclarationGenerator(ContextGenCode* context, NodeDeclarationFunction* node, IVisitor* visitor);
     virtual ~FunctionDeclarationGenerator() = default;
 
-    [[nodiscard]] auto getContextGenCode() const -> ContextGenCode* { return _contextGenCode; }
-    [[nodiscard]] auto getNodeDeclarationFunction() const -> NodeDeclarationFunction* { return _nodeDeclarationFunction; }
-    [[nodiscard]] auto getGeneralVisitorCodeGen() const -> IVisitor* { return _visitorGeneralCodeGen; }
+    PRYSMA_NODISCARD auto getContextGenCode() const -> ContextGenCode* { return _contextGenCode; }
+    PRYSMA_NODISCARD auto getNodeDeclarationFunction() const -> NodeDeclarationFunction* { return _nodeDeclarationFunction; }
+    PRYSMA_NODISCARD auto getGeneralVisitorCodeGen() const -> IVisitor* { return _visitorGeneralCodeGen; }
 
     FunctionDeclarationGenerator(const FunctionDeclarationGenerator&) = delete;
     auto operator=(const FunctionDeclarationGenerator&) -> FunctionDeclarationGenerator& = delete;
@@ -86,8 +87,8 @@ public:
     FunctionCallGenerator(ContextGenCode* context, IVisitor* visitor);
     virtual ~FunctionCallGenerator() = default;
 
-    [[nodiscard]] auto getContextGenCode() const -> ContextGenCode* { return _contextGenCode; }
-    [[nodiscard]] auto getGeneralVisitorCodeGen() const -> IVisitor* { return _visitorGeneralCodeGen; }
+    PRYSMA_NODISCARD auto getContextGenCode() const -> ContextGenCode* { return _contextGenCode; }
+    PRYSMA_NODISCARD auto getGeneralVisitorCodeGen() const -> IVisitor* { return _visitorGeneralCodeGen; }
 
     FunctionCallGenerator(const FunctionCallGenerator&) = delete;
     auto operator=(const FunctionCallGenerator&) -> FunctionCallGenerator& = delete;

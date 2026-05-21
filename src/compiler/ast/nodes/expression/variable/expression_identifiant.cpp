@@ -66,17 +66,32 @@ auto ExpressionIdentifiant::build(std::vector<Token>& equation) -> INode*
 
             combinedName.value = llvm::StringRef(arr, tempStr.size());
             combinedName.type = TOKEN_IDENTIFIER;
-            return _context.getBuilderTreeEquation()->allocate<NodeReadingArray>(indexExpr, combinedName);
-        }
 
-        return _context.getBuilderTreeEquation()->allocate<NodeReadingArray>(indexExpr, equation[0]);
+            auto* nodeReadingArr = _context.getBuilderTreeEquation()->allocate<NodeReadingArray>(_context.getIdGenerator()->next());
+            _context.getNodeDataRegistry()->construct(nodeReadingArr, indexExpr, combinedName);
+
+            return nodeReadingArr;
+        }
+        
+
+        auto* nodeReadingArr = _context.getBuilderTreeEquation()->allocate<NodeReadingArray>(_context.getIdGenerator()->next());
+        _context.getNodeDataRegistry()->construct(nodeReadingArr, indexExpr, equation[0]);
+
+        return nodeReadingArr;
     }
 
     if (equation.size() == 3 && equation[1].type == TOKEN_DOT) {
-        return _context.getBuilderTreeEquation()->allocate<NodeAccesAttribute>(equation[0], equation[2]);
+
+        auto* nodeAccessAttr = _context.getBuilderTreeEquation()->allocate<NodeAccesAttribute>(_context.getIdGenerator()->next());
+        _context.getNodeDataRegistry()->construct(nodeAccessAttr, equation[0], equation[2]);
+
+        return nodeAccessAttr;
     }
 
-    return _context.getBuilderTreeEquation()->allocate<NodeLiteral>(equation[0]);
+    auto* nodeLiteral = _context.getBuilderTreeEquation()->allocate<NodeLiteral>(_context.getIdGenerator()->next());
+    _context.getNodeDataRegistry()->construct(nodeLiteral, equation[0]);
+
+    return nodeLiteral;
 }
 
 #endif /* EXPRESSION_IDENTIFIER_CPP */

@@ -7,12 +7,13 @@
 //===----------------------------------------------------------------------===//
 
 #include "compiler/visitor/code_gen/visitor_general_gen_code.h"
-#include "compiler/ast/nodes/interfaces/i_node.h"
 #include "compiler/ast/ast_genere.h"
+#include "compiler/ast/nodes/interfaces/i_node.h"
 #include "compiler/ast/registry/context_gen_code.h"
 #include "compiler/ast/registry/stack/registry_variable.h"
 #include "compiler/ast/registry/types/type_complex.h"
 #include "compiler/utils/prysma_cast.h"
+#include "compiler/visitor/visitor_base_generale.h"
 #include <cstddef>
 #include <llvm/ADT/StringRef.h>
 #include <llvm/IR/Constants.h>
@@ -21,7 +22,7 @@
 #include <string>
 
 GeneralVisitorGenCode::GeneralVisitorGenCode(ContextGenCode* contextGenCode, OrchestratorInclude* orchestratorInclude) 
-: _contextGenCode(contextGenCode), _orchestratorInclude(orchestratorInclude)
+: VisitorBaseGenerale(contextGenCode), _orchestratorInclude(orchestratorInclude)
 {}
 
 GeneralVisitorGenCode::~GeneralVisitorGenCode()
@@ -29,7 +30,9 @@ GeneralVisitorGenCode::~GeneralVisitorGenCode()
 
 void GeneralVisitorGenCode::traverseChild(NodeInstruction* node)
 {
-    for (const auto& child : node->getChildren()) {
+    auto& component = _contextGenCode->getNodeDataRegistry()->get(node);
+    
+    for (const auto& child : component.getChildren()) {
         child->accept(this);
     }
 }

@@ -14,10 +14,12 @@
 
 void GeneralVisitorGenCode::visiter(NodeIf* nodeIf) 
 {
+    auto& nodeData = _contextGenCode->getNodeDataRegistry()->get(nodeIf);
+
     // Retrieve the condition and blocks from the if node
-    INode* nodeCondition = nodeIf->getNodeCondition();
-    INode* nodeIfBlock = nodeIf->getNodeBlocIf();
-    INode* nodeElseBlock = nodeIf->getNodeBlocElse();
+    INode* nodeCondition = nodeData.getNodeCondition();
+    INode* nodeIfBlock = nodeData.getNodeBlocIf();
+    INode* nodeElseBlock = nodeData.getNodeBlocElse();
 
     // Evaluate the condition
     nodeCondition->accept(this);

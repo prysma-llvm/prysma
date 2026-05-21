@@ -29,7 +29,7 @@ virtual ~IBuilderTree() = default;
     auto operator=(IBuilderTree&&) -> IBuilderTree& = delete;
     
     virtual auto build(std::vector<Token>& tokens) -> INode* = 0;
-    virtual auto build(std::vector<Token>& tokens, int& index) -> INode* = 0;
+    virtual auto build(std::vector<Token>& tokens, std::size_t& index) -> INode* = 0;
     virtual auto getArena() -> llvm::BumpPtrAllocator& = 0;
 
     template<typename T, typename... Args>
@@ -56,10 +56,10 @@ virtual ~IBuilderTree() = default;
 
     static constexpr std::size_t kArenaAlignment = 8;
 
-    auto operator new(size_t size) -> void* { return ::operator new(size); }
+    auto operator new(std::size_t size) -> void* { return ::operator new(size); }
     static void operator delete(void* ptr) { ::operator delete(ptr); }
 
-    auto operator new(size_t size, llvm::BumpPtrAllocator& arena) -> void* {
+    auto operator new(std::size_t size, llvm::BumpPtrAllocator& arena) -> void* {
         return arena.Allocate(size, kArenaAlignment); 
     }
     

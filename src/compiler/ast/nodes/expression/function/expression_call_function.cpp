@@ -26,7 +26,7 @@ ExpressionCallFunction::~ExpressionCallFunction()
 auto ExpressionCallFunction::build(std::vector<Token>& equation) -> INode*
 {
     ParserCallFunction parserCall(*_context.getContextParser());
-    int indexZero = 0;
+    std::size_t indexZero = 0;
     return parserCall.parse(equation, indexZero);
 }
 

@@ -19,7 +19,6 @@
 class FillingVisitorBodyClass : public VisitorBaseGenerale
 {
 private:
-    ContextGenCode* _contextGenCode; 
     using VisitorBaseGenerale::visiter;
     
     void buildVTable(Class* classInfo, const std::string& className, 

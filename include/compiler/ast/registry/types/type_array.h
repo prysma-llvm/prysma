@@ -9,6 +9,9 @@
 #ifndef B05A551C_2519_458F_BB1D_8E5EF8DB9B83
 #define B05A551C_2519_458F_BB1D_8E5EF8DB9B83
 
+#include "compiler/ast/registry/context_gen_code.h"
+#include "compiler/ast/registry/data/node_data_registry.hpp"
+#include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/ast/nodes/interfaces/i_node.h"
 #include "i_type.h"
 #include <llvm/IR/LLVMContext.h>
@@ -19,8 +22,10 @@ private:
     IType* _childType;
     INode* _size; 
 
+    NodeDataRegistry* _nodeDataRegistry; // TODO: à refactoriser, obligatoire mais tout de même un code smell.
+
 public:
-    TypeArray(IType* childType, INode* size);
+    TypeArray(IType* childType, INode* size, NodeDataRegistry* nodeDataRegistry);
     ~TypeArray() override = default;
 
     TypeArray(const TypeArray&) = delete;
@@ -30,15 +35,15 @@ public:
 
     auto generateLLVMType(llvm::LLVMContext& context) -> llvm::Type* override;
     
-    [[nodiscard]] auto isFloating() const -> bool override;
-    [[nodiscard]] auto isBoolean() const -> bool override;
-    [[nodiscard]] auto isString() const -> bool override;
-    [[nodiscard]] auto isArray() const -> bool override { return true; }
+    PRYSMA_NODISCARD auto isFloating() const -> bool override;
+    PRYSMA_NODISCARD auto isBoolean() const -> bool override;
+    PRYSMA_NODISCARD auto isString() const -> bool override;
+    PRYSMA_NODISCARD auto isArray() const -> bool override { return true; }
 
-    [[nodiscard]] static bool classof(const IType* type) { return type->isArray(); }
+    PRYSMA_NODISCARD static bool classof(const IType* type) { return type->isArray(); }
 
-    [[nodiscard]] auto getChildType() const -> IType* { return _childType; }
-    [[nodiscard]] auto getSize() const -> INode* { return _size; }
+    PRYSMA_NODISCARD auto getChildType() const -> IType* { return _childType; }
+    PRYSMA_NODISCARD auto getSize() const -> INode* { return _size; }
 };
 
 #endif /* B05A551C_2519_458F_BB1D_8E5EF8DB9B83 */

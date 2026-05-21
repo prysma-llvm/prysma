@@ -9,6 +9,7 @@
 #ifndef DD335087_6EDE_4036_872C_8BD586E26252
 #define DD335087_6EDE_4036_872C_8BD586E26252
 
+#include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/ast/registry/registry_generic.h"
 #include "interfaces/i_registry_type.h"
 #include "compiler/lexer/token_type.h"
@@ -28,7 +29,7 @@ public:
 
 protected:
     
-    [[nodiscard]] auto generateErrorMessage(const TokenType& key) const -> std::string override {
+    PRYSMA_NODISCARD auto generateErrorMessage(const TokenType& key) const -> std::string override {
         return RegistryGeneric::generateErrorMessage(key);
     }
 };

@@ -6,12 +6,12 @@
 //
 //===----------------------------------------------------------------------===//
 
+#include "compiler/ast/ast_genere.h"
 #include "compiler/ast/registry/stack/registry_variable.h"
 #include "compiler/ast/registry/types/i_type.h"
 #include "compiler/lexer/lexer.h"
 #include "compiler/lexer/token_type.h"
 #include "compiler/visitor/code_gen/visitor_general_gen_code.h"
-#include "compiler/ast/ast_genere.h"
 #include "compiler/ast/registry/types/type_array.h"
 #include "compiler/llvm/gestion_variable.h"
 #include "compiler/utils/prysma_cast.h"
@@ -24,14 +24,16 @@
 
 void GeneralVisitorGenCode::visiter(NodeAssignmentArray* nodeAssignmentArray)
 {
+    auto& nodeData = _contextGenCode->getNodeDataRegistry()->get(nodeAssignmentArray);
+
     // Evaluate the index expression
-    llvm::Value* indexValue = evaluateExpression(nodeAssignmentArray->getExpressionIndex()).getAddress();
+    llvm::Value* indexValue = evaluateExpression(nodeData.getExpressionIndex()).getAddress();
   
     // Evaluate the expression to assign
-    llvm::Value* expressionResult = evaluateExpression(nodeAssignmentArray->getExpression()).getAddress();
+    llvm::Value* expressionResult = evaluateExpression(nodeData.getExpression()).getAddress();
 
     // Retrieve the array
-    llvm::StringRef arrayNameStr = nodeAssignmentArray->getToken().value;
+    llvm::StringRef arrayNameStr = nodeData.getToken().value;
     Symbol symbol;
     llvm::Value* value = nullptr;
 

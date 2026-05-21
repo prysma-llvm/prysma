@@ -24,7 +24,10 @@
 void GeneralVisitorGenCode::visiter(NodeLiteral* nodeLiteral)
 {
     llvm::LLVMContext& context = _contextGenCode->getBackend()->getContext();
-    Token token = nodeLiteral->getToken();
+
+    auto& nodeData = _contextGenCode->getNodeDataRegistry()->get(nodeLiteral);
+
+    Token token = nodeData.getToken();
 
     if (token.type == TOKEN_IDENTIFIER) {
         VariableLoader loader(_contextGenCode);

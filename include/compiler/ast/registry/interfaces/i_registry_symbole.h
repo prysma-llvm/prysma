@@ -10,6 +10,7 @@
 
 #include <set>
 #include <functional>
+#include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/lexer/token_type.h"
 #include "compiler/lexer/lexer.h"
 
@@ -40,11 +41,11 @@ public:
      * @param symbol The character to check
      * @return true if it is a known operator
      */
-    [[nodiscard]] virtual auto isOperator(TokenType symbol) const -> bool = 0;
+    PRYSMA_NODISCARD virtual auto isOperator(TokenType symbol) const -> bool = 0;
     
     /**
      * @brief Gets the set of registered symbols
      * @return Set of operator symbols
      */
-    [[nodiscard]] virtual auto getSymbols() const -> std::set<TokenType> = 0;
+    PRYSMA_NODISCARD virtual auto getSymbols() const -> std::set<TokenType> = 0;
 };

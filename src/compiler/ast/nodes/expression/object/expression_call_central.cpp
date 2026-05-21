@@ -17,6 +17,7 @@
 #include "compiler/lexer/lexer.h"
 #include "compiler/lexer/token_type.h"
 #include "compiler/object/parser_call_object.h"
+#include <cstddef>
 #include <vector>
 
 ExpressionCallCentral::ExpressionCallCentral(ContextExpression& expressionContext)
@@ -28,7 +29,7 @@ ExpressionCallCentral::~ExpressionCallCentral()
 
 auto ExpressionCallCentral::build(std::vector<Token>& equation) -> INode*
 {
-    int indexZero = 0;
+    std::size_t indexZero = 0;
 
     const bool callObject = equation.size() >= 3
         && equation[0].type == TOKEN_CALL
