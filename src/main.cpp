@@ -5,8 +5,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later WITH Prysma-exception-1.0
 //
 //===----------------------------------------------------------------------===//
-#include "compiler/ast/registry/data/id_generator.hpp"
-#include "compiler/ast/registry/data/node_data_registry.hpp"
 #include "compiler/ast/utils/orchestrator_include/configuration_facade_environment.h"
 #include "compiler/ast/utils/orchestrator_include/orchestrator_include.h"
 #include "compiler/file_processing/builder_systeme.h"
@@ -143,8 +141,6 @@ auto main(int argc, char* argv[]) -> int
 
 
         OrchestratorInclude orchestratorInclude(
-            globalIdGenerator.get,
-            globalNodeDataRegistry.get,
             registryFunctionGlobale.get(), 
             registryFiles.get(), 
             mutex.get(), 
