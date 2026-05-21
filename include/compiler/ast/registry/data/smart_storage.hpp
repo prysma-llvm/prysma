@@ -86,33 +86,9 @@ public:
 
     PRYSMA_NODISCARD Tp& get(std::size_t index)
 {
-    std::cout
-        << "[SmartStorage::get] index = " << index
-        << " | buffer_ptr = " << static_cast<void*>(buffer_ptr_)
-        << std::endl;
-
-                std::cout << " | type -> " << typeid(Tp).name() << "\n";
-
-    try {
-        throw_if_out_of_range(index);
-        std::cout << "    -> in range OK\n";
-
-        throw_if_nonexistent(index);
-        std::cout << "    -> exists OK\n";
-    }
-    catch (const std::exception& e) {
-        std::cout
-            << "    -> THROW in validation: " << e.what()
-            << std::endl;
-        throw;
-    }
-
+ 
     auto* addr = reinterpret_cast<Tp*>(buffer_ptr_ + index * sizeof(Tp));
 
-    std::cout
-        << "    -> computed addr = " << static_cast<void*>(addr)
-        << " (offset = " << (index * sizeof(Tp)) << ")"
-        << std::endl;
 
     return *addr;
 }
@@ -123,24 +99,14 @@ public:
 
     // }
 
-    PRYSMA_NODISCARD const Tp& get(std::size_t index) const
+PRYSMA_NODISCARD const Tp& get(std::size_t index) const
 {
-    std::cout
-        << "[SmartStorage::get const] index = " << index
-        << " | buffer_ptr = " << static_cast<const void*>(buffer_ptr_)
-        << std::endl;
-
-        std::cout << " | type -> " << typeid(Tp).name() << "\n";
     throw_if_out_of_range(index);
     throw_if_nonexistent(index);
 
     auto* addr = reinterpret_cast<const Tp*>(
         buffer_ptr_ + index * sizeof(Tp)
     );
-
-    std::cout
-        << "    -> computed addr = " << static_cast<const void*>(addr)
-        << std::endl;
 
     return *addr;
 }
@@ -150,18 +116,11 @@ public:
     Tp& emplace(std::size_t index, Types&&... args)
         noexcept(std::is_nothrow_constructible_v<std::decay<Tp>, Types&&...>)
     {
-        std::cout << "buffer capacity: " << N * sizeof(Tp) << "\n";
         throw_if_out_of_range(index);
         throw_if_existing(index);
 
         Tp* ptr = reinterpret_cast<Tp*>(buffer_ptr_ + index * sizeof(Tp));
         new (ptr) Tp(std::forward<Types>(args)...);
-
-            std::cout
-        << "[SMART_STORAGE] construct index = " << index
-        << std::endl;
-
-                std::cout << " | type -> " << typeid(Tp).name() << "\n";
 
         is_constructed_[index] = true;
         return *ptr;
@@ -252,3 +211,5 @@ private:
 
     std::array<bool, N> is_constructed_;
 };
+
+

@@ -49,8 +49,6 @@ UnitCompilation::~UnitCompilation()
 }
 
 void UnitCompilation::pass1() {
-    std::cout << "\n\n\n PASS 1 \n\n\n";
-
 
     std::filesystem::path absolutePath = std::filesystem::absolute(_originalFilePath);
     
@@ -91,9 +89,6 @@ void UnitCompilation::pass1() {
 }
 
 void UnitCompilation::pass2() {
-std::cout << "\n\n\n PASS 2 \n\n\n";
-std::cout << "CTX addr pass1/pass2 = " << _context << "\n";
-
     if (_tree == nullptr) 
     {
         return;

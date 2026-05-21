@@ -72,5 +72,12 @@
     // ===== Hover Information =====
     "editor.hover.enabled": "on",
     "editor.hover.delay": 300,
-    "chat.disableAIFeatures": false
+    "chat.disableAIFeatures": false,
+
+    // ===== LLDB Debugger =====
+    "lldb-dap.executable-path": "/usr/bin/lldb-dap-21",
+    "lldb.displayFormat": "decimal",
+    "lldb.showDisassembly": "auto",
+    "lldb.dereferencePointers": true,
+    "lldb.consoleMode": "commands"
 }

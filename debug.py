@@ -20,7 +20,7 @@ def main():
     GeneratorParser(dossier_script).generate()
     
     cxxflags = (
-        # # A RÉACTIVER "-fno-rtti -g3 -O0 " # Debug info max, aucune optimisation
+        "-fno-rtti -g3 -O0 " # Debug info max, aucune optimisation
         "-fsanitize=address -fsanitize=undefined " # Les détecteurs de bugs mémoire
         "-fstack-protector-all " # Ajout du protecteur de pile
         "-fno-omit-frame-pointer " # Pour des backtraces propres
@@ -29,7 +29,6 @@ def main():
         "-Wold-style-cast -Wcast-align -Wunused -Woverloaded-virtual "
         "-Wconversion -Wsign-conversion -Wnull-dereference -Wformat=2 "
         "-ffunction-sections -fdata-sections " # section pour le code mort 
-        " "
     )
 
     # 2. Les sanitizers doivent aussi être passés au Linker

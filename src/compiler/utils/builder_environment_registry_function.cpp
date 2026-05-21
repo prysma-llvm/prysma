@@ -113,26 +113,19 @@ void BuilderEnvironmentRegistryFunction::buildVTable(Class* classInfo, const std
 }
 
 
-void BuilderEnvironmentRegistryFunction::fill()
-{   
-    // 1. Fill global functions
-    for(const auto& key : _contextGenCode->getRegistryFunctionGlobal()->getKeys())
-    {
-        const auto& oldSymbolUniquePtr = _contextGenCode->getRegistryFunctionGlobal()->get(key);
-        const auto* oldSymbol = prysma::cast<const SymbolFunctionGlobal>(oldSymbolUniquePtr.get());
-        
-        if (oldSymbol->node == nullptr) { continue;}
+    void BuilderEnvironmentRegistryFunction::fill()
+    {   
+        // 1. Fill global functions
+        for(const auto& key : _contextGenCode->getRegistryFunctionGlobal()->getKeys())
+        {
+            const auto& oldSymbolUniquePtr = _contextGenCode->getRegistryFunctionGlobal()->get(key);
+            const auto* oldSymbol = prysma::cast<const SymbolFunctionGlobal>(oldSymbolUniquePtr.get());
+            
+            if (oldSymbol == nullptr || oldSymbol->isBuiltin) { continue; }
 
-        auto& oldSymbolNodeData = _contextGenCode->getNodeDataRegistry()->get(oldSymbol->node);
-
-        llvm::Type* retType = oldSymbol->returnType->generateLLVMType(_contextGenCode->getBackend()->getContext());
-
-        std::vector<llvm::Type*> paramTypes;
-        for (auto* arg : oldSymbolNodeData.getArguments()) {
-            auto* argFunction = prysma::cast<NodeArgFunction>(arg);
-            auto& nodeData = _contextGenCode->getNodeDataRegistry()->get(argFunction);
-
-            paramTypes.push_back(nodeData.getType()->generateLLVMType(_contextGenCode->getBackend()->getContext()));
+            llvm::Type* retType = oldSymbol->returnType->generateLLVMType(_contextGenCode->getBackend()->getContext());        std::vector<llvm::Type*> paramTypes;
+        for (auto* argType : oldSymbol->argumentTypes) {
+            paramTypes.push_back(argType->generateLLVMType(_contextGenCode->getBackend()->getContext()));
         }
 
         llvm::FunctionType* funcType = llvm::FunctionType::get(retType, paramTypes, false);
@@ -147,9 +140,9 @@ void BuilderEnvironmentRegistryFunction::fill()
         auto newSymbol = std::make_unique<SymbolFunctionLocal>();
         newSymbol->function = realFunction;
         newSymbol->returnType = oldSymbol->returnType;
-        newSymbol->node = oldSymbol->node;
+        newSymbol->node = nullptr; 
         
-        llvm::StringRef safeKey = oldSymbolNodeData.getName().value;
+        llvm::StringRef safeKey = oldSymbol->functionName;
         _contextGenCode->getRegistryFunctionLocal()->registerElement(safeKey, std::move(newSymbol));        
     }
 

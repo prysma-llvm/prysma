@@ -39,7 +39,15 @@ class IFunctionSymbolRegistry
 class SymbolFunctionGlobal : public IFunctionSymbolRegistry {
 public: 
     IType* returnType = nullptr;
-    NodeDeclarationFunction* node = nullptr;
+
+    // TODO : je ne suis pas sur que ce sois la meilleur solution, c'est temporaire pour résoudre 
+    // le problème throw aucun noeud 5 avant c'était NodeDeclarationFunction* nullptr maintenant 
+    // Je met directement car y'a un problème avec le cycle de vie. 
+    // À investiguer pour le future 
+    
+    std::vector<IType*> argumentTypes;
+    std::string functionName;
+    bool isBuiltin = false;
     
     PRYSMA_NODISCARD auto getType() const -> SymbolType override { return SymbolType::Global; }
     PRYSMA_NODISCARD static auto classof(const IFunctionSymbolRegistry* s) -> bool { 

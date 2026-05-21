@@ -443,7 +443,7 @@ TEST_CASE("Construction Tree If simple avec else", "[AST][Branch]")
     auto* racine = dynamic_cast<NodeInstruction*>(tree);
     REQUIRE(racine != nullptr);
 
-    auto& racineData = env.nodeDataRegistry->get(racine);
+    auto racineData = env.nodeDataRegistry->get(racine);
     REQUIRE(racineData.getChildren().size() == 1);
 
 
@@ -459,21 +459,21 @@ TEST_CASE("Construction Tree If simple avec else", "[AST][Branch]")
     auto* condition = dynamic_cast<NodeOperation*>(nodeIfData.getNodeCondition());
     REQUIRE(condition != nullptr);
 
-    auto& conditionData = env.nodeDataRegistry->get(condition);
+    auto conditionData = env.nodeDataRegistry->get(condition);
     REQUIRE(conditionData.getToken().type == TOKEN_GREATER);
 
     // 5. Bloc if existe et contient 1 instruction
     auto* blocIf = dynamic_cast<NodeInstruction*>(nodeIfData.getNodeBlocIf());
     REQUIRE(blocIf != nullptr);
 
-    auto& blocIfData = env.nodeDataRegistry->get(blocIf);
+    auto blocIfData = env.nodeDataRegistry->get(blocIf);
     REQUIRE(blocIfData.getChildren().size() == 1);
 
     // 6. Bloc else existe et contient 1 instruction
     auto* blocElse = dynamic_cast<NodeInstruction*>(nodeIfData.getNodeBlocElse());
     REQUIRE(blocElse != nullptr);
 
-    auto& blocElseData = env.nodeDataRegistry->get(blocElse);
+    auto blocElseData = env.nodeDataRegistry->get(blocElse);
     REQUIRE(blocElseData.getChildren().size() == 1);
 
     // 7. Bloc endif existe (node de output)
@@ -495,7 +495,7 @@ TEST_CASE("Construction Tree If sans else", "[AST][Branch]")
     auto* racine = dynamic_cast<NodeInstruction*>(tree);
     REQUIRE(racine != nullptr);
 
-    auto& racineData = env.nodeDataRegistry->get(racine);
+    auto racineData = env.nodeDataRegistry->get(racine);
 
     // 1. NodeIf
     auto* nodeIf = dynamic_cast<NodeIf*>(racineData.getChildren()[0]);
@@ -507,14 +507,14 @@ TEST_CASE("Construction Tree If sans else", "[AST][Branch]")
     auto* condition = dynamic_cast<NodeOperation*>(nodeIfData.getNodeCondition());
     REQUIRE(condition != nullptr);
 
-    auto& conditionData = env.nodeDataRegistry->get(condition);
+    auto conditionData = env.nodeDataRegistry->get(condition);
     REQUIRE(conditionData.getToken().type == TOKEN_EQUAL_EQUAL);
 
     // 3. Bloc if a 1 child
     auto* blocIf = dynamic_cast<NodeInstruction*>(nodeIfData.getNodeBlocIf());
     REQUIRE(blocIf != nullptr);
 
-    auto& blocIfData = env.nodeDataRegistry->get(blocIf);
+    auto blocIfData = env.nodeDataRegistry->get(blocIf);
     REQUIRE(blocIfData.getChildren().size() == 1);
 
     // 4. Pas de else
@@ -539,7 +539,7 @@ TEST_CASE("Construction Tree If condition logique ET", "[AST][Branch]")
     auto* racine = dynamic_cast<NodeInstruction*>(tree);
     REQUIRE(racine != nullptr);
 
-    auto& racineData = env.nodeDataRegistry->get(racine);
+    auto racineData = env.nodeDataRegistry->get(racine);
     REQUIRE(racineData.getChildren().size() == 1);
 
     auto* nodeIf = dynamic_cast<NodeIf*>(racineData.getChildren()[0]);
@@ -551,21 +551,21 @@ TEST_CASE("Construction Tree If condition logique ET", "[AST][Branch]")
     auto* condition = dynamic_cast<NodeOperation*>(nodeIfData.getNodeCondition());
     REQUIRE(condition != nullptr);
 
-    auto& conditionData = env.nodeDataRegistry->get(condition);
+    auto conditionData = env.nodeDataRegistry->get(condition);
     REQUIRE(conditionData.getToken().type == TOKEN_AND);
 
     // Gauche du && = '>'
     auto* gauche = dynamic_cast<NodeOperation*>(conditionData.getLeft());
     REQUIRE(gauche != nullptr);
 
-    auto& gaucheData = env.nodeDataRegistry->get(gauche);
+    auto gaucheData = env.nodeDataRegistry->get(gauche);
     REQUIRE(gaucheData.getToken().type == TOKEN_GREATER);
 
     // Droite du && = '<'
     auto* droite = dynamic_cast<NodeOperation*>(conditionData.getRight());
     REQUIRE(droite != nullptr);
 
-    auto& droiteData = env.nodeDataRegistry->get(droite);
+    auto droiteData = env.nodeDataRegistry->get(droite);
     REQUIRE(droiteData.getToken().type == TOKEN_LESS);
 }
 
@@ -584,7 +584,7 @@ TEST_CASE("Construction Tree While simple", "[AST][Branch]")
     auto* racine = dynamic_cast<NodeInstruction*>(tree);
     REQUIRE(racine != nullptr);
 
-    auto& racineData = env.nodeDataRegistry->get(racine);
+    auto racineData = env.nodeDataRegistry->get(racine);
     REQUIRE(racineData.getChildren().size() == 1);
 
     // 1. NodeWhile
@@ -597,14 +597,14 @@ TEST_CASE("Construction Tree While simple", "[AST][Branch]")
     auto* condition = dynamic_cast<NodeOperation*>(nodeWhileData.getNodeCondition());
     REQUIRE(condition != nullptr);
 
-    auto& conditionData = env.nodeDataRegistry->get(condition);
+    auto conditionData = env.nodeDataRegistry->get(condition);
     REQUIRE(conditionData.getToken().type == TOKEN_LESS);
 
     // 3. Bloc while a 1 instruction
     auto* blocWhile = dynamic_cast<NodeInstruction*>(nodeWhileData.getNodeWhileBlock());
     REQUIRE(blocWhile != nullptr);
 
-    auto& blocWhileData = env.nodeDataRegistry->get(blocWhile);
+    auto blocWhileData = env.nodeDataRegistry->get(blocWhile);
     REQUIRE(blocWhileData.getChildren().size() == 1);
 
     // 4. Bloc fin while existe
@@ -626,7 +626,7 @@ TEST_CASE("Construction Tree While condition OU", "[AST][Branch]")
     auto* racine = dynamic_cast<NodeInstruction*>(tree);
     REQUIRE(racine != nullptr);
 
-    auto& racineData = env.nodeDataRegistry->get(racine);
+    auto racineData = env.nodeDataRegistry->get(racine);
     REQUIRE(racineData.getChildren().size() == 1);
 
     auto* nodeWhile = dynamic_cast<NodeWhile*>(racineData.getChildren()[0]);
@@ -638,21 +638,21 @@ TEST_CASE("Construction Tree While condition OU", "[AST][Branch]")
     auto* condition = dynamic_cast<NodeOperation*>(nodeWhileData.getNodeCondition());
     REQUIRE(condition != nullptr);
 
-    auto& conditionData = env.nodeDataRegistry->get(condition);
+    auto conditionData = env.nodeDataRegistry->get(condition);
     REQUIRE(conditionData.getToken().type == TOKEN_OR);
 
     // Gauche du || = '=='
     auto* gauche = dynamic_cast<NodeOperation*>(conditionData.getLeft());
     REQUIRE(gauche != nullptr);
 
-    auto& gaucheData = env.nodeDataRegistry->get(gauche);
+    auto gaucheData = env.nodeDataRegistry->get(gauche);
     REQUIRE(gaucheData.getToken().type == TOKEN_EQUAL_EQUAL);
 
     // Droite du || = '=='
     auto* droite = dynamic_cast<NodeOperation*>(conditionData.getRight());
     REQUIRE(droite != nullptr);
 
-    auto& droiteData = env.nodeDataRegistry->get(droite);
+    auto droiteData = env.nodeDataRegistry->get(droite);
     REQUIRE(droiteData.getToken().type == TOKEN_EQUAL_EQUAL);
 }
 
@@ -671,7 +671,7 @@ TEST_CASE("Construction Tree While plusieurs instructions", "[AST][Branch]")
     auto* racine = dynamic_cast<NodeInstruction*>(tree);
     REQUIRE(racine != nullptr);
 
-    auto& racineData = env.nodeDataRegistry->get(racine);
+    auto racineData = env.nodeDataRegistry->get(racine);
     REQUIRE(racineData.getChildren().size() == 1);
 
     auto* nodeWhile = dynamic_cast<NodeWhile*>(racineData.getChildren()[0]);
@@ -683,6 +683,6 @@ TEST_CASE("Construction Tree While plusieurs instructions", "[AST][Branch]")
     auto* blocWhile = dynamic_cast<NodeInstruction*>(nodeWhileData.getNodeWhileBlock());
     REQUIRE(blocWhile != nullptr);
 
-    auto& blocWhileData = env.nodeDataRegistry->get(blocWhile);
+    auto blocWhileData = env.nodeDataRegistry->get(blocWhile);
     REQUIRE(blocWhileData.getChildren().size() == 2);
 }

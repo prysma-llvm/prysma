@@ -7,6 +7,8 @@
 //===----------------------------------------------------------------------===//
 
 #include "compiler/visitor/visitor_filling_registry/visitor_filling_registry.h"
+#include "compiler/ast/ast_genere.h"
+#include "compiler/utils/prysma_cast.h"
 #include "compiler/ast/registry/registry_class.h"
 #include "compiler/ast/registry/registry_function.h"
 #include "compiler/ast/registry/types/i_type.h"
@@ -35,7 +37,12 @@ void FillingVisitorRegistry::visiter(NodeDeclarationFunction* nodeDeclarationFun
         // global context (global function)
         auto functionSymbol = std::make_unique<SymbolFunctionGlobal>();
         functionSymbol->returnType = returnType;
-        functionSymbol->node = nodeDeclarationFunction;
+        functionSymbol->functionName = std::string(functionName);
+        for(auto* arg : nodeDeclFuncData.getArguments()) {
+            auto* argFunction = prysma::cast<NodeArgFunction>(arg);
+            auto argData = _contextGenCode->getNodeDataRegistry()->get(argFunction);
+            functionSymbol->argumentTypes.push_back(argData.getType());
+        }
 
         _contextGenCode->getRegistryFunctionGlobal()->registerElement(std::string(functionName), std::move(functionSymbol));
     }

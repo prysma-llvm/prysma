@@ -13,6 +13,8 @@
 #include "compiler/ast/registry/data/storage_traits.hpp"
 #include "compiler/macros/prysma_nodiscard.h"
 #include <cstddef>
+#include <mutex>
+#include <shared_mutex>
 #include <tuple>
 #include <utility>
 #include <type_traits>
@@ -31,7 +33,7 @@ public:
     explicit MultiStorageRegistry(HandleProvider provider = {}) // par copie
         : handleProvider_(provider), storage_{}
     {
-        std::cout << "[NODE REGISTRY CTOR] this = " << this << "\n";
+        
     }
 
     ~MultiStorageRegistry() noexcept { reset(); }
@@ -56,6 +58,7 @@ public:
     template<typename Tp>
     PRYSMA_NODISCARD const auto& get(const Tp* obj) const noexcept
     {
+        std::shared_lock<std::shared_mutex> lock(mutex_);
         const auto& storage = resolve_storage<Tp>();
         return storage.get(handleProvider_(obj));
     }
@@ -63,6 +66,7 @@ public:
     template<typename Up, typename Tp>
     PRYSMA_NODISCARD const auto& get_for(const Tp* obj) const noexcept
     {
+        std::shared_lock<std::shared_mutex> lock(mutex_);
         const auto& storage = std::get<RegistryStorageStrategy<Up>>(storage_);
         return storage.get(handleProvider_(obj));
     }
@@ -71,7 +75,7 @@ public:
     // template<typename Tp>
     // PRYSMA_NODISCARD auto& get(const Tp* obj) noexcept
     // {
-    //     std::cout << "calling get for -> " << typeid(Tp).name() << "\n";
+    //     std::cout <<"calling get for -> " << typeid(Tp).name() << "\n";
 
     //     auto& storage = resolve_storage<Tp>();
     //     return storage.get(handleProvider_(obj));
@@ -80,65 +84,38 @@ public:
     // template<typename Up, typename Tp>
     // PRYSMA_NODISCARD auto& get_for(const Tp* obj) noexcept
     // {
-    //     std::cout << "calling get_for for -> " << typeid(Tp).name() << "\n";
+    //     std::cout <<"calling get_for for -> " << typeid(Tp).name() << "\n";
 
     //     auto& storage = std::get<RegistryStorageStrategy<Up>>(storage_);
     //     return storage.get(handleProvider_(obj));
     // }
 
-    template<typename Tp>
-PRYSMA_NODISCARD auto& get(const Tp* obj) noexcept
+template<typename Tp>
+PRYSMA_NODISCARD auto& get(const Tp* obj)
 {
-    std::cout
-        << "[GET] Tp = " << typeid(Tp).name()
-        << " | obj = " << obj
-        << std::endl;
+    std::shared_lock<std::shared_mutex> lock(mutex_);
+ 
 
     auto& storage = resolve_storage<Tp>();
 
-    std::cout
-        << "    -> resolved storage = " << &storage
-        << std::endl;
-
+ 
     auto handle = handleProvider_(obj);
-
-    std::cout
-        << "    -> handle = " << handle
-        << std::endl;
 
     auto& result = storage.get(handle);
 
-    std::cout
-        << "    -> SUCCESS get(handle)\n";
-
-    return result;
+    return result; 
 }
 
 template<typename Up, typename Tp>
 PRYSMA_NODISCARD auto& get_for(const Tp* obj) noexcept
 {
-    std::cout
-        << "[GET_FOR] Tp = " << typeid(Tp).name()
-        << " | Up = " << typeid(Up).name()
-        << " | obj = " << obj
-        << std::endl;
+    std::shared_lock<std::shared_mutex> lock(mutex_);
 
     auto& storage = std::get<RegistryStorageStrategy<Up>>(storage_);
 
-    std::cout
-        << "    -> storage addr = " << &storage
-        << std::endl;
-
     auto handle = handleProvider_(obj);
 
-    std::cout
-        << "    -> handle = " << handle
-        << std::endl;
-
     auto& result = storage.get(handle);
-
-    std::cout
-        << "    -> SUCCESS get_for\n";
 
     return result;
 }
@@ -147,6 +124,7 @@ public:
     template<typename Tp, typename... Types>
     auto& construct(const Tp* obj, Types&&... args)
     {
+        std::unique_lock<std::shared_mutex> lock(mutex_);
         auto& storage = resolve_storage<Tp>();
         return storage.emplace(handleProvider_(obj), std::forward<Types>(args)...);
     }
@@ -154,6 +132,7 @@ public:
     template<typename Up, typename Tp, typename... Types>
     auto& construct_for(const Tp* obj, Types&&... args)
     {
+        std::unique_lock<std::shared_mutex> lock(mutex_);
         auto& storage = std::get<RegistryStorageStrategy<Up>>(storage_);
         return storage.emplace(handleProvider_(obj), std::forward<Types>(args)...);
     }
@@ -162,6 +141,7 @@ public:
     template<typename Tp, typename Up>
     auto& assign(const Tp* obj, Up&& arg)
     {
+        std::unique_lock<std::shared_mutex> lock(mutex_);
         auto& storage = resolve_storage<Tp>();
         return storage.insert(handleProvider_(obj), std::forward<Up>(arg));
     }
@@ -169,6 +149,7 @@ public:
     template<typename Up, typename Tp>
     auto& assign_for(const Tp* obj, Up&& arg)
     {
+        std::unique_lock<std::shared_mutex> lock(mutex_);
         auto& storage = std::get<RegistryStorageStrategy<Up>>(storage_);
         return storage.insert(handleProvider_(obj), std::forward<Up>(arg));
     }
@@ -176,6 +157,7 @@ public:
 public:
     void reset() noexcept
     {
+        std::unique_lock<std::shared_mutex> lock(mutex_);
         std::apply([](auto&... storage) {
             (storage.reset(), ...);
         }, storage_);
@@ -184,6 +166,7 @@ public:
     template<typename Up>
     void reset_for() noexcept
     {
+        std::unique_lock<std::shared_mutex> lock(mutex_);
         auto& storage = std::get<RegistryStorageStrategy<Up>>(storage_);
         storage.reset();
     }
@@ -191,6 +174,7 @@ public:
 private:
     make_registry_storage_t<Table, RegistryStorageStrategy> storage_;
     HandleProvider handleProvider_;
+    mutable std::shared_mutex mutex_;
 };
 
 /***************************************************************************/

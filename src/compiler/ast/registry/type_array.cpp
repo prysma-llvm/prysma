@@ -44,7 +44,6 @@ auto TypeArray::generateLLVMType(llvm::LLVMContext& context) -> llvm::Type*
         throw std::runtime_error("Error: the array size must be an integer literal");
     }
 
-    std::cout << "PASSED NODELITERAL NULLPTR CHECK\n";
 
     auto& nodeLiteralData = _nodeDataRegistry->get(literal);
 

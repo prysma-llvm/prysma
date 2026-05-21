@@ -172,7 +172,8 @@ void ConfigurationFacadeEnvironment::registerExternalFunctions()
     {
         auto symBackSlashNGlobal = std::make_unique<SymbolFunctionGlobal>();
         symBackSlashNGlobal->returnType = prysmaVoidType;
-        symBackSlashNGlobal->node = nullptr;
+        symBackSlashNGlobal->functionName = "backSlashN";
+        symBackSlashNGlobal->isBuiltin = true;
         _context->getRegistryFunctionGlobal()->registerElement("backSlashN", std::move(symBackSlashNGlobal));
 
         auto symBackSlashNLocal = std::make_unique<SymbolFunctionLocal>();
@@ -190,7 +191,9 @@ void ConfigurationFacadeEnvironment::registerExternalFunctions()
     {
         auto symPrintGlobal = std::make_unique<SymbolFunctionGlobal>();
         symPrintGlobal->returnType = prysmaVoidType;
-        symPrintGlobal->node = nullptr;
+        symPrintGlobal->functionName = "print";
+        symPrintGlobal->isBuiltin = true;
+        // print also takes an i32, but we mock it
         _context->getRegistryFunctionGlobal()->registerElement("print", std::move(symPrintGlobal));
 
         auto symPrintLocal = std::make_unique<SymbolFunctionLocal>();
@@ -208,7 +211,8 @@ void ConfigurationFacadeEnvironment::registerExternalFunctions()
     {
         auto symMallocGlobal = std::make_unique<SymbolFunctionGlobal>();
         symMallocGlobal->returnType = static_cast<TypeSimple*>(static_cast<void*>(new (_arena.Allocate<TypeSimple>()) TypeSimple(llvm::PointerType::getUnqual(_context->getBackend()->getContext()))));
-        symMallocGlobal->node = nullptr;
+        symMallocGlobal->functionName = "prysma_malloc";
+        symMallocGlobal->isBuiltin = true;
         _context->getRegistryFunctionGlobal()->registerElement("prysma_malloc", std::move(symMallocGlobal));
 
         auto symMallocLocal = std::make_unique<SymbolFunctionLocal>();
@@ -226,7 +230,8 @@ void ConfigurationFacadeEnvironment::registerExternalFunctions()
     {
         auto symFreeGlobal = std::make_unique<SymbolFunctionGlobal>();
         symFreeGlobal->returnType = prysmaVoidType;
-        symFreeGlobal->node = nullptr;
+        symFreeGlobal->functionName = "prysma_free";
+        symFreeGlobal->isBuiltin = true;
         _context->getRegistryFunctionGlobal()->registerElement("prysma_free", std::move(symFreeGlobal));
 
         auto symFreeLocal = std::make_unique<SymbolFunctionLocal>();
