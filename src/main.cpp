@@ -5,6 +5,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later WITH Prysma-exception-1.0
 //
 //===----------------------------------------------------------------------===//
+#include "compiler/ast/registry/data/id_generator.hpp"
+#include "compiler/ast/registry/data/node_data_registry.hpp"
 #include "compiler/ast/utils/orchestrator_include/configuration_facade_environment.h"
 #include "compiler/ast/utils/orchestrator_include/orchestrator_include.h"
 #include "compiler/file_processing/builder_systeme.h"
@@ -133,10 +135,16 @@ auto main(int argc, char* argv[]) -> int
         std::unique_ptr<FileRegistry> registryFiles = std::make_unique<FileRegistry>();
         std::unique_ptr<ConfigurationFacadeEnvironment> facadeConfigurationEnvironnement = std::make_unique<ConfigurationFacadeEnvironment>(registryFunctionGlobale.get(), registryFiles.get());
         
+
+        std::unique_ptr<NodeDataRegistry> globalNodeDataRegistry = std::make_unique<NodeDataRegistry>();
+        std::unique_ptr<IdGenerator> globalIdGenerator = std::make_unique<IdGenerator>();
+
         //std::unique_ptr<NodeRegistry> nodeRegistry = std::make_unique<NodeRegistry>(); // À REMETTRE QUAND TERMINÉ (note: je suis tombé la dessus, je ne suis pas certain que c'est encore valid)
 
 
         OrchestratorInclude orchestratorInclude(
+            globalIdGenerator.get,
+            globalNodeDataRegistry.get,
             registryFunctionGlobale.get(), 
             registryFiles.get(), 
             mutex.get(), 

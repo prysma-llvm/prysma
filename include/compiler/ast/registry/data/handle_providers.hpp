@@ -11,6 +11,7 @@
 #include "compiler/ast/nodes/interfaces/i_node.h"
 #include "compiler/macros/prysma_nodiscard.h"
 #include <cstddef>
+#include <iostream>
 
 struct DefaultHandleProvider {
     template<typename Tp>
@@ -21,6 +22,10 @@ struct DefaultHandleProvider {
 
 struct NodeHandleProvider {
     PRYSMA_NODISCARD constexpr std::size_t operator()(const INode* node) {
+        if (node == nullptr) [[unlikely]] {
+            throw std::invalid_argument("NodeHandleProvider received nullptr");
+        }
+
         return node->getNodeId();
     }
 };

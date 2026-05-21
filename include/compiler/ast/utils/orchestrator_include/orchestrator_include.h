@@ -33,6 +33,8 @@ private:
    FileRegistry* _registryFile;
    llvm::ThreadPool _threads;
    std::vector<std::unique_ptr<UnitCompilation>> _compilationUnits;
+
+   NodeDataRegistry _node
    
    // A registry dedicated to source files (.p)
    std::set<std::string> _alreadyIncludedFiles; 

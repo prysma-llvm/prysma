@@ -10,7 +10,6 @@
 #include "compiler/ast/registry/context_gen_code.h"
 #include "compiler/ast/registry/registry_function.h"
 #include "compiler/ast/registry/registry_class.h"
-#include "../../../build/generationCode/include/compiler/ast/ast_genere_copy.txt"
 #include "compiler/utils/prysma_cast.h"
 #include "compiler/visitor/extractors/members_extractor_class.h"
 #include <llvm-18/llvm/IR/Function.h>

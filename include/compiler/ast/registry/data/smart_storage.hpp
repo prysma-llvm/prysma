@@ -54,7 +54,7 @@ protected:
     void throw_if_out_of_range(std::size_t index) const {
         if (index >= N) [[unlikely]] {
             throw std::out_of_range(
-                "[EXOTIC::SmartStorage] index out of range: "
+                "[PRYSMA::SmartStorage] index out of range: "
                 + std::to_string(index) + " (valid range: 0.." + std::to_string(N - 1) + ")"
             );
         }
@@ -63,7 +63,7 @@ protected:
     void throw_if_existing(std::size_t index) const {
         if (is_constructed_[index]) [[unlikely]] {
             throw std::runtime_error(
-                "[EXOTIC::SmartStorage] construction conflict: slot already occupied at index "
+                "[PRYSMA::SmartStorage] construction conflict: slot already occupied at index "
                 + std::to_string(index)
             );
         }
@@ -72,23 +72,78 @@ protected:
     void throw_if_nonexistent(std::size_t index) const {
         if (!is_constructed_[index]) [[unlikely]] {
             throw std::runtime_error(
-                "[EXOTIC::SmartStorage] access violation: no object constructed at index "
+                "[PRYSMA::SmartStorage] access violation: no object constructed at index "
                 + std::to_string(index)
             );
         }
     }
 
 public:
-    PRYSMA_NODISCARD Tp& get(std::size_t index) {
-        throw_if_out_of_range(index); throw_if_nonexistent(index);
-        return *reinterpret_cast<Tp*>(buffer_ptr_ + index * sizeof(Tp));
+    // PRYSMA_NODISCARD Tp& get(std::size_t index) {
+    //     throw_if_out_of_range(index); throw_if_nonexistent(index);
+    //     return *reinterpret_cast<Tp*>(buffer_ptr_ + index * sizeof(Tp));
+    // }
+
+    PRYSMA_NODISCARD Tp& get(std::size_t index)
+{
+    std::cout
+        << "[SmartStorage::get] index = " << index
+        << " | buffer_ptr = " << static_cast<void*>(buffer_ptr_)
+        << std::endl;
+
+                std::cout << " | type -> " << typeid(Tp).name() << "\n";
+
+    try {
+        throw_if_out_of_range(index);
+        std::cout << "    -> in range OK\n";
+
+        throw_if_nonexistent(index);
+        std::cout << "    -> exists OK\n";
+    }
+    catch (const std::exception& e) {
+        std::cout
+            << "    -> THROW in validation: " << e.what()
+            << std::endl;
+        throw;
     }
 
-    PRYSMA_NODISCARD const Tp& get(std::size_t index) const {
-        throw_if_out_of_range(index); throw_if_nonexistent(index);
-        return *reinterpret_cast<const Tp*>(buffer_ptr_ + index * sizeof(Tp));
+    auto* addr = reinterpret_cast<Tp*>(buffer_ptr_ + index * sizeof(Tp));
 
-    }
+    std::cout
+        << "    -> computed addr = " << static_cast<void*>(addr)
+        << " (offset = " << (index * sizeof(Tp)) << ")"
+        << std::endl;
+
+    return *addr;
+}
+
+    // PRYSMA_NODISCARD const Tp& get(std::size_t index) const {
+    //     throw_if_out_of_range(index); throw_if_nonexistent(index);
+    //     return *reinterpret_cast<const Tp*>(buffer_ptr_ + index * sizeof(Tp));
+
+    // }
+
+    PRYSMA_NODISCARD const Tp& get(std::size_t index) const
+{
+    std::cout
+        << "[SmartStorage::get const] index = " << index
+        << " | buffer_ptr = " << static_cast<const void*>(buffer_ptr_)
+        << std::endl;
+
+        std::cout << " | type -> " << typeid(Tp).name() << "\n";
+    throw_if_out_of_range(index);
+    throw_if_nonexistent(index);
+
+    auto* addr = reinterpret_cast<const Tp*>(
+        buffer_ptr_ + index * sizeof(Tp)
+    );
+
+    std::cout
+        << "    -> computed addr = " << static_cast<const void*>(addr)
+        << std::endl;
+
+    return *addr;
+}
 
 public:
     template<typename... Types>
@@ -101,6 +156,12 @@ public:
 
         Tp* ptr = reinterpret_cast<Tp*>(buffer_ptr_ + index * sizeof(Tp));
         new (ptr) Tp(std::forward<Types>(args)...);
+
+            std::cout
+        << "[SMART_STORAGE] construct index = " << index
+        << std::endl;
+
+                std::cout << " | type -> " << typeid(Tp).name() << "\n";
 
         is_constructed_[index] = true;
         return *ptr;
@@ -190,7 +251,4 @@ private:
         std::is_same_v<OnlyIfStackEligible, std::monostate>;
 
     std::array<bool, N> is_constructed_;
-
-    RawBufferType raw_buffer_;
-    std::byte* buffer_ptr_;
 };

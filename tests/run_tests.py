@@ -8,7 +8,7 @@ def main():
     tests_dir = os.path.join(root_dir, "tests")
 
     print("[1/5] Building Prysma compiler (via debug.py with sanitizers)...")
-    subprocess.run(["python3", "build.py"], cwd=root_dir, check=True) # tout le fichier est modifié, prendre la version du main
+    subprocess.run(["python3", "build.py"], cwd=root_dir, check=True)
 
     print("[2/5] Configuring and building C++ unit tests (PrysmaTests)...")
     subprocess.run(["cmake", "-S", ".", "-B", "build"], cwd=tests_dir, check=True)

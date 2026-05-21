@@ -56,8 +56,8 @@ auto ParserIf::parse(std::vector<Token>& tokens, std::size_t& index) -> INode*
 
         auto elseChildren = consumeChildBody(tokens, index, _contextParser.getBuilderTreeInstruction(), TOKEN_BRACE_CLOSE);
 
-        auto* nodeBlockElse = _contextParser.getBuilderTreeInstruction()->allocate<NodeInstruction>(_contextParser.getIdGenerator()->next()); 
-        _contextParser.getNodeDataRegistry()->construct(nodeBlockElse, elseChildren);
+        nodeBlockElse = _contextParser.getBuilderTreeInstruction()->allocate<NodeInstruction>(_contextParser.getIdGenerator()->next()); 
+        _contextParser.getNodeDataRegistry()->construct_for<InstructionNodeData>(nodeBlockElse, elseChildren);
 
         consume(tokens, index, TOKEN_BRACE_CLOSE, "Error, token is not '}'");
     }

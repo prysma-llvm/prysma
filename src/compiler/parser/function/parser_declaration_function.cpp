@@ -78,8 +78,6 @@ auto ParserDeclarationFunction::parse(std::vector<Token>& tokens, std::size_t& i
         _contextParser.getBuilderTreeInstruction()->allocateArray<INode*>(arguments),
         nodeBody
     );
- 
-    std::cout << "parser_declaration_function.cpp\n"; // ICI LE PROB
 
     return nodeFunction; 
 }

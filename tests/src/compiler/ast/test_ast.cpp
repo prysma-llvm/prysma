@@ -28,7 +28,6 @@
 #include "compiler/ast/registry/context_parser.h"
 #include "compiler/ast/registry/stack/registry_variable.h"
 #include "compiler/ast/nodes/interfaces/i_node.h"
-#include "../../../../build/generationCode/include/compiler/ast/ast_genere_copy.txt"
 
 // Expressions
 #include "compiler/math/expression_literal.h"
@@ -57,6 +56,9 @@
 #include <list>
 
 using namespace std;
+
+// NOTE: L'architecture est à refaire afin de passer correctement l'accès au registre de données de noeuds. 
+//       J'ai patché le système mais ce n'est pas propre. Il fonctionne mais il sera à adapter.
 
 struct EnvironnementAST {
     std::list<std::string> codes;

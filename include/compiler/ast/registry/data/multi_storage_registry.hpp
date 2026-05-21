@@ -16,6 +16,7 @@
 #include <tuple>
 #include <utility>
 #include <type_traits>
+#include <iostream>
 
 /***************************************************************************/
 
@@ -29,7 +30,9 @@ protected:
 public:
     explicit MultiStorageRegistry(HandleProvider provider = {}) // par copie
         : handleProvider_(provider), storage_{}
-    {}
+    {
+        std::cout << "[NODE REGISTRY CTOR] this = " << this << "\n";
+    }
 
     ~MultiStorageRegistry() noexcept { reset(); }
 
@@ -65,19 +68,80 @@ public:
     }
 
 public:
-    template<typename Tp>
-    PRYSMA_NODISCARD auto& get(const Tp* obj) noexcept
-    {
-        auto& storage = resolve_storage<Tp>();
-        return storage.get(handleProvider_(obj));
-    }
+    // template<typename Tp>
+    // PRYSMA_NODISCARD auto& get(const Tp* obj) noexcept
+    // {
+    //     std::cout << "calling get for -> " << typeid(Tp).name() << "\n";
 
-    template<typename Up, typename Tp>
-    PRYSMA_NODISCARD auto& get_for(const Tp* obj) noexcept
-    {
-        auto& storage = std::get<RegistryStorageStrategy<Up>>(storage_);
-        return storage.get(handleProvider_(obj));
-    }
+    //     auto& storage = resolve_storage<Tp>();
+    //     return storage.get(handleProvider_(obj));
+    // }
+
+    // template<typename Up, typename Tp>
+    // PRYSMA_NODISCARD auto& get_for(const Tp* obj) noexcept
+    // {
+    //     std::cout << "calling get_for for -> " << typeid(Tp).name() << "\n";
+
+    //     auto& storage = std::get<RegistryStorageStrategy<Up>>(storage_);
+    //     return storage.get(handleProvider_(obj));
+    // }
+
+    template<typename Tp>
+PRYSMA_NODISCARD auto& get(const Tp* obj) noexcept
+{
+    std::cout
+        << "[GET] Tp = " << typeid(Tp).name()
+        << " | obj = " << obj
+        << std::endl;
+
+    auto& storage = resolve_storage<Tp>();
+
+    std::cout
+        << "    -> resolved storage = " << &storage
+        << std::endl;
+
+    auto handle = handleProvider_(obj);
+
+    std::cout
+        << "    -> handle = " << handle
+        << std::endl;
+
+    auto& result = storage.get(handle);
+
+    std::cout
+        << "    -> SUCCESS get(handle)\n";
+
+    return result;
+}
+
+template<typename Up, typename Tp>
+PRYSMA_NODISCARD auto& get_for(const Tp* obj) noexcept
+{
+    std::cout
+        << "[GET_FOR] Tp = " << typeid(Tp).name()
+        << " | Up = " << typeid(Up).name()
+        << " | obj = " << obj
+        << std::endl;
+
+    auto& storage = std::get<RegistryStorageStrategy<Up>>(storage_);
+
+    std::cout
+        << "    -> storage addr = " << &storage
+        << std::endl;
+
+    auto handle = handleProvider_(obj);
+
+    std::cout
+        << "    -> handle = " << handle
+        << std::endl;
+
+    auto& result = storage.get(handle);
+
+    std::cout
+        << "    -> SUCCESS get_for\n";
+
+    return result;
+}
 
 public:
     template<typename Tp, typename... Types>

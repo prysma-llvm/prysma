@@ -33,21 +33,18 @@ void GeneralVisitorGenCode::visiter(NodeDeclarationVariable* nodeDeclarationVari
 
     INode* expression = nodeDeclarationData.getExpression();
 
-    // ici ya aucun null check quand je fais par exemple ->getNodeId, la solution est simple, juste mettre un nullcheck ou déplacer la logique dans le if (...)
-    // et ya le truc en bas, faudrait juste rechercher un autre fois dans le registre ou faire une var = nullptr par défaut pour nodeElement pour qu'il ne saute pas le nullcheck    
-
     // Check if the expression is an array initialization
     auto* arrayInit = prysma::dyn_cast<NodeArrayInitialization>(expression);
 
-    auto& nodeArrData = _contextGenCode->getNodeDataRegistry()->get(arrayInit);
-    auto nodeElements = nodeArrData.getElements();
-    
     llvm::AllocaInst* createdAlloca = nullptr; 
     
     if (arrayInit != nullptr) {
         // Determine the LLVM type of the array
         llvm::Type* variableType = nullptr;
         llvm::Type* elementType = nullptr;
+
+        auto& nodeArrData = _contextGenCode->getNodeDataRegistry()->get(arrayInit);
+        auto nodeElements = nodeArrData.getElements();
         
         IType* typeDecl = nodeDeclarationData.getType();
         auto* typeArrayDecl = prysma::dyn_cast<TypeArray>(typeDecl);
@@ -105,7 +102,7 @@ void GeneralVisitorGenCode::visiter(NodeDeclarationVariable* nodeDeclarationVari
     if (createdAlloca != nullptr) {
         Token token;
         token.value = nodeDeclarationData.getName().value;
-        
+  
         // Create the symbol with the pointed type if it's a pointer
         llvm::Type* variableType = nodeDeclarationData.getType()->generateLLVMType(_contextGenCode->getBackend()->getContext());
         
@@ -114,6 +111,9 @@ void GeneralVisitorGenCode::visiter(NodeDeclarationVariable* nodeDeclarationVari
             IType* typeDecl = nodeDeclarationData.getType();
             auto* typeArrayDecl = prysma::dyn_cast<TypeArray>(typeDecl);
             if (typeArrayDecl != nullptr && arrayInit != nullptr) {
+                auto& nodeArrData = _contextGenCode->getNodeDataRegistry()->get(arrayInit);
+                auto nodeElements = nodeArrData.getElements();
+
                 // Recalculate from the initialization
                 std::size_t realSize = nodeElements.size();
                 llvm::Type* elementType = typeArrayDecl->getChildType()->generateLLVMType(_contextGenCode->getBackend()->getContext());

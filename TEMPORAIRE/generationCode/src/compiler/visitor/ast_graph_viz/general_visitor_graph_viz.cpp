@@ -2,8 +2,6 @@
 #include "compiler/ast/registry/context_gen_code.h"
 #include "compiler/visual_graph/output_visual_graph_text.h"
 #include "compiler/visitor/visitor_base_generale.h"
-#include "compiler/ast/ast_genere_copy.txt"
-#include "compiler/ast/ast_genere_copy.txt"
 #include "compiler/macros/prysma_maybe_unused.h"
 
 #if 1
