@@ -39,7 +39,7 @@ public:
     };
 
 public:
-    explicit unsynchronized_chunk_allocator(prysma::memory_resource* upstream, std::size_t reserve = default_initial_reserve)
+    explicit unsynchronized_chunk_allocator(memory_resource* upstream, std::size_t reserve = default_initial_reserve)
         : ressource_{ upstream }
     {
         if (upstream == nullptr) PRYSMA_UNLIKELY_BRANCH
@@ -230,7 +230,7 @@ private:
     std::vector<Chunk> free_chunks_;
     Chunk active_chunk_;
 
-    prysma::memory_resource* ressource_;
+    memory_resource* ressource_;
 };
 
 }
