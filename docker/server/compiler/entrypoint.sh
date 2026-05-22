@@ -7,6 +7,13 @@ if [ -z "$BRANCH_NAME" ]; then
   exit 1
 fi
 
+# Guarantee cleanup even if the script fails (set -e, crash, etc.)
+cleanup() {
+  echo "Cleaning up clone..."
+  rm -rf /prysma/prysma
+}
+trap cleanup EXIT
+
 echo "Cloning branch $BRANCH_NAME..."
 git clone --branch "$BRANCH_NAME" https://github.com/prysma-llvm/prysma.git /prysma/prysma
 
@@ -15,8 +22,5 @@ python3 /prysma/prysma/tests/run_perf_tests.py
 
 echo "Copying results..."
 cp /prysma/prysma/perf_run_data.json /workspace/perf_run_data.json
-
-echo "Cleaning up clone..."
-rm -rf /prysma/prysma
 
 echo "Done."
