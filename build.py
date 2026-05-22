@@ -34,7 +34,7 @@ def main():
         "-O3",                  # Raw speed (maximum optimization)
         "-march=native",        # Fully exploit your CPU's instructions
         "-ffast-math",          # Aggressive math calculations
-        # A RÉACTIVER "-fno-rtti",            # No runtime type information (RTTI off) -> Afin d'assurer la compatibilité avec l'ABI de LLVM
+        "-fno-rtti",            # No runtime type information (RTTI off) -> Afin d'assurer la compatibilité avec l'ABI de LLVM
         "-fomit-frame-pointer", # Free up a CPU register
         "-flto",                # Link Time Optimization (LTO)
         "-DNDEBUG"              # Completely disable assertions
