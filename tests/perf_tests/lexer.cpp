@@ -9,6 +9,15 @@
 #include <random>
 #include <sys/prctl.h>
 
+// Disable perf counters as early as possible (before main).
+// perf stat starts with enable_on_exec=1, so counters are active from exec().
+// This constructor fires before Catch2's main(), killing startup noise.
+// Each TEST_CASE then re-enables counters only around its hot loop.
+__attribute__((constructor))
+static void disablePerfCountersAtStartup() {
+    prctl(PR_TASK_PERF_EVENTS_DISABLE, 0, 0, 0, 0);
+}
+
 // Shared deterministic seed for generating test data
 constexpr uint64_t DEFAULT_SEED = 12345ULL;
 
@@ -99,7 +108,7 @@ TEST_CASE("Lexer DFA - Fused Tokens 50k", "[lexer][pmu]") {
     constexpr size_t NUM_TOKENS = 50000;
     const std::string stress = generateStressCode(DEFAULT_SEED, NUM_TOKENS);
 
-    // Enable perf counters (perf stat -D -1 starts with counters disabled)
+    // Enable perf counters only around the hot loop
     prctl(PR_TASK_PERF_EVENTS_ENABLE, 0, 0, 0, 0);
 
     for (int i = 0; i < 1000; ++i) {

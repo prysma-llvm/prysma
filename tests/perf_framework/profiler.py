@@ -27,14 +27,17 @@ class Profiler:
 
         safe_name = "".join(c if c.isalnum() else "_" for c in test_name).strip("_")
         json_output = os.path.join(self.root_dir, f"perf_{safe_name}.json")
-        cmd = [self.perf_bin, "stat", "-D", "-1", "-j", "-o", json_output, "-e", self.perf_events, self.exe, test_name]
+        cmd = [self.perf_bin, "stat", "-j", "-o", json_output, "-e", self.perf_events, self.exe, test_name]
 
         # Try running perf normally, otherwise with sudo (forcing standard C locale for valid JSON floats)
         run_env = dict(os.environ, LC_ALL="C")
         ret = subprocess.run(cmd, env=run_env, cwd=self.root_dir, capture_output=True, text=True)
         if ret.returncode != 0 or not os.path.exists(json_output):
-            print("Failed without privileges, retrying with sudo...")
+            print(f"perf stat failed (rc={ret.returncode}): {ret.stderr.strip()}")
+            print("Retrying with sudo...")
             ret = subprocess.run(["sudo", "env", "LC_ALL=C"] + cmd, env=run_env, cwd=self.root_dir, capture_output=True, text=True)
+            if ret.returncode != 0:
+                print(f"perf stat with sudo also failed (rc={ret.returncode}): {ret.stderr.strip()}")
 
         metrics = {}
         if os.path.exists(json_output):
