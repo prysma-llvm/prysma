@@ -81,7 +81,6 @@
 // Qu'un simple switch case c'est seulement un jump à un déterminé précis donc c'est parfait pour le prédict branchement du cpu.
 // Vitesse de flux de contrôle par switch case, hypothèse à analyser. 
 
-
 auto main(int argc, char* argv[]) -> int
 {
     if (argc < 2) {
