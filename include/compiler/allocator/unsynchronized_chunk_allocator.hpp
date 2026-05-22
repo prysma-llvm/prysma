@@ -11,6 +11,7 @@
 #include "compiler/memory/memory_resource.hpp"
 #include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/macros/prysma_unlikely.h"
+#include "compiler/macros/prysma_likely.h"
 #include "compiler/macros/prysma_maybe_unused.h"
 
 #include <cstddef>
@@ -73,7 +74,7 @@ public:
             }
         }
 
-        if (active_chunk_.buffer_ != nullptr) {
+        if (active_chunk_.buffer_ != nullptr) PRYSMA_LIKELY_BRANCH {
             ressource_->deallocate(static_cast<void*>(active_chunk_.buffer_), chunk_bytes, chunk_align);
         }
     }
