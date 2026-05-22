@@ -27,7 +27,7 @@ class Profiler:
 
         safe_name = "".join(c if c.isalnum() else "_" for c in test_name).strip("_")
         json_output = os.path.join(self.root_dir, f"perf_{safe_name}.json")
-        cmd = [self.perf_bin, "stat", "-j", "-o", json_output, "-e", self.perf_events, self.exe, test_name]
+        cmd = [self.perf_bin, "stat", "-D", "-1", "-j", "-o", json_output, "-e", self.perf_events, self.exe, test_name]
 
         # Try running perf normally, otherwise with sudo (forcing standard C locale for valid JSON floats)
         run_env = dict(os.environ, LC_ALL="C")

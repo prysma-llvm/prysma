@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <random>
+#include <sys/prctl.h>
 
 // Shared deterministic seed for generating test data
 constexpr uint64_t DEFAULT_SEED = 12345ULL;
@@ -98,28 +99,42 @@ TEST_CASE("Lexer DFA - Fused Tokens 50k", "[lexer][pmu]") {
     constexpr size_t NUM_TOKENS = 50000;
     const std::string stress = generateStressCode(DEFAULT_SEED, NUM_TOKENS);
 
+    // Enable perf counters (perf stat -D -1 starts with counters disabled)
+    prctl(PR_TASK_PERF_EVENTS_ENABLE, 0, 0, 0, 0);
+
     for (int i = 0; i < 1000; ++i) {
         auto tokens = Lexer::tokenize(stress);
         (void)tokens;
     }
+
+    // Disable perf counters — only the hot loop above is measured
+    prctl(PR_TASK_PERF_EVENTS_DISABLE, 0, 0, 0, 0);
 }
 
 TEST_CASE("Lexer DFA - Keywords Heavy", "[lexer][pmu]") {
     constexpr size_t NUM_TOKENS = 50000;
     const std::string stress = generateKeywordsHeavyCode(DEFAULT_SEED, NUM_TOKENS);
 
+    prctl(PR_TASK_PERF_EVENTS_ENABLE, 0, 0, 0, 0);
+
     for (int i = 0; i < 1000; ++i) {
         auto tokens = Lexer::tokenize(stress);
         (void)tokens;
     }
+
+    prctl(PR_TASK_PERF_EVENTS_DISABLE, 0, 0, 0, 0);
 }
 
 TEST_CASE("Lexer DFA - Numeric Literals", "[lexer][pmu]") {
     constexpr size_t NUM_TOKENS = 50000;
     const std::string stress = generateNumericLiteralsCode(DEFAULT_SEED, NUM_TOKENS);
 
+    prctl(PR_TASK_PERF_EVENTS_ENABLE, 0, 0, 0, 0);
+
     for (int i = 0; i < 1000; ++i) {
         auto tokens = Lexer::tokenize(stress);
         (void)tokens;
     }
+
+    prctl(PR_TASK_PERF_EVENTS_DISABLE, 0, 0, 0, 0);
 }
