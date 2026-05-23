@@ -79,37 +79,15 @@ protected:
     }
 
 public:
-    // PRYSMA_NODISCARD Tp& get(std::size_t index) {
-    //     throw_if_out_of_range(index); throw_if_nonexistent(index);
-    //     return *reinterpret_cast<Tp*>(buffer_ptr_ + index * sizeof(Tp));
-    // }
+    PRYSMA_NODISCARD Tp& get(std::size_t index) {
+        throw_if_out_of_range(index); throw_if_nonexistent(index);
+        return *reinterpret_cast<Tp*>(buffer_ptr_ + index * sizeof(Tp));
+    }
 
-    PRYSMA_NODISCARD Tp& get(std::size_t index)
-{
- 
-    auto* addr = reinterpret_cast<Tp*>(buffer_ptr_ + index * sizeof(Tp));
-
-
-    return *addr;
-}
-
-    // PRYSMA_NODISCARD const Tp& get(std::size_t index) const {
-    //     throw_if_out_of_range(index); throw_if_nonexistent(index);
-    //     return *reinterpret_cast<const Tp*>(buffer_ptr_ + index * sizeof(Tp));
-
-    // }
-
-PRYSMA_NODISCARD const Tp& get(std::size_t index) const
-{
-    throw_if_out_of_range(index);
-    throw_if_nonexistent(index);
-
-    auto* addr = reinterpret_cast<const Tp*>(
-        buffer_ptr_ + index * sizeof(Tp)
-    );
-
-    return *addr;
-}
+    PRYSMA_NODISCARD const Tp& get(std::size_t index) const {
+        throw_if_out_of_range(index); throw_if_nonexistent(index);
+        return *reinterpret_cast<const Tp*>(buffer_ptr_ + index * sizeof(Tp));
+    }
 
 public:
     template<typename... Types>
@@ -211,5 +189,4 @@ private:
 
     std::array<bool, N> is_constructed_;
 };
-
 
