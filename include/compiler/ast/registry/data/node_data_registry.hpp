@@ -43,4 +43,4 @@ using NodeDataRegistryTable = LinearTable<
     Entry<NodeString,              StringNodeData>
 >;
 
-using NodeDataRegistry = MultiStorageRegistry<NodeDataRegistryTable, NodeHandleProvider, 1 << 24>; // 1048576 / n entries
+using NodeDataRegistry = MultiStorageRegistry<NodeDataRegistryTable, NodeHandleProvider, 1 << 24>; // [16 777 216 / N table entries]
