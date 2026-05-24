@@ -50,6 +50,11 @@ class EngineGeneration:
     def _rendre_et_ecrire(self, nom_template, chemin_output, **kwargs):
         contenu = self._env.get_template(nom_template).render(**kwargs)
         os.makedirs(os.path.dirname(chemin_output), exist_ok=True)
+        # Only write if content actually changed, to preserve timestamps for CMake/ccache
+        if os.path.exists(chemin_output):
+            with open(chemin_output, "r", encoding="utf-8") as fichier:
+                if fichier.read() == contenu:
+                    return  # Content identical, skip to preserve timestamp
         with open(chemin_output, "w", encoding="utf-8") as fichier:
             fichier.write(contenu)
 

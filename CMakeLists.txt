@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
 
-# absolutely force clang HERE before project()
-set(CMAKE_CXX_COMPILER clang++)
-set(CMAKE_C_COMPILER clang)
-
 project(Prysma)
 
 # setup C++17
@@ -78,7 +74,4 @@ target_compile_options(Prysma PRIVATE
     -Wshadow                
     -Wnon-virtual-dtor      
     -Wnull-dereference      
-    
-    # LLVM XRay instrumentation (Debug only)
-    $<$<CONFIG:Debug>:-fxray-instrument;-fxray-instruction-threshold=1>
 )
