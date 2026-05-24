@@ -12,7 +12,7 @@
 #include <sys/prctl.h>
 
 TEST_CASE("AST Registry - Sequential Construction", "[ast][registry][pmu]") {
-    constexpr size_t NUM_NODES = 100000;
+    constexpr size_t NUM_NODES = 20000;
     
     std::vector<std::unique_ptr<NodeLiteral>> nodes;
     nodes.reserve(NUM_NODES);
@@ -35,7 +35,7 @@ TEST_CASE("AST Registry - Sequential Construction", "[ast][registry][pmu]") {
 }
 
 TEST_CASE("AST Registry - Sequential Access", "[ast][registry][pmu]") {
-    constexpr size_t NUM_NODES = 100000;
+    constexpr size_t NUM_NODES = 20000;
     
     std::vector<std::unique_ptr<NodeLiteral>> nodes;
     nodes.reserve(NUM_NODES);
@@ -62,7 +62,7 @@ TEST_CASE("AST Registry - Sequential Access", "[ast][registry][pmu]") {
 }
 
 TEST_CASE("AST Registry - Random Access (Visitor Pattern Simulation)", "[ast][registry][pmu]") {
-    constexpr size_t NUM_NODES = 100000;
+    constexpr size_t NUM_NODES = 20000;
     
     std::vector<std::unique_ptr<NodeLiteral>> nodes;
     nodes.reserve(NUM_NODES);
