@@ -23,23 +23,23 @@
 // INFO: how to use this class ?
 
 //  monotonic_atomic_buffer charpool(1 << 18);
-//  sharded_string_interner<10> interner{ &charpool };
+//  ShardedStringInterner<10> interner{ &charpool };
 
 //  auto strptr = interner.intern("this was made by unrays");
 
 template<std::size_t N>
-struct sharded_string_interner {
+struct ShardedStringInterner {
 public:
     using Shard = StringInterner;
 
 public:
-    explicit sharded_string_interner(prysma::memory_resource* upstream) {
+    explicit ShardedStringInterner(prysma::memory_resource* upstream) {
         for (std::size_t i = 0; i < N; ++i) {
             shards_[i] = ::new Shard(prysma::unsynchronized_chunk_allocator<char>(upstream));
         }
     }
 
-    ~sharded_string_interner() noexcept{
+    ~ShardedStringInterner() noexcept{
         for (auto* shard : shards_) {
             if (shard == nullptr) PRYSMA_UNLIKELY_BRANCH continue;
             delete shard;
