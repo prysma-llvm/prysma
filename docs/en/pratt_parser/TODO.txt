@@ -1,0 +1,6 @@
+This tool is NOT COMPLETE. and doesnt support
+
+systems of equations
+graphing
+anymore then 32 varibles
+anything other then f64
