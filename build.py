@@ -9,7 +9,6 @@ from generation.generator_graphe_viz import GeneratorGraphViz
 from generation.generator_expression import GeneratorExpression
 from generation.generator_parser import GeneratorParser
 
-
 def setup_ccache():
     ccache_path = shutil.which("ccache")
     if not ccache_path:
@@ -23,25 +22,6 @@ def setup_ccache():
     print(f"[OK] ccache enabled ({ccache_path}), cache limit: 10 GB")
     return ccache_path
 
-
-def smart_copy_file(src, dst):
-    os.makedirs(os.path.dirname(dst), exist_ok=True)
-    if os.path.exists(dst) and filecmp.cmp(src, dst, shallow=False):
-        return  # Content identical, skip copy to preserve timestamp
-    shutil.copy2(src, dst)
-
-
-def smart_copy_tree(src, dst):
-    for dirpath, dirnames, filenames in os.walk(src):
-        rel_dir = os.path.relpath(dirpath, src)
-        dst_dir = os.path.join(dst, rel_dir)
-        os.makedirs(dst_dir, exist_ok=True)
-        for filename in filenames:
-            src_file = os.path.join(dirpath, filename)
-            dst_file = os.path.join(dst_dir, filename)
-            smart_copy_file(src_file, dst_file)
-
-
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(script_dir)
@@ -50,10 +30,8 @@ def main():
     GeneratorInterfaceVisitor(script_dir).generate()
     GeneratorVisitorBaseGeneral(script_dir).generate() 
  
-    #GeneratorGraphViz(script_dir).generate() # NOTE: same thing here
-    smart_copy_tree("TEMPORAIRE/generationCode/include/compiler/visitor/ast_graph_viz", "build/generationCode/include/compiler/visitor/ast_graph_viz")
-    smart_copy_tree("TEMPORAIRE/generationCode/src/compiler/visitor/ast_graph_viz", "build/generationCode/src/compiler/visitor/ast_graph_viz")
-    
+    GeneratorGraphViz(script_dir).generate()
+  
     GeneratorExpression(script_dir).generate()
     GeneratorParser(script_dir).generate()
 

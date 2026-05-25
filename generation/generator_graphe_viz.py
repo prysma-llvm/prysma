@@ -18,7 +18,7 @@ class GeneratorGraphViz(EngineGeneration):
     def __init__(self, racine_project):
         super().__init__(racine_project)
         self._fichier_graphviz_yaml = os.path.join(
-            racine_project, "include", "compiler", "ast", "YamelAST", "graphviz.yaml"
+            racine_project, "include", "compiler", "ast", "yaml_ast", "graphviz.yaml"
         )
         self._dossier_entete = self._chemin_generation_include(
             "compiler", "visitor", "ast_graph_viz"
@@ -66,8 +66,8 @@ class GeneratorGraphViz(EngineGeneration):
         for nom_champ, type_champ in champs.items():
             getter = "get" + nom_champ[0].upper() + nom_champ[1:]
             if type_champ == "std::string":
-                return f'"{nom_node}: " + node->{getter}()'
+                return f'"{nom_node}: " + node{nom_node}Data.{getter}()'
             if type_champ == "Token":
-                return f'node->{getter}().value.str()'
+                return f'node{nom_node}Data.{getter}().value.str()'
 
         return f'"{nom_node}"'

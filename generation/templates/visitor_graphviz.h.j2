@@ -14,7 +14,7 @@ private:
     std::stack<int, std::vector<int>> _pileIds;
 
 public:
-    GeneralVisitorGraphViz(OutputVisualGraphText outputVisualGraph);
+    GeneralVisitorGraphViz(ContextGenCode* contextGenCode, OutputVisualGraphText outputVisualGraph);
     ~GeneralVisitorGraphViz() override;
     void generate();
 
