@@ -9,7 +9,7 @@
 #ifndef PARSER_CLASS_CPP
 #define PARSER_CLASS_CPP
 
-#include "compiler/ast/registry/data/node_data.hpp"
+#include "../build/generationCode/include/compiler/ast/node_data.hpp"
 #include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/manager_error.h"
 #include "compiler/ast/ast_genere.h"
@@ -67,7 +67,7 @@ namespace
 
           node = contextParser.getBuilderTreeInstruction()->allocate<NodeDeclarationVariable>(contextParser.getIdGenerator()->next());
 
-          contextParser.getNodeDataRegistry()->construct_for<VariableDeclarationNodeData>( // car il est INode*, il s'agirait de dyn_cast mais je vous laisse le faire
+          contextParser.getNodeDataRegistry()->construct_for<DeclarationVariableNodeData>( // car il est INode*, il s'agirait de dyn_cast mais je vous laisse le faire
               node, 
               param.current_visibility(),
               nodeData.getName(),
@@ -85,7 +85,7 @@ namespace
 
           node = contextParser.getBuilderTreeInstruction()->allocate<NodeDeclarationFunction>(contextParser.getIdGenerator()->next());
 
-          contextParser.getNodeDataRegistry()->construct_for<FunctionDeclarationNodeData>(
+          contextParser.getNodeDataRegistry()->construct_for<DeclarationFunctionNodeData>(
               node,
               param.current_visibility(),
               nodeData.getReturnType(),

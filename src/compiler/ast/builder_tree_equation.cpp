@@ -12,7 +12,7 @@
 #include <vector>
 #include "compiler/ast/nodes/interfaces/i_expression.h"
 #include "compiler/ast/nodes/interfaces/i_node.h"
-#include "compiler/ast/registry/data/node_data.hpp"
+#include "../build/generationCode/include/compiler/ast/node_data.hpp"
 #include "compiler/ast/registry/data/node_data_registry.hpp"
 #include "compiler/ast/registry/registry_expression.h"
 #include "compiler/ast/registry/registry_symbole.h"

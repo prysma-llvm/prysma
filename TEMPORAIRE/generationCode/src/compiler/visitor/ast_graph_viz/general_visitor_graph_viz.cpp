@@ -364,17 +364,17 @@ void GeneralVisitorGraphViz::visiter(NodeWhile* nodeWhile)
         _outputVisualGraph.addEdge(idNode, idChild);
     }
 
-    if (nodeWhileData.getNodeWhileBlock() != nullptr)
+    if (nodeWhileData.getWhileBlock() != nullptr)
     {
-        nodeWhileData.getNodeWhileBlock()->accept(this);
+        nodeWhileData.getWhileBlock()->accept(this);
         int idChild = _pileIds.top();
         _pileIds.pop();
         _outputVisualGraph.addEdge(idNode, idChild);
     }
 
-    if (nodeWhileData.getNodeWhileEndBlock() != nullptr)
+    if (nodeWhileData.getWhileEndBlock() != nullptr)
     {
-        nodeWhileData.getNodeWhileEndBlock()->accept(this);
+        nodeWhileData.getWhileEndBlock()->accept(this);
         int idChild = _pileIds.top();
         _pileIds.pop();
         _outputVisualGraph.addEdge(idNode, idChild);
@@ -414,7 +414,7 @@ void GeneralVisitorGraphViz::visiter(NodeNegation* nodeNegation)
 {
     auto& nodeNegationData = _contextGenCode->getNodeDataRegistry()->get(nodeNegation);
 
-    int idNode = _outputVisualGraph.addNode(nodeNegationData.getOperator().value.str());
+    int idNode = _outputVisualGraph.addNode(nodeNegationData.getOp().value.str());
     if (nodeNegationData.getOperand() != nullptr)
     {
         nodeNegationData.getOperand()->accept(this);

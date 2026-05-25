@@ -1,4 +1,3 @@
-
 import re
 def to_snake_case(name):
     if '.' in name:
@@ -33,6 +32,11 @@ class GeneratorAST(EngineGeneration):
         classes = self._preparer_classes(nodes_data)
         self._rendre_et_ecrire(
             "ast_generated.h.j2", self._fichier_output,
+            nodes_noms=list(nodes_data.keys()), classes=classes
+        )
+        # TODO : Bon c'est temporaire je vais changer l'architecture après pour le pipeline de données
+        self._rendre_et_ecrire(
+            "node_data.hpp.j2", self._chemin_generation_include("compiler", "ast", "node_data.hpp"),
             nodes_noms=list(nodes_data.keys()), classes=classes
         )
 
@@ -92,7 +96,7 @@ class GeneratorAST(EngineGeneration):
 
     @staticmethod
     def _analyser_parametre(type_c):
-        if "std::" in type_c or type_c == "Token":
+        if "std::" in type_c:
             return type_c, "std::move({nom})"
         return type_c, "{nom}"
 

@@ -201,13 +201,13 @@ void VisitorBaseGenerale::visiter(NodeWhile* nodeWhile)
     // {
     //     nodeWhileData.getNodeCondition()->accept(this);
     // }    
-    // if (nodeWhileData.getNodeWhileBlock() != nullptr)
+    // if (nodeWhileData.getWhileBlock() != nullptr)
     // {
-    //     nodeWhileData.getNodeWhileBlock()->accept(this);
+    //     nodeWhileData.getWhileBlock()->accept(this);
     // }    
-    // if (nodeWhileData.getNodeWhileEndBlock() != nullptr)
+    // if (nodeWhileData.getWhileEndBlock() != nullptr)
     // {
-    //     nodeWhileData.getNodeWhileEndBlock()->accept(this);
+    //     nodeWhileData.getWhileEndBlock()->accept(this);
     // }
 }
 
