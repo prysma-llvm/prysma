@@ -213,7 +213,3 @@ auto ParserClass::parse(std::vector<Token>& tokens, std::size_t& index) -> INode
 }
 
 #endif /* PARSER_CLASS_CPP */
-
-
-
-

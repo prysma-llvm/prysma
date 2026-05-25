@@ -52,12 +52,8 @@ def main():
     
     GeneratorInterfaceVisitor(dossier_script).generate()
     
-    #GeneratorVisitorBaseGeneral(dossier_script).generate() # NOTE: same thing here
-    os.makedirs("build/generationCode/include/compiler/visitor", exist_ok=True)
-    os.makedirs("build/generationCode/src/compiler/visitor", exist_ok=True)
-    smart_copy_file("TEMPORAIRE/generationCode/include/compiler/visitor/visitor_base_generale.h", "build/generationCode/include/compiler/visitor/visitor_base_generale.h")
-    smart_copy_file("TEMPORAIRE/generationCode/src/compiler/visitor/visitor_base_generale.cpp", "build/generationCode/src/compiler/visitor/visitor_base_generale.cpp")
-    
+    GeneratorVisitorBaseGeneral(dossier_script).generate()
+ 
     #GeneratorGraphViz(dossier_script).generate() # NOTE: same thing here
     smart_copy_tree("TEMPORAIRE/generationCode/include/compiler/visitor/ast_graph_viz", "build/generationCode/include/compiler/visitor/ast_graph_viz")
     smart_copy_tree("TEMPORAIRE/generationCode/src/compiler/visitor/ast_graph_viz", "build/generationCode/src/compiler/visitor/ast_graph_viz")

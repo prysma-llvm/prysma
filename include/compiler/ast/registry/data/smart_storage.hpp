@@ -20,6 +20,7 @@
 #include <iostream>
 #include <variant>
 #include "compiler/macros/prysma_nodiscard.h"
+#include "compiler/macros/prysma_unlikely.h"
 
 template<typename Tp, std::size_t N>
 class SmartStorage final {
@@ -52,7 +53,7 @@ public:
 
 protected:
     void throw_if_out_of_range(std::size_t index) const {
-        if (index >= N) [[unlikely]] {
+        if (index >= N) PRYSMA_UNLIKELY_BRANCH {
             throw std::out_of_range(
                 "[PRYSMA::SmartStorage] index out of range: "
                 + std::to_string(index) + " (valid range: 0.." + std::to_string(N - 1) + ")"
@@ -61,7 +62,7 @@ protected:
     }
 
     void throw_if_existing(std::size_t index) const {
-        if (is_constructed_[index]) [[unlikely]] {
+        if (is_constructed_[index]) PRYSMA_UNLIKELY_BRANCH {
             throw std::runtime_error(
                 "[PRYSMA::SmartStorage] construction conflict: slot already occupied at index "
                 + std::to_string(index)
@@ -70,7 +71,7 @@ protected:
     }
 
     void throw_if_nonexistent(std::size_t index) const {
-        if (!is_constructed_[index]) [[unlikely]] {
+        if (!is_constructed_[index]) PRYSMA_UNLIKELY_BRANCH {
             throw std::runtime_error(
                 "[PRYSMA::SmartStorage] access violation: no object constructed at index "
                 + std::to_string(index)
