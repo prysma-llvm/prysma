@@ -46,9 +46,8 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(script_dir)
 
-    #GeneratorAST(script_dir).generate() # NOTE: do not uncomment until the Jinja2 system is adapted to the new DoD architecture
-    smart_copy_tree("TEMPORAIRE/generationCode/include/compiler/ast", "build/generationCode/include/compiler/ast")
-    
+    GeneratorAST(script_dir).generate() 
+
     GeneratorInterfaceVisitor(script_dir).generate()
     
     #GeneratorVisitorBaseGeneral(script_dir).generate() # NOTE: same thing here
