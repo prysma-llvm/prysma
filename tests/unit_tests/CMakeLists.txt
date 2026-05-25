@@ -7,8 +7,8 @@ set(CMAKE_C_COMPILER clang)
 
 project(PrysmaTests)
 
-# Configuration du standard C++20 et de l'exportation pour clangd
-set(CMAKE_CXX_STANDARD 20)
+# Configuration du standard C++23 et de l'exportation pour clangd
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
