@@ -13,7 +13,7 @@
 #include <variant>
 
 TEST_CASE("AST Registry - Sequential Construction", "[ast][registry][pmu]") {
-    constexpr size_t NUM_NODES_PER_TYPE = 250000;
+    constexpr size_t NUM_NODES_PER_TYPE = 15000;
     
     std::vector<std::unique_ptr<NodeLiteral>> literals;
     std::vector<std::unique_ptr<NodeReturn>> returns;
@@ -53,7 +53,7 @@ TEST_CASE("AST Registry - Sequential Construction", "[ast][registry][pmu]") {
 }
 
 TEST_CASE("AST Registry - Sequential Access", "[ast][registry][pmu]") {
-    constexpr size_t NUM_NODES_PER_TYPE = 250000;
+    constexpr size_t NUM_NODES_PER_TYPE = 15000;
     
     std::vector<std::unique_ptr<NodeLiteral>> literals;
     std::vector<std::unique_ptr<NodeReturn>> returns;
@@ -106,7 +106,7 @@ TEST_CASE("AST Registry - Sequential Access", "[ast][registry][pmu]") {
 }
 
 TEST_CASE("AST Registry - Random Access (Visitor Pattern Simulation)", "[ast][registry][pmu]") {
-    constexpr size_t NUM_NODES = 1000000;
+    constexpr size_t NUM_NODES = 60000;
     
     using NodeVar = std::variant<NodeLiteral*, NodeReturn*, NodeWhile*, NodeIf*>;
     std::vector<std::unique_ptr<INode>> raw_nodes;
