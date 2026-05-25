@@ -12,6 +12,8 @@
 #include "compiler/macros/prysma_nodiscard.h"
 #include <cstddef>
 #include <iostream>
+#include <stdexcept>
+#include "compiler/macros/prysma_unlikely.h"
 
 struct DefaultHandleProvider {
     template<typename Tp>
@@ -22,7 +24,7 @@ struct DefaultHandleProvider {
 
 struct NodeHandleProvider {
     PRYSMA_NODISCARD constexpr std::size_t operator()(const INode* node) {
-        if (node == nullptr) [[unlikely]] {
+        if (node == nullptr) PRYSMA_UNLIKELY_BRANCH {
             throw std::invalid_argument("NodeHandleProvider received nullptr");
         }
 

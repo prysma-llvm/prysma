@@ -601,14 +601,14 @@ TEST_CASE("Construction Tree While simple", "[AST][Branch]")
     REQUIRE(conditionData.getToken().type == TOKEN_LESS);
 
     // 3. Bloc while a 1 instruction
-    auto* blocWhile = dynamic_cast<NodeInstruction*>(nodeWhileData.getNodeWhileBlock());
+    auto* blocWhile = dynamic_cast<NodeInstruction*>(nodeWhileData.getWhileBlock());
     REQUIRE(blocWhile != nullptr);
 
     auto blocWhileData = env.nodeDataRegistry->get(blocWhile);
     REQUIRE(blocWhileData.getChildren().size() == 1);
 
     // 4. Bloc fin while existe
-    REQUIRE(nodeWhileData.getNodeWhileEndBlock() != nullptr);
+    REQUIRE(nodeWhileData.getWhileEndBlock() != nullptr);
 }
 
 // Test while avec condition logique ||
@@ -680,7 +680,7 @@ TEST_CASE("Construction Tree While plusieurs instructions", "[AST][Branch]")
     auto& nodeWhileData = env.nodeDataRegistry->get(nodeWhile);
 
     // Bloc while contient 2 instructions (aff + aff)
-    auto* blocWhile = dynamic_cast<NodeInstruction*>(nodeWhileData.getNodeWhileBlock());
+    auto* blocWhile = dynamic_cast<NodeInstruction*>(nodeWhileData.getWhileBlock());
     REQUIRE(blocWhile != nullptr);
 
     auto blocWhileData = env.nodeDataRegistry->get(blocWhile);

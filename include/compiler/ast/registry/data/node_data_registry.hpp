@@ -12,26 +12,26 @@
 #include "compiler/ast/registry/data/handle_providers.hpp"
 #include "compiler/ast/registry/data/multi_storage_registry.hpp"
 #include "compiler/ast/registry/data/linear_table.hpp"
-#include "compiler/ast/registry/data/node_data.hpp"
+#include "../build/generationCode/include/compiler/ast/node_data.hpp"
 
 using NodeDataRegistryTable = LinearTable<
     Entry<NodeInstruction,         InstructionNodeData>,
-    Entry<NodeCallFunction,        FunctionCallNodeData>,
-    Entry<NodeArgFunction,         FunctionArgNodeData>,
-    Entry<NodeDeclarationFunction, FunctionDeclarationNodeData>,
+    Entry<NodeCallFunction,        CallFunctionNodeData>,
+    Entry<NodeArgFunction,         ArgFunctionNodeData>,
+    Entry<NodeDeclarationFunction, DeclarationFunctionNodeData>,
     Entry<NodeReturn,              ReturnNodeData>,
-    Entry<NodeAssignmentVariable,  VariableAssignmentNodeData>,
-    Entry<NodeDeclarationVariable, VariableDeclarationNodeData>,
-    Entry<NodeRefVariable,         VariableRefNodeData>,
-    Entry<NodeUnRefVariable,       VariableUnrefNodeData>,
-    Entry<NodeIdentifiant,         IdentifierNodeData>,
-    Entry<NodeAssignmentArray,     ArrayAssignmentNodeData>,
+    Entry<NodeAssignmentVariable,  AssignmentVariableNodeData>,
+    Entry<NodeDeclarationVariable, DeclarationVariableNodeData>,
+    Entry<NodeRefVariable,         RefVariableNodeData>,
+    Entry<NodeUnRefVariable,       UnRefVariableNodeData>,
+    Entry<NodeIdentifiant,         IdentifiantNodeData>,
+    Entry<NodeAssignmentArray,     AssignmentArrayNodeData>,
     Entry<NodeArrayInitialization, ArrayInitializationNodeData>,
-    Entry<NodeReadingArray,        ArrayReadingNodeData>,
+    Entry<NodeReadingArray,        ReadingArrayNodeData>,
     Entry<NodeClass,               ClassNodeData>,
-    Entry<NodeCallObject,          ObjectCallNodeData>,
-    Entry<NodeAccesAttribute,      AccessAttributeNodeData>,
-    Entry<NodeDeclarationObject,   ObjectDeclarationNodeData>,
+    Entry<NodeCallObject,          CallObjectNodeData>,
+    Entry<NodeAccesAttribute,      AccesAttributeNodeData>,
+    Entry<NodeDeclarationObject,   DeclarationObjectNodeData>,
     Entry<NodeIf,                  IfNodeData>,
     Entry<NodeNew,                 NewNodeData>,
     Entry<NodeDelete,              DeleteNodeData>,

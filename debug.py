@@ -23,46 +23,14 @@ def setup_ccache():
     print(f"[OK] ccache enabled ({ccache_path}), cache limit: 10 GB")
     return ccache_path
 
-
-def smart_copy_file(src, dst):
-    """Copy a file only if its content has actually changed, to preserve timestamps for CMake."""
-    os.makedirs(os.path.dirname(dst), exist_ok=True)
-    if os.path.exists(dst) and filecmp.cmp(src, dst, shallow=False):
-        return  # Content identical, skip copy to preserve timestamp
-    shutil.copy2(src, dst)
-
-
-def smart_copy_tree(src, dst):
-    """Copy a directory tree, only overwriting files whose content has changed."""
-    for dirpath, dirnames, filenames in os.walk(src):
-        rel_dir = os.path.relpath(dirpath, src)
-        dst_dir = os.path.join(dst, rel_dir)
-        os.makedirs(dst_dir, exist_ok=True)
-        for filename in filenames:
-            src_file = os.path.join(dirpath, filename)
-            dst_file = os.path.join(dst_dir, filename)
-            smart_copy_file(src_file, dst_file)
-
-
 def main():
     dossier_script = os.path.dirname(os.path.abspath(__file__))
     os.chdir(dossier_script)
 
-    #GeneratorAST(dossier_script).generate() # NOTE: do not uncomment until the Jinja2 system is adapted to the new DoD architecture
-    smart_copy_tree("TEMPORAIRE/generationCode/include/compiler/ast", "build/generationCode/include/compiler/ast")
-    
+    GeneratorAST(dossier_script).generate()
     GeneratorInterfaceVisitor(dossier_script).generate()
-    
-    #GeneratorVisitorBaseGeneral(dossier_script).generate() # NOTE: same thing here
-    os.makedirs("build/generationCode/include/compiler/visitor", exist_ok=True)
-    os.makedirs("build/generationCode/src/compiler/visitor", exist_ok=True)
-    smart_copy_file("TEMPORAIRE/generationCode/include/compiler/visitor/visitor_base_generale.h", "build/generationCode/include/compiler/visitor/visitor_base_generale.h")
-    smart_copy_file("TEMPORAIRE/generationCode/src/compiler/visitor/visitor_base_generale.cpp", "build/generationCode/src/compiler/visitor/visitor_base_generale.cpp")
-    
-    #GeneratorGraphViz(dossier_script).generate() # NOTE: same thing here
-    smart_copy_tree("TEMPORAIRE/generationCode/include/compiler/visitor/ast_graph_viz", "build/generationCode/include/compiler/visitor/ast_graph_viz")
-    smart_copy_tree("TEMPORAIRE/generationCode/src/compiler/visitor/ast_graph_viz", "build/generationCode/src/compiler/visitor/ast_graph_viz")
-    
+    GeneratorVisitorBaseGeneral(dossier_script).generate()
+    GeneratorGraphViz(dossier_script).generate()  
     GeneratorExpression(dossier_script).generate()
     GeneratorParser(dossier_script).generate()
     

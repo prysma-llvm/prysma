@@ -8,48 +8,48 @@ Node:
     CallFunction:
       engine: [parser, expression]
       champs:
-        nomFunction: "Token"
+        name: "Token"
         children: "llvm::ArrayRef<INode*>"
     ArgFunction:
       engine: [parser]
       champs:
         type: "IType*"
-        nom: "Token"
+        name: "Token"
     DeclarationFunction:
       engine: [parser]
       champs:
-        visibilite: "Token"
-        typeReturn: "IType*"
-        nom: "Token"
+        visibility: "Token"
+        returnType: "IType*"
+        name: "Token"
         arguments: "llvm::ArrayRef<INode*>"
         body: "INode*"
     Return:
       engine: [parser]
       champs:
-        valeurReturn: "INode*"
+        returnValue: "INode*"
 
   Variable:
     AssignmentVariable:
       engine: [parser]
       champs:
-        nom: "Token"
+        name: "Token"
         expression: "INode*"
         token: "Token"
     DeclarationVariable:
       engine: [parser]
       champs:
-        visibilite: "Token"
-        nom: "Token"
+        visibility: "Token"
+        name: "Token"
         type: "IType*"
         expression: "INode*"  
     RefVariable:
       engine: [parser, expression]
       champs:
-        nomVariable: "Token"
+        name: "Token"
     UnRefVariable:
       engine: [parser, expression]
       champs:
-        nomVariable: "Token"
+        name: "Token"
     Identifiant:
       engine: [expression]
       champs: {}
@@ -58,7 +58,7 @@ Node:
     AssignmentArray:
       engine: []
       champs:
-        nom: "Token"
+        name: "Token"
         expressionIndex: "INode*"
         expression: "INode*"
         token: "Token"
@@ -70,32 +70,32 @@ Node:
       engine: []
       champs:
         indexEquation: "INode*"
-        nomArray: "Token"
+        name: "Token"
 
   Object:
     Class:
       engine: [parser]
       champs: 
-        Heritage: "llvm::ArrayRef<INode*>"
-        listMembers: "llvm::ArrayRef<INode*>"
+        inheritance: "llvm::ArrayRef<INode*>"
+        members: "llvm::ArrayRef<INode*>"
         builder: "llvm::ArrayRef<INode*>"
-        nomClass: "Token"
+        name: "Token"
     CallObject:
       engine: [parser, expression]
       champs:
-        nomObject: "Token"
-        nomMethode: "Token"
+        objectName: "Token"
+        methodName: "Token"
         children: "llvm::ArrayRef<INode*>"
     AccesAttribute:
       engine: []
       champs:
-        nomObject: "Token"
-        nomAttribute: "Token"
+        objectName: "Token"
+        attributeName: "Token"
     DeclarationObject:
       engine: []
       champs:
-        nomObject: "Token"
-        typeObject: "IType*"
+        objectName: "Token"
+        objectType: "IType*"
         
   Condition:
     If:
@@ -110,11 +110,11 @@ Node:
       engine: [expression]
       champs:
         arguments: "llvm::ArrayRef<INode*>"
-        nomType: "Token"
+        name: "Token"
     Delete:
       engine: [parser]
       champs:
-        nomType: "Token"
+        name: "Token"
         
   IncludeModule:
     Include:
@@ -127,8 +127,8 @@ Node:
       engine: [parser]
       champs:
         nodeCondition: "INode*"
-        nodeBlocWhile: "INode*"
-        nodeBlocFinWhile: "INode*"
+        whileBlock: "INode*"
+        whileEndBlock: "INode*"
     
   Math:
     Operation:
@@ -136,8 +136,8 @@ Node:
       parent: "IExpression"
       champs:
         token: "Token"
-        gauche: "INode*"
-        droite: "INode*"
+        left: "INode*"
+        right: "INode*"
     Literal:
       engine: [expression]
       champs:
@@ -146,8 +146,8 @@ Node:
     Negation:
       engine: [expression]
       champs:
-        operateur: "Token"
-        operande: "INode*"
+        op: "Token"
+        operand: "INode*"
     String:
       engine: [expression]
       champs: {}

@@ -10,7 +10,7 @@ InlayHints:
 
 CompileFlags:
   Add: 
-    #- "-fno-rtti" // temporaire, pour le debug
+    - "-fno-rtti" 
     - "-frtti"
     - "-std=c++23"
     - "-Wall"
@@ -42,6 +42,8 @@ Diagnostics:
       - misc-*
       - portability-*
       - concurrency-*
+    Remove:
+      - readability-redundant-access-specifiers
     CheckOptions:
       readability-identifier-naming.VariableCase: camelCase
 

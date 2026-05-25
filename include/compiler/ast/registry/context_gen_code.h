@@ -15,6 +15,7 @@
 #include <utility>
 #include "compiler/ast/registry/data/id_generator.hpp"
 #include "compiler/ast/registry/data/node_data_registry.hpp"
+#include "compiler/ast/registry/stack/registry_variable.h"
 #include "compiler/macros/prysma_nodiscard.h"
 #include "compiler/ast/registry/registry_type.h"
 #include "registry_instruction.h"

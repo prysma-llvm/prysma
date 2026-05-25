@@ -19,8 +19,8 @@ void GeneralVisitorGenCode::visiter(NodeWhile* nodeWhile)
 
     // Retrieve the condition and blocks from the while node
     INode* nodeCondition = nodeData.getNodeCondition();
-    INode* nodeWhileBlock = nodeData.getNodeWhileBlock();
-    INode* nodeEndWhileBlock = nodeData.getNodeWhileEndBlock();
+    INode* nodeWhileBlock = nodeData.getWhileBlock();
+    INode* nodeEndWhileBlock = nodeData.getWhileEndBlock();
     
     // Build the basic blocks for the while
     llvm::Function* currentFunction = _contextGenCode->getBackend()->getBuilder().GetInsertBlock()->getParent();

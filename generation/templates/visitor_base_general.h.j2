@@ -8,10 +8,18 @@
 class Node{{ nom }};
 {% endfor %}
 
+struct ContextGenCode;
+
 class VisitorBaseGenerale : public IVisitor
 {
-public:
+protected:
+    // TODO : getNodeDataRegistry est le seule utilisée dans le contextGenCode
+    // Est-ce qu'il serais préférable de seulement injecter le registre ici ? 
+    // Possible. 
+    ContextGenCode* _contextGenCode;
 
+public:
+    VisitorBaseGenerale(ContextGenCode* contextGenCode);
 {% for nom in nodes %}
     void visiter(Node{{ nom }}* node{{ nom }}) override;
 {% endfor %}
