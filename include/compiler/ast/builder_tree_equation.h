@@ -21,10 +21,10 @@
 #include <vector>
 
 
-class BuilderTreeEquation : public IBuilderTree
+class BuilderTreeEquation : public IBuilderTree // TODO : trouver un moyen pour retirer cette héritage, ça ajoute une vtable et détruit les performances
 {
 private:
-    NodeDataRegistry* _nodeDataRegistry;// TODO: à possiblement changer pour un ExpressionDataRegistry
+    NodeDataRegistry* _nodeDataRegistry; // TODO: à possiblement changer pour un ExpressionDataRegistry
 
     ChainOfResponsibility* _chainOfResponsibility;
     RegistrySymbol* _symbolRegistry;
@@ -43,7 +43,7 @@ public:
         llvm::BumpPtrAllocator& arena
     );
     
-    auto build(std::vector<Token> &tokens) -> INode* override;
-    auto build(std::vector<Token>& tokens, std::size_t& index) -> INode* override;
+    auto build(const std::vector<Token> &tokens) -> INode* override;
+    auto build(const std::vector<Token>& tokens, std::size_t& index) -> INode* override;
     auto getArena() -> llvm::BumpPtrAllocator& override;
 };

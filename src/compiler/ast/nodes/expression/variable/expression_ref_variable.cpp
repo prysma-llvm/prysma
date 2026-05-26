@@ -26,7 +26,7 @@ ExpressionRefVariable::ExpressionRefVariable(ContextExpression& expressionContex
 ExpressionRefVariable::~ExpressionRefVariable()
 = default;
 
-auto ExpressionRefVariable::build(std::vector<Token>& equation) -> INode*
+auto ExpressionRefVariable::build(const std::vector<Token>& equation) -> INode*
 {
     if (equation.size() < 2 || equation[1].type != TOKEN_IDENTIFIER) {
         throw std::runtime_error("Error: 'ref' must be followed by an identifier");

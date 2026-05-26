@@ -27,7 +27,7 @@ ParserArgFunction::ParserArgFunction(ContextParser& contextParser)
 ParserArgFunction::~ParserArgFunction()
 = default;
 
-auto ParserArgFunction::parse(std::vector<Token>& tokens, std::size_t& index) -> INode* 
+auto ParserArgFunction::parse(const std::vector<Token>& tokens, std::size_t& index) -> INode* 
 {
     consume(tokens, index, TOKEN_ARG, "Error: token is not 'arg'!");
 

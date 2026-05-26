@@ -27,7 +27,7 @@ ParserInclude::~ParserInclude()
 = default;
 
 // Example: include "path"
-auto ParserInclude::parse(std::vector<Token>& tokens, std::size_t& index) -> INode*
+auto ParserInclude::parse(const std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
     consume(tokens, index, TOKEN_INCLUDE, "Error: Include instruction must start with the 'include' keyword");
     consume(tokens, index, TOKEN_QUOTE, "Error: Include instruction must be followed by a string in quotes");

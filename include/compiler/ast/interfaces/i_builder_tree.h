@@ -28,8 +28,8 @@ virtual ~IBuilderTree() = default;
     IBuilderTree(IBuilderTree&&) = delete;
     auto operator=(IBuilderTree&&) -> IBuilderTree& = delete;
     
-    virtual auto build(std::vector<Token>& tokens) -> INode* = 0;
-    virtual auto build(std::vector<Token>& tokens, std::size_t& index) -> INode* = 0;
+    virtual auto build(const std::vector<Token>& tokens) -> INode* = 0;
+    virtual auto build(const std::vector<Token>& tokens, std::size_t& index) -> INode* = 0;
     virtual auto getArena() -> llvm::BumpPtrAllocator& = 0;
 
     template<typename T, typename... Args>

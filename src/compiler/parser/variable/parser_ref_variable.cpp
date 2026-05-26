@@ -28,7 +28,7 @@ ParserRefVariable::~ParserRefVariable()
 =default;
 
 // Example: ref variable
-auto ParserRefVariable::parse(std::vector<Token>& tokens, std::size_t& index) -> INode* 
+auto ParserRefVariable::parse(const std::vector<Token>& tokens, std::size_t& index) -> INode* 
 {
     consume(tokens, index, TOKEN_REF, "Error: 'ref' expected");
     

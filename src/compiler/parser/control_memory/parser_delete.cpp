@@ -27,7 +27,7 @@ ParserDelete::~ParserDelete()
 = default;
 
 // Example: delete variableName;
-auto ParserDelete::parse(std::vector<Token>& tokens, std::size_t& index) -> INode*
+auto ParserDelete::parse(const std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
     consume(tokens, index, TOKEN_DELETE, "Expected 'delete' at the beginning of the delete instruction.");
     Token identifierToken = consume(tokens, index, TOKEN_IDENTIFIER, "Expected an identifier after 'delete'.");

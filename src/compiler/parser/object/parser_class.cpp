@@ -145,7 +145,7 @@ ParserClass::~ParserClass()
 //                  }
 //           }
 
-auto ParserClass::parse(std::vector<Token>& tokens, std::size_t& index) -> INode*
+auto ParserClass::parse(const std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
     consume(tokens, index, TOKEN_CLASS, "Expected 'class' at the beginning of the class declaration.");
     Token classNameToken = consume(tokens, index, TOKEN_IDENTIFIER, "Expected an identifier after 'class' for the class name.");

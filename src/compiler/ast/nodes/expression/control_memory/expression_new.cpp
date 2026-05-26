@@ -27,7 +27,7 @@ ExpressionNew::ExpressionNew(ContextExpression& expressionContext)
 ExpressionNew::~ExpressionNew()
 = default;
 
-auto ExpressionNew::build(std::vector<Token>& equation) -> INode*
+auto ExpressionNew::build(const std::vector<Token>& equation) -> INode*
 {
     std::size_t index = 0;
     if (equation.empty() || equation[0].type != TOKEN_NEW) {

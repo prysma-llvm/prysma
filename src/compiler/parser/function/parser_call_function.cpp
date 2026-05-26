@@ -24,7 +24,7 @@ ParserCallFunction::ParserCallFunction(ContextParser& contextParser)
 
 ParserCallFunction::~ParserCallFunction() = default;
 
-INode* ParserCallFunction::parse(std::vector<Token>& tokens, std::size_t& index)
+INode* ParserCallFunction::parse(const std::vector<Token>& tokens, std::size_t& index)
 {
     const bool callAsInstruction = index == 0 || tokens[index - 1].type != TOKEN_EQUAL;
 

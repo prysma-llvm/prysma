@@ -26,7 +26,7 @@ ParserCallObject::ParserCallObject(ContextParser& contextParser)
 ParserCallObject::~ParserCallObject()
 = default;
 
-auto ParserCallObject::parse(std::vector<Token>& tokens, std::size_t& index) -> INode*
+auto ParserCallObject::parse(const std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
   const bool callAsInstruction = index == 0 || tokens[index - 1].type != TOKEN_EQUAL;
 

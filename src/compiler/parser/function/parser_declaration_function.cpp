@@ -29,7 +29,7 @@ ParserDeclarationFunction::ParserDeclarationFunction(ContextParser& contextParse
 
 ParserDeclarationFunction::~ParserDeclarationFunction() = default;
 
-auto ParserDeclarationFunction::parse(std::vector<Token>& tokens, std::size_t& index) -> INode*
+auto ParserDeclarationFunction::parse(const std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
     consume(tokens, index, TOKEN_FUNCTION, "Error: not the correct token! 'fn'");
 

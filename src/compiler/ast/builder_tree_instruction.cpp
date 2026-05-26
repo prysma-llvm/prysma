@@ -29,7 +29,7 @@ BuilderTreeInstruction::BuilderTreeInstruction(RegistryInstruction* registryInst
 
 BuilderTreeInstruction::~BuilderTreeInstruction() = default;
 
-auto BuilderTreeInstruction::build(std::vector<Token>& tokens, std::size_t& index) -> INode*
+auto BuilderTreeInstruction::build(const std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
     if (!_registryInstructions->exists(tokens[index].type)) {
         throw CompilationError(llvm::formatv(
@@ -45,7 +45,7 @@ auto BuilderTreeInstruction::build(std::vector<Token>& tokens, std::size_t& inde
 }
 
 
-auto BuilderTreeInstruction::build(std::vector<Token>& tokens) -> INode*
+auto BuilderTreeInstruction::build(const std::vector<Token>& tokens) -> INode*
 {
     std::size_t index = 0; 
     llvm::SmallVector<INode*, 64> children;

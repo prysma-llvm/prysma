@@ -26,7 +26,7 @@ ExpressionArrayInitialization::ExpressionArrayInitialization(ContextExpression& 
 ExpressionArrayInitialization::~ExpressionArrayInitialization()
 = default;
 
-auto ExpressionArrayInitialization::build(std::vector<Token>& equation) -> INode*
+auto ExpressionArrayInitialization::build(const std::vector<Token>& equation) -> INode*
 {
     llvm::SmallVector<INode*, 8> arrayElements;
     std::vector<Token> subEquation;

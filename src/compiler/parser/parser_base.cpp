@@ -21,7 +21,7 @@ namespace {
     constexpr std::size_t DEFAULT_CHILDREN_CAPACITY = 32;
 }
 
-auto ParserBase::consume(std::vector<Token>& tokens, std::size_t& index, TokenType expectedType, const std::string& errorMessage) -> Token
+auto ParserBase::consume(const std::vector<Token>& tokens, std::size_t& index, TokenType expectedType, const std::string& errorMessage) -> const Token&
 {
     if (index < 0 || index >= tokens.size() || tokens[index].type != expectedType) {
         if (index < tokens.size()) {
@@ -32,7 +32,7 @@ auto ParserBase::consume(std::vector<Token>& tokens, std::size_t& index, TokenTy
     return tokens[index++];
 }
 
-auto ParserBase::consumeChildBody(std::vector<Token>& tokens, std::size_t& index , IBuilderTree* builderTree, TokenType end) -> llvm::ArrayRef<INode*>
+auto ParserBase::consumeChildBody(const std::vector<Token>& tokens, std::size_t& index , IBuilderTree* builderTree, TokenType end) -> llvm::ArrayRef<INode*>
 {
     llvm::SmallVector<INode*, DEFAULT_CHILDREN_CAPACITY> children;
     while(index < tokens.size() && tokens[index].type != end)

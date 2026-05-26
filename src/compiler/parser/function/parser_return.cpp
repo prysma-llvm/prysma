@@ -24,7 +24,7 @@ ParserReturn::ParserReturn(ContextParser& contextParser)
 
 ParserReturn::~ParserReturn() = default;
 
-auto ParserReturn::parse(std::vector<Token>& tokens, std::size_t& index) -> INode*
+auto ParserReturn::parse(const std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
     consume(tokens, index, TOKEN_RETURN, "Error: not the correct token! 'return'");
 

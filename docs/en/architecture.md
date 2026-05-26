@@ -86,7 +86,7 @@ InstructionTreeBuilder::build(
 
 ### Step 3: Recursive Equation Tree Construction
 ```cpp
-EquationTreeBuilder::build(std::vector<Token>& equation) → INode
+EquationTreeBuilder::build(const std::vector<Token>& equation) → INode
 ```
 
 **Pseudo-code:**

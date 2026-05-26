@@ -28,7 +28,7 @@ TypeParser::TypeParser(RegistryType* registryType, NodeDataRegistry* nodeDataReg
 {
 }
 
-auto TypeParser::parse(std::vector<Token>& tokens, std::size_t& index) -> IType*
+auto TypeParser::parse(const std::vector<Token>& tokens, std::size_t& index) -> IType*
 {
     // Check that the current token is a valid type
     if (!isType(tokens[index].type)) {

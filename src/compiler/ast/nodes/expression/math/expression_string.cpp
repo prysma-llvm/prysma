@@ -30,7 +30,7 @@ ExpressionString::ExpressionString(ContextExpression& expressionContext)
 ExpressionString::~ExpressionString()
 = default;
 
-auto ExpressionString::build(std::vector<Token>& equation) -> INode*
+auto ExpressionString::build(const std::vector<Token>& equation) -> INode*
 {
     llvm::SmallVector<INode*, 16> stringElements;
 

@@ -27,7 +27,7 @@ ExpressionCallCentral::ExpressionCallCentral(ContextExpression& expressionContex
 ExpressionCallCentral::~ExpressionCallCentral()
 = default;
 
-auto ExpressionCallCentral::build(std::vector<Token>& equation) -> INode*
+auto ExpressionCallCentral::build(const std::vector<Token>& equation) -> INode*
 {
     std::size_t indexZero = 0;
 

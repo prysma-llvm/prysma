@@ -25,7 +25,7 @@ ExpressionUnRefVariable::ExpressionUnRefVariable(ContextExpression& expressionCo
 ExpressionUnRefVariable::~ExpressionUnRefVariable()
 = default;
 
-auto ExpressionUnRefVariable::build(std::vector<Token>& equation) -> INode*
+auto ExpressionUnRefVariable::build(const std::vector<Token>& equation) -> INode*
 {
     if (equation.size() < 2 || equation[1].type != TOKEN_IDENTIFIER) {
         throw std::runtime_error("Error: 'unref' must be followed by an identifier");

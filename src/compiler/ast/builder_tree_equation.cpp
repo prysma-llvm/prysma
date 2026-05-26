@@ -39,30 +39,36 @@ BuilderTreeEquation::BuilderTreeEquation( // TODO: miger le naming scheme des me
 {
 }
 
-auto BuilderTreeEquation::build(std::vector<Token> &tokens) -> INode* {
+auto BuilderTreeEquation::build(const std::vector<Token> &tokens) -> INode* {
     std::vector<Token> tokensWithoutParentheses = _parenthesisManager->removeWrappingParentheses(tokens);
-    tokens = tokensWithoutParentheses;
-    
+   
     if (tokens.empty()) {
         throw CompilationError("Error: empty equation", Line(_lastToken.line), Column(_lastToken.column));
     }
     
-    std::size_t index = _chainOfResponsibility->findOperator(tokens); // TODO: 2 options -> adapt the api to support std::size_t or cast to an integer  
+    std::size_t index = _chainOfResponsibility->findOperator(tokensWithoutParentheses); // TODO: 2 options -> adapt the api to support std::size_t or cast to an integer  
                                                                                //                     there's a lot of integers where unsigned would be more relevant
 
     if (index == -1) {
-        TokenType type = tokens[0].type;
+        TokenType type = tokensWithoutParentheses[0].type;
 
         if ((_expressionRegistry != nullptr) && _expressionRegistry->exists(type)) {
-            return _expressionRegistry->get(type)->build(tokens);
+            // TODO : Je vais utiliser un switch case généré dynamiquement soit par template C++ soit par jinja2, à voir.
+            // Ensuite, chaque expression sera sous forme d'une seule et unique classe dispersée en plusieurs fichiers.
+            // Car l'instanciation de nouvelles classes, plus le passage en constructeur des éléments, coûte cher.
+            // Utilisation d'un script jinja2 pour rassembler toutes les expressions dans un seul et unique fichier,
+            // car le compilateur clang est fragmenté, il ne connaît pas le contexte des autres fichiers, ce qui
+            // réduit l'efficacité des optimisations du compilateur,
+            // et donc moins de localité dans le cache aussi.
+            return _expressionRegistry->get(type)->build(tokensWithoutParentheses);
         }
 
-        throw CompilationError("Error: unrecognized token in the equation", Line(tokens[0].line), Column(tokens[0].column));
+        throw CompilationError("Error: unrecognized token in the equation", Line(tokensWithoutParentheses[0].line), Column(tokensWithoutParentheses[0].column));
     }
     
-    IExpression* node = _symbolRegistry->getNode(tokens[index]);
-    std::vector<Token> left(tokens.begin(), tokens.begin() + index); 
-    std::vector<Token> right(tokens.begin() + index + 1, tokens.end());
+    IExpression* node = _symbolRegistry->getNode(tokensWithoutParentheses[index]);
+    std::vector<Token> left(tokensWithoutParentheses.begin(), tokensWithoutParentheses.begin() + index); 
+    std::vector<Token> right(tokensWithoutParentheses.begin() + index + 1, tokensWithoutParentheses.end());
     
     INode* leftExpr = build(left);
     INode* rightExpr = build(right);
@@ -79,7 +85,7 @@ auto BuilderTreeEquation::build(std::vector<Token> &tokens) -> INode* {
     return node;
 }
 
-auto BuilderTreeEquation::build(std::vector<Token>& tokens, std::size_t &index) -> INode* {
+auto BuilderTreeEquation::build(const std::vector<Token>& tokens, std::size_t &index) -> INode* {
 
     // Save the current token position for error messages
     if (index < tokens.size()) {

@@ -30,7 +30,7 @@ public:
     ExpressionCallCentral(ExpressionCallCentral&&) = delete;
     auto operator=(ExpressionCallCentral&&) -> ExpressionCallCentral& = delete;
 
-    auto build(std::vector<Token>& equation) -> INode* override;
+    auto build(const std::vector<Token>& equation) -> INode* override;
 };
 
 #endif /* EXPRESSION_CALLCENTRAL_H */

@@ -24,7 +24,7 @@ ExpressionNegation::ExpressionNegation(ContextExpression& expressionContext)
 ExpressionNegation::~ExpressionNegation()
 = default;
 
-auto ExpressionNegation::build(std::vector<Token>& equation) -> INode*
+auto ExpressionNegation::build(const std::vector<Token>& equation) -> INode*
 {
     if (equation.size() < 2) {
         throw std::runtime_error("Error: '!' must be followed by an expression");

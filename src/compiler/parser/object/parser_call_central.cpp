@@ -28,7 +28,7 @@ ParserCallCentral::ParserCallCentral(ContextParser& contextParser)
 ParserCallCentral::~ParserCallCentral()
 = default;
 
-INode* ParserCallCentral::parse(std::vector<Token>& tokens, std::size_t& index)
+INode* ParserCallCentral::parse(const std::vector<Token>& tokens, std::size_t& index)
 {
     const std::size_t currentIndex = index;
     const bool callObject = currentIndex + 2 < tokens.size()

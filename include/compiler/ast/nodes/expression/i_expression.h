@@ -21,7 +21,7 @@ public:
     auto operator=(const IExpression&) -> IExpression& = delete;
     IExpression(IExpression&&) = delete;
     auto operator=(IExpression&&) -> IExpression& = delete;
-    virtual auto build(std::vector<Token>& equation) -> INode* = 0;
+    virtual auto build(const std::vector<Token>& equation) -> INode* = 0;
 };
 
 #endif /* C2F85AFD_7B01_4D87_8D01_5C59514D2B2E */

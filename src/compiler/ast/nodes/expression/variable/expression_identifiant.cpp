@@ -30,7 +30,7 @@ ExpressionIdentifiant::ExpressionIdentifiant(ContextExpression& expressionContex
 ExpressionIdentifiant::~ExpressionIdentifiant()
 = default;
 
-auto ExpressionIdentifiant::build(std::vector<Token>& equation) -> INode*
+auto ExpressionIdentifiant::build(const std::vector<Token>& equation) -> INode*
 {
     bool isArray = false;
     size_t bracketIndex = 0;

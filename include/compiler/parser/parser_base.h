@@ -20,11 +20,13 @@
 
 class ParserBase
 {
-protected:
+public: // Temporairement en public, seulement pour éviter l'héritage et donc la vtable 
+// Je vais dois aussi retirer l'héritage parserBase de plusieurs classe et seulement l'utiliser comme utilitaire
+
     // Consumes a token of the expected type, throws if not found
-    static auto consume(std::vector<Token>& tokens, std::size_t& index, TokenType expectedType, const std::string& errorMessage) -> Token;
+    static auto consume(const std::vector<Token>& tokens, std::size_t& index, TokenType expectedType, const std::string& errorMessage) -> const Token&;
     // Consumes the child body until the end token
-    static auto consumeChildBody(std::vector<Token>& tokens, std::size_t& index, IBuilderTree* builderTree, TokenType end) -> llvm::ArrayRef<INode*>;
+    static auto consumeChildBody(const std::vector<Token>& tokens, std::size_t& index, IBuilderTree* builderTree, TokenType end) -> llvm::ArrayRef<INode*>;
 };
 
 #endif /* DD335087_6EDE_4036_872C_8BD586E26251 */

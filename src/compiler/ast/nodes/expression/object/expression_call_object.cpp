@@ -24,7 +24,7 @@ ExpressionCallObject::ExpressionCallObject(ContextExpression& expressionContext)
 ExpressionCallObject::~ExpressionCallObject()
 = default;
 // Example: call object.method() or call object.method(arg int64 param1, arg int64 param2)
-auto ExpressionCallObject::build(std::vector<Token>& equation) -> INode*
+auto ExpressionCallObject::build(const std::vector<Token>& equation) -> INode*
 {
     ParserCallObject parserCall(*_context.getContextParser());
     std::size_t indexZero = 0;

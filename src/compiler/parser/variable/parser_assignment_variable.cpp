@@ -27,7 +27,7 @@ ParserAssignmentVariable::ParserAssignmentVariable(ContextParser& contextParser)
 ParserAssignmentVariable::~ParserAssignmentVariable()
 = default;
 
-auto ParserAssignmentVariable::parse(std::vector<Token>& tokens, std::size_t& index) -> INode*
+auto ParserAssignmentVariable::parse(const std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
     consume(tokens, index, TOKEN_ASSIGN, "Error: 'aff' expected");
     Token nameToken = consume(tokens, index, TOKEN_IDENTIFIER, "Error: variable name expected");

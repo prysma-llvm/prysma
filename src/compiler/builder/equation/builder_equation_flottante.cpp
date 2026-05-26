@@ -17,6 +17,7 @@
 #include <llvm/Support/Allocator.h>
 #include <memory>
 #include <utility>
+#include <vector>
 
 // Floating-point equation builder
 BuilderFloatEquation::BuilderFloatEquation(RegistryExpression* expressionRegistry, NodeDataRegistry* nodeDataRegistry, IdGenerator* idGenerator, llvm::BumpPtrAllocator& arena)
@@ -166,7 +167,7 @@ void BuilderFloatEquation::initializeRegistry() // TODO: réduire massivement la
     });
 }
 
-auto BuilderFloatEquation::build(std::vector<Token> &tokens) -> INode*
+auto BuilderFloatEquation::build(const std::vector<Token> &tokens) -> INode*
 {
     return _builderTree->build(tokens);
 }
@@ -176,7 +177,7 @@ auto BuilderFloatEquation::getBuilderTree() const -> IBuilderTree*
     return _builderTree;
 }
 
-auto BuilderFloatEquation::build(std::vector<Token>& tokens, std::size_t& index) -> INode*
+auto BuilderFloatEquation::build(const std::vector<Token>& tokens, std::size_t& index) -> INode*
 {
     return _builderTree->build(tokens, index);
 }
