@@ -51,10 +51,10 @@ private:
 
 private:
 
-    auto peak() -> const Token&;
+    auto peak() -> const Token& { return (*_tokens)[*_index]; }
 
      //Heres my prioritys again, kind of, but hey it maps it to the proper ones.
-    auto lbp(Token& token) -> uint8_t;
+    static auto lbp(Token& token) -> uint8_t;
 
 public:
 
@@ -74,7 +74,7 @@ public:
             assert(_parserBase != nullptr);
         };
 
-    auto expr(uint8_t min_bp ) -> Result;
+    static auto expr(uint8_t min_bp ) -> Result;
 
 };
 
