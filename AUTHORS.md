@@ -1,2 +1,0 @@
-- Raphael Arseneault 
-- Félix-Olivier Dumas
