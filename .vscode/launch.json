@@ -22,6 +22,26 @@
             "preLaunchTask": "Start LLDB Server (Docker)"
         },
         {
+            "name": "C++: Debug Unit Tests in Docker (LLDB)",
+            "type": "lldb",
+            "request": "custom",
+            "initCommands": [
+                "settings set target.source-map /workspace ${workspaceFolder}"
+            ],
+            "targetCreateCommands": [
+                "target create ${workspaceFolder}/tests/unit_tests/build/PrysmaTests",
+                "settings set target.source-map /workspace ${workspaceFolder}"
+            ],
+            "processCreateCommands": [
+                "gdb-remote 127.0.0.1:1234",
+                "continue"
+            ],
+            "sourceMap": {
+                "/workspace": "${workspaceFolder}"
+            },
+            "preLaunchTask": "Start LLDB Server for Unit Tests (Docker)"
+        },
+        {
             "name": "Python: Debug in Docker",
             "type": "debugpy",
             "request": "attach",

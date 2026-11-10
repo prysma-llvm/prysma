@@ -10,8 +10,12 @@ InlayHints:
 
 CompileFlags:
   Add: 
+    - "-Iinclude"
+    - "-Ibuild/generationCode/include"
     - "-I.clangd-includes"
     - "-isystem.clangd-includes"
+    - "-Itests/lib"
+    - "-Itests/unit_tests/include"
     - "-fno-rtti" 
     - "-frtti"
     - "-std=c++23"
@@ -59,3 +63,4 @@ Hover:
 
 Completion:
   AllScopes: true
+
