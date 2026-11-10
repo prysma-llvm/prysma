@@ -4,29 +4,30 @@
 
 [![CI](https://github.com/Zyphorah/Prysma/actions/workflows/ci.yml/badge.svg)](https://github.com/Zyphorah/Prysma/actions/workflows/ci.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![C++](https://img.shields.io/badge/C++-17-blue.svg)](https://isocpp.org/)
+[![C++](https://img.shields.io/badge/C++-23-blue.svg)](https://isocpp.org/)
 [![LLVM](https://img.shields.io/badge/LLVM-18-red.svg)](https://llvm.org/)
 
-Prysma est un langage de programmation système à hautes performances, compilé vers l'infrastructure **LLVM 18**. Le projet privilégie un contrôle déterministe des ressources et une architecture modulaire robuste.
+Prysma est un langage de programmation système compilé vers l'infrastructure **LLVM 18**. Le projet se concentre sur le contrôle déterministe des ressources sans ramasse-miettes (garbage collector), une tokenisation optimisée par tables précalculées à la compilation, l'allocation contiguë par arènes et la compilation multi-fichiers parallélisée.
 
 ## Capacités Techniques
 
-  * **Backend :** Génération de code intermédiaire (IR) via LLVM 18 en forme SSA (Single Static Assignment).
-  * **Modèle Objet :** Implémentation native des classes, de l'héritage et du polymorphisme dynamique via VTable.
-  * **Gestion Mémoire :** Contrôle manuel du tas (heap) via les opérateurs `new` et `delete`. Allocation interne optimisée par **Bump Pointer Allocator** (Arena).
-  * **Parallélisme :** Orchestration de la compilation multi-fichier via `llvm::ThreadPool`.
-  * **Analyse Statique :** Système de typage fort avec auto-casting sécurisé et détection des dépendances circulaires d'inclusion.
+* **Backend LLVM :** Génération de code intermédiaire LLVM 18 en forme SSA (Single Static Assignment) exploitant les pointeurs opaques.
+* **Analyse Lexicale :** Tokenisation par tables de correspondance précalculées à la compilation (LUT 256 octets) et comparaisons d'entiers 64 bits en Little Endian, évitant les surcoûts de hachage dynamique.
+* **Gestion Mémoire :** Gestion manuelle sur le tas via les opérateurs `new` et `delete`. Allocation interne des nœuds AST optimisée par arène (`llvm::BumpPtrAllocator`).
+* **Compilation Multi-fichiers :** Pipeline en 2 passes parallélisé avec `llvm::ThreadPool`, résolution des directives `include` et détection des cycles de dépendances.
+* **Modèle Objet :** Classes avec visibilité `public:`, `private:`, `protected:`, héritage et polymorphisme dynamique via table virtuelle (vtable).
+* **Analyse et Typage :** Typage statique avec auto-casting sécurisé, pile de contextes pour les portées lexicales et détection précoce des erreurs syntaxiques (fail-fast).
 
 ## Architecture du Compilateur
 
-Le pipeline de traitement suit une structure linéaire stricte :
+Le compilateur opère selon un pipeline modulaire :
 
-1.  **Frontend :** Analyse lexicale (Lexer) et syntaxique par descente récursive.
-2.  **Représentation Intermédiaire :** Construction d'un Arbre Syntaxique Abstrait (AST) basé sur le patron de conception **Composite**.
-3.  **Génération de Code :** Traduction de l'AST vers LLVM IR via le patron de conception **Visitor**.
-4.  **Backend :** Optimisations et génération du binaire natif par l'infrastructure LLVM.
+1. **Frontend :** Analyse lexicale sans saut de branchement conditionnel (`Lexer::tokenize`) et descente récursive pour les instructions.
+2. **Passe 1 (Analyse & Registres) :** Construction de l'AST et inspection des signatures via `FillingVisitorRegistry` et `FillingVisitorBodyClass`.
+3. **Passe 2 (Environnements & Émission) :** Résolution des tables de symboles (`BuilderEnvironmentRegistryFunction`, `BuilderEnvironmentRegistryVariable`) et émission LLVM IR via `GeneralVisitorGenCode`.
+4. **Backend LLVM :** Optimisations du module et liaison binaire par l'infrastructure LLVM / LLD.
 
-## Aperçu de la Syntaxe
+## Syntaxe
 
 ```rust
 fn int32 main() {
@@ -36,72 +37,56 @@ fn int32 main() {
 }
 ```
 
-## Programmation orientée objet
+## Compilation sous Docker
 
-> Actuellement en phase expérimentale. Cette partie est incomplète et peut présenter des instabilités.
-
-## Environnement de compilation officiel (Docker)
-
-La compilation officielle de Prysma repose sur une **architecture centralisée sous Docker**. 
-
-Cette approche standardise l'ensemble de la chaîne d'outils (LLVM 18, Clang 18, LLD, CMake, ccache, outils de diagnostic et environnement Python) dans une image reproductible. Elle élimine les disparités entre distributions hôtes et évite toute pollution du système local.
+La chaîne de compilation officielle (LLVM 18, Clang 18, LLD, CMake, ccache, Python) est encapsulée dans une image Docker pour garantir des builds reproductibles.
 
 ### Installation de Docker
 
-Avant de compiler, assurez-vous que Docker est opérationnel sur votre machine :
-
 | Système hôte | Guide d'installation |
 | :--- | :--- |
-| **Arch Linux** | [Consulter le guide Arch Linux](docs/fr/installation/docker/arch_linux.md) |
-| **Debian** | [Consulter le guide Debian](docs/fr/installation/docker/debian.md) |
-| **Ubuntu** | [Consulter le guide Ubuntu](docs/fr/installation/docker/ubuntu.md) |
-| **Windows (PowerShell)** | [Consulter le guide Windows](docs/fr/installation/docker/windows_powershell.md) |
+| **Arch Linux** | [Guide Arch Linux](docs/fr/installation/docker/arch_linux.md) |
+| **Debian** | [Guide Debian](docs/fr/installation/docker/debian.md) |
+| **Ubuntu** | [Guide Ubuntu](docs/fr/installation/docker/ubuntu.md) |
+| **Windows (PowerShell)** | [Guide Windows](docs/fr/installation/docker/windows_powershell.md) |
 
 ### Démarrage rapide
 
-Cet environnement constitue l'espace de travail officiel du projet. Il s'adresse aussi bien à ceux qui souhaitent simplement compiler et tester Prysma qu'à ceux qui désirent y contribuer activement. 
+1. **Construire l'image de compilation :**
+   ```bash
+   docker build --target debug -t prysma-debug -f docker/compiler/Dockerfile .
+   ```
 
-Une configuration de base est fournie pour faciliter le développement sous **VS Code** (VS Code standard / « bleu ») via le dossier `.vscode` et le script `docker-cli.sh`. Elle permet notamment de compiler directement avec `Ctrl+Shift+B` le fichier Prysma actif dans l'éditeur (réservé exclusivement à la compilation des fichiers avec l'extension `.p`), tout en prenant en charge le débogage et l'indexation de code Clangd sans nécessiter d'outils installés sur l'hôte.
+2. **Compiler le projet depuis l'hôte :**
+   ```bash
+   # Mode Release optimisé (-O3, -march=native, -flto, lld)
+   docker run --rm -v "$(pwd)":/workspace prysma-debug python3 build.py
 
-#### 1. Construire l'image de compilation :
+   # Mode Debug instrumenté (-g3, -O0, ASan, UBSan)
+   docker run --rm -v "$(pwd)":/workspace prysma-debug python3 debug.py
+   ```
 
-```bash
-docker build --target debug -t prysma-debug -f docker/compiler/Dockerfile .
-```
+3. **Session interactive :**
+   ```bash
+   docker run --rm -it -v "$(pwd)":/workspace prysma-debug
+   ```
 
-#### 2. Accéder à l'environnement interactif :
+Le script `build.py` / `debug.py` génère automatiquement les classes de nœuds AST, les interfaces des visiteurs et les tables du parseur avant d'invoquer CMake et Clang.
 
-```bash
-docker run --rm -it -v "$(pwd)":/workspace prysma-debug
-```
+### Intégration VS Code
 
-#### 3. Orchestration de la compilation (`build.py` et `debug.py`) :
+La configuration fournie dans `.vscode` s'interface directement avec le conteneur :
 
-Une fois dans le conteneur (dans `/workspace`), la compilation est orchestrée par deux scripts Python qui servent d'interface unifiée :
+* **Compilation (`Ctrl+Shift+B`) :** Compile le fichier source `.p` actif via `docker-cli.sh`.
+* **Débogage (`F5`) :** Profils LLDB pour le compilateur C++ (port 1234) et debugpy pour les générateurs Python (port 5678).
+* **Indexation Clangd :** Navigation de code et autocomplétion C++ sur l'hôte sans nécessiter LLVM en local.
+* **Coloration syntaxique :** Extension `.vscode/SyntaxeCouleurPrysma` pour les fichiers `.p`.
 
-* **Pourquoi un wrapper Python ?** Avant de lancer CMake et Clang, le script exécute automatiquement les générateurs de code internes du compilateur (construction de l'AST, des visiteurs, de l'export GraphViz et du parseur), active le cache `ccache` et configure les options de compilation sans avoir à saisir de longues commandes manuelles.
-* **`python3 build.py` (Mode Release)** : Génère le code et compile une version hautement optimisée (`-O3`, `-march=native`, `-flto`, éditeur de liens `lld`).
-* **`python3 debug.py` (Mode Debug)** : Génère le code et compile avec l'injection des drapeaux de débogage et d'analyse (`-g3`, `-O0`, protecteur de pile `-fstack-protector-all`, assertions, ainsi que les détecteurs de corruption mémoire AddressSanitizer `-fsanitize=address` et UndefinedBehaviorSanitizer `-fsanitize=undefined`).
-
-*(Il est également possible de compiler directement depuis l'hôte sans ouvrir de shell interactif, par exemple : `docker run --rm -v "$(pwd)":/workspace prysma-debug python3 build.py`).*
-
-### Environnement de travail et débogage sous VS Code
-
-Le projet propose une intégration complète prête à l'emploi sous **VS Code** (VS Code standard / « bleu ») alliant le confort de l'interface graphique hôte et la puissance du conteneur Docker :
-
-* **Profil préconfiguré (`.vscode/Prysma.code-profile`)** : Installe et paramètre en un clic l'ensemble des extensions (Clangd, LLDB DAP, Debugpy) et réglages recommandés.
-* **Coloration syntaxique Prysma (`.vscode/SyntaxeCouleurPrysma`)** : Extension interne pour la coloration et la gestion des fichiers sources `.p`.
-* **Compilation à la volée** : Le raccourci `Ctrl+Shift+B` compile immédiatement le fichier `.p` actif via l'exécutable Prysma dans le conteneur.
-* **Débogage pas-à-pas (C++ et Python)** : Configurations prêtes à l'emploi (`F5`) pour déboguer le compilateur natif via LLDB (port 1234), les tests unitaires C++ et les scripts Python via debugpy (port 5678).
-* **Navigation et autocomplétion Clangd** : Analyse sémantique en temps réel sans installer LLVM sur votre système hôte.
-
-Consultez le [Guide de l'environnement VS Code](docs/fr/installation/vscode_environment.md) pour les instructions pas à pas d'installation du profil, de packaging de l'extension de coloration et de débogage.
-
-Pour les options avancées de compilation et les benchmarks, consultez également le [Guide d'architecture et de compilation Docker](docs/fr/installation/docker_compilation.md).
+Voir le [Guide de l'environnement VS Code](docs/fr/installation/vscode_environment.md) pour les détails de configuration. Pour les options de compilation avancées, voir le [Guide de compilation Docker](docs/fr/installation/docker_compilation.md).
 
 ## Documentation
 
-L'intégralité de la documentation technique et des procédures de configuration est organisée dans le répertoire `/docs` :
+La documentation technique est disponible dans le répertoire `docs/` :
 
 * **Compilation et Environnement :**
   * [Architecture de centralisation et guide Docker](docs/fr/installation/docker_compilation.md)

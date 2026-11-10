@@ -1,61 +1,52 @@
-# NOTE: Some configuration explanations are specific to the blue version of VSCode
+# Native Ubuntu Installation (Non-Container Alternative)
+
+> **Important:** This guide documents manual direct installation on an Ubuntu host. The official and supported method for compiling Prysma relies on the centralized Docker architecture: refer to the [Docker Compilation Guide](docker_compilation.md) and the [VS Code Environment Guide](vscode_environment.md).
 
 ## 1. System Prerequisites
 
-### Installing LLVM
-```bash
-sudo apt install llvm-dev llvm
-```
-
-### Installing Bear (for generating compile_commands.json)
-```bash
-sudo apt-get update && sudo apt-get install -y bear
-```
-
-### Installing Graphviz (for graph visualization)
-```bash
-sudo apt install graphviz
-```
-
-## Installing lld for final compilation
+Install the LLVM 18 toolchain, Clang compiler, LLD linker, and build dependencies:
 
 ```bash
-sudo apt install lld
+sudo apt update
+sudo apt install -y llvm-18 llvm-18-dev clang-18 lld-18 bear graphviz cmake ninja-build ccache python3 python3-venv
 ```
 
 ## 2. Python Virtual Environment
 
+Set up a virtual environment to execute the compiler's internal AST and parser generators:
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-## 3. Python Prerequisites
-Make sure you have Python 3 installed, as well as the necessary dependencies for the project
+## 3. Project Compilation
+
+To compile the project in debug mode with AddressSanitizer:
 
 ```bash
-uv pip install -r requirements.txt
+python3 debug.py
 ```
 
-## 4. Project Configuration
+To compile the project in release mode:
 
-### Project Compilation
- ```bash
- python3 debug.py
- ```
- 
-## 5. VS Code Configuration (tasks.json)
+```bash
+python3 build.py
+```
 
-Include this task in your `tasks.json` to enable error checking with `Ctrl+Shift+B`:
+## 4. VS Code Configuration (`tasks.json`)
+
+When working natively without Docker, configure the on-the-fly compilation task (`Ctrl+Shift+B`) to run the local binary in `build/`:
 
 ```json
 {
-  "label": "Compile Prysma (Build)",
+  "label": "Compile Prysma (Native)",
   "type": "shell",
-  "command": "./Prysma",
+  "command": "./build/Prysma",
   "args": ["${file}"],
   "options": {
-    "cwd": "${workspaceFolder}/build"
+    "cwd": "${workspaceFolder}"
   },
   "group": {
     "kind": "build",
@@ -81,34 +72,14 @@ Include this task in your `tasks.json` to enable error checking with `Ctrl+Shift
 }
 ```
 
-This configuration allows VS Code to:
-- Highlight errors and warnings in the editor
-- Quickly navigate to errors
-- Display relevant diagnostic messages
+## 5. Prysma Syntax Highlighting
 
-## 6. Prysma Syntax Highlighting Configuration
-
-### Installing Node.js Prerequisites
-You need to have Node.js installed to generate the syntax highlighting grammar.
+To package and install the local syntax highlighting extension from source:
 
 ```bash
-sudo apt install nodejs npm
+cd .vscode/SyntaxeCouleurPrysma
+npm install
+npx vsce package
 ```
 
-### Compile the TextMate Grammar (prysma.tmLanguage.json)
-Navigate to the directory containing the grammar file and compile it:
-
-```bash
-cd ${workspaceFolder}/.vscode/SyntaxeCouleurPrysma
-npm install -g vsce
-vsce package
-```
-In blue VSCode, right-click on the generated file and click at the bottom on `Install Extension VSIX`
-
-### Apply Highlighting to .p Files
-Once compiled, the Prysma grammar is applied **automatically** to all files with the `.p` extension.
-
-To check that highlighting works:
-1. Open a `.p` file in VS Code
-2. Language elements should appear with colors
-3. If necessary, reload the window: `Ctrl+Shift+P` → "Developer: Reload Window"
+Then install the generated `.vsix` file in VS Code (*Extensions view > `...` menu > Install from VSIX...*).

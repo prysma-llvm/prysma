@@ -1,10 +1,12 @@
-# securing the runner to block garbage commands
+# GitHub Actions Runner Security (Safe Shell)
 
-if someone makes a pr and modifies the ci.yml to try to hack the server, this thing blocks everything right away. basically we replace the default bash with a python script that checks that the commands are exactly the ones we want. if they're not, it blocks.
+This document details the configuration of a restricted execution shell (`prysma-safe-shell`) on the Debian 12 continuous integration server. This security mechanism prevents unauthorized command execution during GitHub Actions workflows triggered by external contributions (Pull Requests).
 
-## 1. the python security script
+The safe shell replaces the default runner shell with a Python script that validates every command against a strict regular expression whitelist. Any command not explicitly permitted is blocked with an exit status of 127.
 
-create the file `/usr/local/bin/prysma-safe-shell` as root and copy this:
+## 1. Command Filtering Script (`prysma-safe-shell`)
+
+Create the file `/usr/local/bin/prysma-safe-shell` with administrative privileges:
 
 ```python
 #!/usr/bin/env python3
@@ -13,11 +15,11 @@ import os
 import subprocess
 import re
 
-# allowed commands, if it's not there it blocks right away
+# Whitelisted command patterns for the CI runner
 ALLOWED_PATTERNS = [
-    r'^cp docker/server/compiler/Dockerfile (\$HOME|.+)/prysma/Dockerfile$',
-    r'^cp docker/server/compiler/entrypoint.sh (\$HOME|.+)/prysma/entrypoint.sh$',
-    r'^docker build -t prysma-compiler docker/server/compiler$',
+    r'^cp docker/compiler/Dockerfile (\$HOME|.+)/prysma/Dockerfile$',
+    r'^cp docker/compiler/entrypoint.sh (\$HOME|.+)/prysma/entrypoint.sh$',
+    r'^docker build --target benchmark -t prysma-compiler -f docker/compiler/Dockerfile \.$',
     r'^docker run --rm --privileged --pid=host -v /var/run/docker\.sock:/var/run/docker\.sock optiplex-lab-mode enable$',
     r'^docker run --rm --cap-add=SYS_ADMIN --cpuset-cpus="1-3" -v "(\$HOME|.+)/prysma":/prysma -v ".+":/workspace prysma-compiler ".+"$',
     r'^python3 tests/save_perf_results\.py$',
@@ -38,14 +40,14 @@ def main():
             cmd_to_run = sys.argv[idx+1].strip()
             if cmd_to_run.startswith('echo') or cmd_to_run == 'locale':
                 return subprocess.run(['/bin/bash'] + sys.argv[1:]).returncode
-            print(f"block command: {cmd_to_run}", file=sys.stderr)
+            print(f"Blocked unauthorized command: {cmd_to_run}", file=sys.stderr)
             return 127
         return subprocess.run(['/bin/bash'] + sys.argv[1:]).returncode
 
     with open(script_path, 'r') as f:
         content = f.read().strip()
 
-    # Combine backslash line continuations
+    # Reconstruct lines with backslash continuations
     raw_lines = content.splitlines()
     lines = []
     current_line = ""
@@ -69,7 +71,7 @@ def main():
                 matched = True
                 break
         if not matched:
-            print(f"block command: {line}", file=sys.stderr)
+            print(f"Blocked unauthorized command: {line}", file=sys.stderr)
             return 127
 
     return subprocess.run(['/bin/bash'] + sys.argv[1:]).returncode
@@ -78,85 +80,60 @@ if __name__ == '__main__':
     sys.exit(main())
 ```
 
-## 2. configure the server
+## 2. Host Server Configuration
 
-Run these steps on the server (as `root` or with `sudo` from your administrator account):
+Execute the following steps on the host server with `sudo` privileges:
 
-### A. Dedicated User Creation
+### A. Dedicated User Account Creation
 ```bash
-# 1. Create the isolated user (no password)
+# Create a system user without password login
 sudo adduser --disabled-password --gecos "" actions-runner
 
-# 2. Add them to the docker group to allow them to launch test containers
+# Grant Docker group access to run test containers
 sudo usermod -aG docker actions-runner
 ```
 
-### B. Safe Shell Configuration
+### B. Safe Shell Registration
 ```bash
-# 1. Make the script executable
+# Make the script executable
 sudo chmod +x /usr/local/bin/prysma-safe-shell
 
-# 2. Register the script in the list of authorized system shells
+# Register the script in the valid system shells list
 sudo sh -c 'echo "/usr/local/bin/prysma-safe-shell" >> /etc/shells'
 
-# 3. Set the safe-shell as the default shell for the user
+# Assign the safe shell as default for actions-runner
 sudo chsh -s /usr/local/bin/prysma-safe-shell actions-runner
 ```
 
-### C. Deployment and Access Rights
-If the runner has already been installed in another directory (for example `/home/zyph/actions-runner`), move it to the dedicated user's home folder to avoid access rights errors to the parent directory (`CHDIR permission denied`):
+### C. Runner Service Deployment
 ```bash
-# 1. Go to the old folder and uninstall the existing service
-cd /home/zyph/actions-runner
-sudo ./svc.sh stop || true
-sudo ./svc.sh uninstall || true
-
-# 2. Move the folder to its new home
+# Move the runner to the dedicated user directory
 sudo mv /home/zyph/actions-runner /home/actions-runner/
-
-# 3. Assign file ownership to the actions-runner user
 sudo chown -R actions-runner:actions-runner /home/actions-runner/actions-runner
-```
 
-### D. Service Registration
-```bash
-# 1. Go to the new folder
+# Install and start the systemd service under the actions-runner account
 cd /home/actions-runner/actions-runner
-
-# 2. Install the systemd service so it runs under the secured user
 sudo ./svc.sh install actions-runner
-
-# 3. Start the service
 sudo ./svc.sh start
 ```
 
-### E. Dashboard Database Access (SQLite)
-To allow the isolated `actions-runner` user to record performance test results in the dashboard's SQLite database (located in the main user's folder `/home/zyph/dashboard-prysma/`), configure access rights via ACLs:
+### D. Database Access Permissions (ACLs)
+Grant the `actions-runner` account access to write metrics into the dashboard SQLite database without elevating system privileges:
+
 ```bash
-# 1. Install the acl package on the server
-sudo apt-get install acl -y
-
-# 2. Allow actions-runner to traverse the /home/zyph home directory
+sudo apt-get install -y acl
 sudo setfacl -m u:actions-runner:x /home/zyph
-
-# 3. Grant full read/write permissions on the dashboard folder and its files
 sudo setfacl -R -m u:actions-runner:rwx /home/zyph/dashboard-prysma
 sudo setfacl -R -d -m u:actions-runner:rwx /home/zyph/dashboard-prysma
 ```
 
-## 3. security test
+## 3. Filtering Validation
 
-if in the ci.yml there's a suspicious command like this:
-
-```yaml
-run: cat /etc/passwd && rm -rf /home/zyph/dashboard-prysma
-```
-
-it will block right away and crash the git step with this:
+When an instruction outside the whitelist is executed within the CI workflow, the runner intercepts the execution:
 
 ```text
-block command: cat /etc/passwd && rm -rf /home/zyph/dashboard-prysma
+Blocked unauthorized command: cat /etc/passwd && rm -rf /home/zyph/dashboard-prysma
 Error: Process completed with exit code 127.
 ```
 
-same thing, impossible to launch another suspicious script (like `sh /tmp/test.sh`), everything is blocked.
+The GitHub Actions job terminates immediately with exit code 127, preserving host security.

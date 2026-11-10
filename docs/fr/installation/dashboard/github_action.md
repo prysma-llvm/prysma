@@ -23,11 +23,11 @@ jobs:
 
       - name: Copie des fichiers de construction sur l'hôte
         run: |
-          cp docker/server/compiler/Dockerfile $HOME/prysma/Dockerfile
-          cp docker/server/compiler/entrypoint.sh $HOME/prysma/entrypoint.sh
+          cp docker/compiler/Dockerfile $HOME/prysma/Dockerfile
+          cp docker/compiler/entrypoint.sh $HOME/prysma/entrypoint.sh
 
       - name: Construction de l'image éphémère
-        run: docker build -t prysma-compiler docker/server/compiler
+        run: docker build --target benchmark -t prysma-compiler -f docker/compiler/Dockerfile .
 
       - name: Activation du Mode Laboratoire
         run: |

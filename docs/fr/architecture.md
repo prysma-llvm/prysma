@@ -1,229 +1,108 @@
-# Architecture - Compiler Prysma
+# Architecture du Compilateur Prysma
 
 ## Vue d'ensemble
 
-Prysma est un compiler pour un langage Turing-complet générant du code intermédiaire LLVM 18. L'architecture suit une structure modulaire en trois phases : analyse lexicale (Lexer), construction de l'Tree Syntaxique Abstrait (AST), et génération de code LLVM via le pattern Visitor.
+Prysma est un compilateur système ciblant l'infrastructure LLVM 18. Son architecture est découpée en phases indépendantes : analyse lexicale par tables de correspondance précalculées à la compilation, analyse syntaxique descendante récursive, validation sémantique et résolution de symboles en deux passes, puis émission de code intermédiaire LLVM IR en forme SSA (Single Static Assignment).
 
-## Schéma général du project
+## Schéma d'exécution du compilateur
 
 ```
-Code Source Prysma (.prysma)
-         ↓
-    [Lexer] - Tokenization (O(n))
-         ↓
-  Vecteur de Tokens
-         ↓
- [BuilderTreeInstruction] - Descente Récursive (O(t))
-         ↓
- [BuilderTreeEquation] - Récursion Mutuelle (O(k·e²))
-         ↓
-   Tree Syntaxique (AST)
-         ↓
-  [GeneralVisitorGenCode] - Patron Visitor
-         ↓
-   Code LLVM IR (.ll)
-         ↓
- [LLVM Backend] - Optimisation & Compilation
-         ↓
- Code Machine Exécutable
+Fichier Source Prysma (.p)
+           ↓
+     [FileReading] - Chargement du tampon mémoire
+           ↓
+  [Lexer::tokenize] - Tables LUT compile-time + SWAR (O(n))
+           ↓
+    Vecteur de Tokens
+           ↓
+[BuilderTreeInstruction::build] - Descente récursive (Passe 1)
+           ↓
+  [BuilderTreeEquation] - Résolution d'expressions
+           ↓
+   Arbre Syntaxique Abstrait (AST alloué en arène BumpPtr)
+           ↓
+[FillingVisitorRegistry & FillingVisitorBodyClass] - Inspection des déclarations
+           ↓
+[BuilderEnvironmentRegistryFunction & Variable] - Tables de symboles (Passe 2)
+           ↓
+  [GeneralVisitorGenCode] - Émission LLVM IR (.ll)
+           ↓
+ [LLVM Backend / LLD] - Optimisations & Génération binaire machine
+           ↓
+    Binaire Exécutable Natif
 ```
 
-## Flux d'Exécution Frontend : Génération de l'AST
+## Frontend et Pipeline de Compilation
 
-### Composants et Interactions
+### 1. Lecture de fichier (`FileReading`)
 
-1. **Main** : Contrôleur central orchestrant le flux séquentiel sans exécuter de logique d'analyse.
+Le composant `FileReading` extrait le contenu brut du fichier source `.p` à partir de son chemin absolu ou relatif résolu et charge le tampon textuel en mémoire.
 
-2. **LecteurFileText** : Extrait le code brut du fichier source et returnne une `std::string`.
+### 2. Analyse lexicale (`Lexer::tokenize`)
 
-3. **Lexer** : Analyse le texte et génère un vecteur de tokens (analyse lexicale).
-   - Classifie les mots-clés via table de hachage `O(1) amorti`
-   - Traite les opérateurs via switch en `O(1)`
-   - Parcourt caractère par caractère en `O(n)` où n = nombre de caractères
+La méthode `Lexer::tokenize(const std::string& sourceCode)` convertit le flux de caractères en un vecteur de structures `Token` :
 
-4. **BuilderTreeInstruction** : Builder central piloté par descente récursive.
-   - Délègue à des parsers spécialisés via `RegistryInstruction`
-   - Chaque token consommé une seule fois → `O(t)` où t = nombre de tokens
+* **Classification des caractères (LUT 256 octets) :** Une table précalculée à la compilation (`cclut_array`), générée par métaprogrammation avec `std::index_sequence` (`make_cclut`), classifie chaque octet ASCII (`CharClass`) en $O(1)$ sans saut de branchement conditionnel.
+* **Chargement mémoire rapide (SWAR) :** Des fonctions de lecture directes (`ld16`, `ld32`, `ld64`) lisent des blocs de 2, 4 ou 8 octets directement dans les registres du processeur via `std::memcpy`.
+* **Encodage compile-time des mots-clés (`to_kw`) :** La fonction `constexpr Lexer::to_kw()` transforme jusqu'à 8 caractères ASCII en un entier 64 bits en Little Endian (`val |= (c << (8 * i))`).
+* **Résolution des mots-clés sans table de hachage :** `Lexer::resolveKeyword` effectue un `switch(word.size())` sur la longueur du token et compare directement l'entier 64 bits en un cycle processeur.
+* **Résolution d'opérateurs unaires (`unary_lut`) :** Une table booléenne compile-time de 128 entrées détermine en $O(1)$ si un opérateur (`+`, `-`) se situe dans un contexte unaire ou binaire selon la nature du token précédent, éliminant les défauts de prédiction de branchement (*branch mispredictions*).
+* **Pré-allocation mémoire :** Le vecteur de tokens pré-alloue sa mémoire via `tokens.reserve((sourceCode.size() / 3) + 4)` pour limiter les réallocations dynamiques sur le tas.
+* **Fin de fichier déterministe :** Un token terminal `TOKEN_EOF` est systématiquement inséré en fin de flux.
 
-5. **BuilderTreeEquation** : Résout les expressions mathématiques récursivement.
-   - Utilise `ChainOfResponsibility` pour identifier l'opérateur de plus faible priorité
-   - Divise l'expression gauche/droite et applique la récursion
-   - Complexité pire cas : `O(k·e²)` où k = niveaux de priorité (13), e = tokens expression
+### 3. Construction de l'Arbre Syntaxique Abstrait (AST)
 
-6. **INode** : Représente la logique de l'AST.
-   - Interfaces souches : `INode`, `IInstruction`, `IExpression`
-   - Construction par récursivité, chaque nœud instanciant ses childs selon la grammaire Prysma
+La méthode `BuilderTreeInstruction::build(std::vector<Token>& tokens)` analyse la structure séquentielle du programme :
 
-### Contrainte Architecturale
+* **Descente récursive :** Chaque instruction consomme ses tokens et délègue l'instanciation des nœuds aux analyseurs spécialisés enregistrés dans `RegistryInstruction` (`ParserVariable`, `ParserIf`, `ParserWhile`, `ParserClass`, etc.).
+* **Expressions et priorité (`BuilderTreeEquation`) :** La résolution des expressions arithmétiques et logiques s'appuie sur une chaîne de priorité (`ChainOfResponsibility`) qui localise l'opérateur de plus faible priorité pour découper l'expression en sous-arbres gauche et droit.
 
-L'AST généré est renvoyé au Main **uniquement s'il est complet**. Cette isolation stricte applique le principe de **Fail-Fast** :
-- Erreur détectée par Lexer ou BuilderTreeInstruction → compilation arrêtée immédiatement
-- Prévient la corruption mémoire
-- Garantit que LLVM reçoit un tree syntaxique 100% valide
+### 4. Pipeline en Deux Passes (`UnitCompilation`)
 
-## Description Détaillée de l'Algorithme
+La compilation de chaque unité de traduction est orchestrée en deux passes explicites afin de résoudre les dépendances circulaires et l'ordre arbitraire de déclaration des fonctions et classes :
 
-### Étape 1 : Analyse Lexicale (Lexer::tokenizer)
-```cpp
-Lexer::tokenizer(const std::string& source) → std::vector<Token>
-```
-- Parcourt le fichier caractère par caractère
-- Sépare mot par mot en attribuant un identifiant unique à chaque token
-- Supprime les éléments superflus (espaces, caractères invalides)
-- Résultat : vecteur de tokens avec identifiants et valeurs string
+#### Passe 1 (`UnitCompilation::pass1`)
+1. Résolution du chemin absolu et construction d'un nom d'unité unique (`<dossier_parent>_<nom_fichier>`).
+2. Tokenisation du code source via `Lexer::tokenize`.
+3. Construction de l'AST via `builderTreeInstruction->build(tokens)`.
+4. Visite de l'arbre par `FillingVisitorRegistry` pour enregistrer les signatures globales de fonctions dans `RegistryFunctionGlobal`.
+5. Visite de l'arbre par `FillingVisitorBodyClass` pour inspecter les définitions de classes, leurs attributs et leurs méthodes.
 
-### Étape 2 : Construction de l'Tree d'Instructions
-```cpp
-BuilderTreeInstruction::construire(
-    std::vector<Token>& tokens, int& index
-) → INode
-```
-- Parcourt le vecteur de tokens avec algorithme de descente récursive
-- Pour chaque token, récupère le parser spécifique via `RegistryInstruction`
-- Délègue la parsing au parser trouvé (ex: ParserVariable, ParserSi, ParserWhile)
-- Permet la récursivité en passant le builder actuel au parser
-- Résultat : tree d'instructions complet
+#### Passe 2 (`UnitCompilation::pass2`)
+1. Instanciation et remplissage des environnements locaux de variables et de fonctions via `BuilderEnvironmentRegistryFunction` et `BuilderEnvironmentRegistryVariable`.
+2. Parcours de l'AST par `GeneralVisitorGenCode` pour traduire les nœuds en instructions LLVM IR conformes au modèle SSA.
+3. Export optionnel de l'arbre au format DOT / SVG via `GeneralVisitorGraphViz` si l'option `--graphviz` est activée.
+4. Écriture du module LLVM résultant (`.ll`) sur le disque via `LlvmSerializer`.
 
-### Étape 3 : Construction de l'Tree d'Équations Récursif
-```cpp
-BuilderTreeEquation::construire(std::vector<Token>& equation) → INode
-```
+## Gestion de la Mémoire Interne
 
-**Pseudo-code :**
-```
-function construire(equation : Vecteur<Token>) → INode
-    // Nettoyer les parenthèses englobantes
-    equation ← enleverParenthesesEnglobantes(equation)
-    
-    // Cas de base : aucun opérateur trouvé = valeur numérique
-    indice ← chaineResponsabilite.trouverOperateur(equation)
-    si indice == -1
-        returnner creerNodeValeur(convertirEnFloat(equation[0]))
-    fin si
-    
-    // Cas récursif : diviser et conquérir
-    operateur ← registrySymbole.recupererNode(equation[indice])
-    gauche ← equation[0..indice-1]
-    droite ← equation[indice+1..fin]
-    
-    // Calls récursifs
-    sousTreeGauche ← construire(gauche)
-    sousTreeDroite ← construire(droite)
-    
-    // Lier les sous-trees
-    operateur.ajouter(sousTreeGauche, sousTreeDroite)
-    returnner operateur
-fin function
-```
+### Allocateur d'Arène (`llvm::BumpPtrAllocator`)
 
-### Étape 4 : Génération du Code LLVM via Patron Visitor
-- Utilise l'interface `IVisitor` implémentée par `GeneralVisitorGenCode`
-- Parcourt l'AST en depth `O(n)` où n = nombre de nœuds
-- Chaque nœud callle `accept(this)` pour générer son IR LLVM
-- Produit un fichier `.ll` (code intermédiaire LLVM)
+Pour garantir une localité de cache optimale et éliminer la surcharge des allocations individuelles :
 
-### Étape 5 : Backend LLVM
-- Optimise le code IR
-- Génère l'assembleur pour l'architecture cible
-- Produit l'exécutable final
+* Les nœuds AST (`INode*`) sont alloués directement au sein d'une arène contiguë (`llvm::BumpPtrAllocator`).
+* L'allocation se résume à l'incrémentation d'un pointeur de sommet (*bump pointer*), avec une complexité en $O(1)$.
+* Les pointeurs intelligents (`std::shared_ptr`) sont exclus du parcours critique de l'AST.
+* La mémoire complète de l'AST d'une unité de traduction est libérée en bloc à la destruction du contexte de compilation, prévenant toute fuite mémoire sans coût de parcours récursif de désallocation.
 
-## Patrons de Conception
+## Compilation Multi-Fichiers et Concurrence
 
-### 1. Composite + Interpréteur (Structure AST)
-**Interfaces souches :** `INode`, `IExpression`, `IInstruction`  
-**Bénéfice :** Manipulation transparente de la grammaire Turing-complète, validation syntaxique stricte avant compilation.
+La compilation de projets multi-fichiers est coordonnée par `OrchestratorInclude` :
 
-### 2. Visitor (Visitor Pattern)
-**Implémentations :** `GeneralVisitorGenCode` (LLVM IR), `GeneralVisitorGraphViz` (débogage)  
-**Bénéfice :** Sépare l'AST de la logique de génération, permet multiples représentations sans altérer les nœuds.
+* **Pool de threads (`llvm::ThreadPool`) :** Parallélisation native de la Passe 1 puis de la Passe 2, bornée aux capacités du processeur pour éviter l'épuisement des ressources système.
+* **Résolution des inclusions (`include`) :** Lorsqu'une directive `include "chemin/fichier.p";` est rencontrée, `OrchestratorInclude::includeFile()` enregistre le chemin résolu.
+* **Prévention des inclusions multiples et cycles :** Un ensemble `std::set<std::string> _alreadyIncludedFiles` protégé par un mutex garantit qu'un même fichier n'est compilé qu'une seule fois.
+* **Gestion des erreurs et Fail-Fast :** Les exceptions `CompilationError` levées dans un thread worker sont capturées, consignées avec le fichier et la ligne fautive, et mettent à jour le témoin atomique `_hasErrors`. Si la Passe 1 échoue sur un fichier quelconque, la Passe 2 est automatiquement annulée.
 
-### 3. Chaîne de Responsabilité (Chain of Responsibility)
-**Classes :** `ChainOfResponsibility`, `ManagerOperateur`  
-**Bénéfice :** Gère automatiquement les 13 niveaux de priorité mathématique, évite les conditions imbriquées.
+## Formats et Sorties du Compilateur
 
-### 4. Stratégie (Strategy Pattern)
-**Interface :** `IStrategieEquation`  
-**Bénéfice :** Délègue l'analyse au vol selon le type de token (identifiant, call function, etc.).
+* **Fichier source :** `.p`
+* **Code intermédiaire :** `.ll` (LLVM IR textuel) stocké dans le répertoire `programme/`
+* **Visualisation graphique optionnelle :** `.dot` et `.svg` stockés dans le répertoire `graphe/`
+* **Binaire exécutable natif :** Généré via Clang / LLD à partir des modules `.ll`.
 
-### 5. Monteur (Builder Pattern)
-**Classes :** `BuilderTreeInstruction`, `BuilderTreeEquation`  
-**Bénéfice :** Centralise l'instanciation des nœuds AST et l'API LLVM, prévient les fuites mémoire.
+## Perspectives d'Évolution Technique
 
-### 6. Façade (Facade Pattern)
-**Classe :** `LlvmBackend`  
-**Bénéfice :** Encapsule la complexité de l'API C++ LLVM derrière des méthodes haut niveau (creerAutoCast, declarerExterne, loadrValeur).
-
-### 7. Object Context (Context Object)
-**Structure :** `ContextGenCode`  
-**Bénéfice :** Encapsule l'état global de compilation (registrys, backend, arène allocation), injecte les dépendances au visitor sans surloadr les signatures, prépare la thread-safety multi-fichier.
-
-## Gestion de la Mémoire
-
-### Arena Allocator (Bump Pointer)
-- Migré des `std::shared_ptr` vers LLVM `BumpPtrAllocator`
-- Conversion vers pointeurs bruts (`INode*`)
-- Avantages :
-  - Mémoire contiguë → optimisation caches L1/L2
-  - Fragmentation réduite
-  - Risque de fuite mémoire limité
-  - Performance : allocation `O(1)` amortie
-
-### Registrys Globaux
-- `RegistryVariable` : stockage des déclarations de variables
-- `RegistryType` : introspection des types
-- `RegistryInstruction` : dispatching des parsers
-- `RegistryFile` : gestion des inclusions (protégé par mutex)
-
-## Optimisations Implémentées
-
-### CMake et Clang
-- Remplace les Makefile obsolètes
-- Intégration de la fonction `glob` pour l'ajout automatique des chemins
-- Meilleure précision des erreurs avec Clang
-
-### Multithreading avec LLVM::ThreadPool
-- Migré de `std::thread` à `llvm::ThreadPool`
-- Limite les threads créés (vs création incontrôlée : 2000 threads pour 2000 fichiers)
-- Séparation en deux passes :
-  - **Passe 1** : Lexer, Parser, remplissage registrys (parallélisé par fichier)
-  - **Passe 2** : Génération LLVM (parallélisée, registrys thread-safe via mutex)
-
-### AddressSanitizer (ASAN)
-- Détection immédiate des fuites mémoire et corruptions au runtime
-- Drapeaux d'allocation pour trace automatique
-
-## Outputs du Compiler
-
-**File source :** `.prysma` (texte)  
-**File intermédiaire :** `.ll` (LLVM IR)  
-**Exécutable :** Sans extension (code machine)  
-**Débogage optionnel :**
-- Dump AST en console
-- Export AST Graphviz (visualisation)
-- Code IR LLVM en console
-
-**Gestion d'erreur :**
-- Messages précis avec numéro de ligne et type d'erreur
-- Compilation arrêtée en cas de syntaxe invalide
-
-## Futures Améliorations
-
-### Optimisations Algorithmiques
-1. **Lexer :** Remplacer logique conditionnelle par DFA (Deterministic Finite Automaton)
-   - Gain estimé : 10-20x plus rapide que parcours linéaire
-
-2. **Construction d'équation :** Remplacer `ChainOfResponsibility` par Pratt Parser
-   - Complexité améliorée : `O(k·e²)` → `O(e)`
-   - Approche utilisée par V8 et Clang
-
-3. **Suppression parenthèses :** Utiliser deux index (début/fin) au lieu de copier le vecteur
-   - Complexité améliorée : `O(e²)` → `O(e)`
-
-4. **Reading fichier :** Utiliser `mmap()` pour mapper le fichier directement
-   - Élimine les allocations dynamiques `std::string`
-   - Approche utilisée par Clang
-
-### Multithreading
-- Implémenter pool de threads borné au nombre de cœurs physiques (`std::thread::hardware_concurrency()`)
-- File de tâches pour dispatcher le travail
-- Approche standard des systèmes comme Ninja et Make -j
+1. **Parseur d'expressions de Pratt :** Remplacement de la chaîne de responsabilité par un analyseur syntaxique de Pratt pour réduire la complexité de résolution d'expressions de $O(k \cdot e^2)$ à $O(e)$.
+2. **Dispatch statique des nœuds AST :** Remplacement progressif du double dispatch virtuel (`accept` / `visit`) par un dispatch statique basé sur les identifiants de nœuds contigus, optimisant la prédiction de branchement lors de l'émission LLVM.
+3. **Internement de chaînes (String Interning Pool) :** Centralisation des identifiants dans une table de chaînes uniques permettant la comparaison par égalité de pointeurs plutôt que par comparaison lexicographique.

@@ -1,143 +1,179 @@
-# Official Documentation of the Prysma Language
+# Prysma Language Specification
 
-## Introduction
+## 1. Principles & General Syntax
 
-Prysma is a compiled system language via LLVM, offering low-level control with a modern syntax. It supports procedural and object-oriented paradigms with deterministic memory management.
+Prysma is a system compiled programming language targeting LLVM 18. It provides explicit memory management without a garbage collector, strict static typing, and native multi-file compilation.
 
------
+* **Statement Termination:** Every statement ends with a semicolon (`;`).
+* **Code Blocks:** Function bodies, classes, and control structures are delimited by curly braces `{ }`.
+* **Case Sensitivity:** Identifiers are strictly case-sensitive.
+* **Comments:** Single-line comments begin with `//`.
 
-## Syntax and Blocks
+## 2. Multi-File Compilation (`include`)
 
-  * **End of Statement:** Each line of code must end with a semicolon (`;`).
-  * **Delimitation:** Code blocks (functions, classes, loops) use curly braces `{ }`.
-  * **Identifiers:** Case-sensitive.
-  * **Please note there is no floating point types currently, nor unsigned types, everything is a signed interger.
------
-
-## Data Types
-
-| Type | Description |
-| :--- | :--- |
-| `int32` | Signed 32-bit integer** |
-| `float` | Floating-point number 32/64 bits |
-| `bool` | Logical value (`true`, `false`) |
-| `string` | Native character string |
-| `void` | Absence of type (function return only) |
-| `T[]` | Array of type `T` (e.g., `int32[]`) |
-
------
-
-## Memory Management
-
-Prysma uses **manual** memory management on the heap.
-
-### Allocation and Release
-
-  * **`new` :** Allocates memory for an object or an array.
-  * **`delete` :** Frees previously allocated memory.
-
-<!-- end list -->
+Module and header inclusions use the native `include` directive:
 
 ```rust
-// Allocating an object
-dec MaClasse instance = new MaClasse(); // 'dec' stands for declaration. 
-
-// Release
-delete instance;
+include "math/geometry.p";
+include "tools/validation.p";
 ```
 
------
+The compiler resolves relative paths relative to the current source file, deduplicates inclusions, and detects circular inclusion dependencies.
 
-## Functions
+## 3. Type System
 
-Declared with `fn` and called via `call`.
+| Type | Size (bits) | LLVM IR Representation | Description |
+| :--- | :--- | :--- | :--- |
+| `int32` | 32 | `i32` | Standard signed 32-bit integer |
+| `int64` | 64 | `i64` | Signed 64-bit integer |
+| `float` | 32 | `float` | Single-precision IEEE 754 floating-point |
+| `bool` | 1 | `i1` | Boolean value (`true`, `false`) |
+| `char` | 8 | `i8` | ASCII character |
+| `string` | Variable | Memory buffer | Text character sequence |
+| `ptr` | 64 | `ptr` | Opaque memory pointer |
+| `void` | 0 | `void` | Unit type (function returns only) |
+| `T[]` | Variable | Contiguous pointer | Array of type `T` elements (e.g. `int32[]`) |
 
-  * **Syntax:** `fn returnType functionName(arg type argName)`
-  * **Call:** `call functionName(arguments)`
-  * A quick tip, it follows this syntex: `fn <type of data> <function name> { <opening brace, insert code here, assuming like rust style ish> <closing brace> }`
-  * The end of a function has no semi-colon (;)
+## 4. Declarations & Assignments
 
-### Recursion (Factorial Correction)
+* **Variable Declaration (`dec`):**
+  ```rust
+  dec int32 counter = 0;
+  dec float pi = 3.14159;
+  dec bool active = true;
+  ```
+* **Assignment (`aff`):**
+  Modifying an existing variable requires the `aff` keyword:
+  ```rust
+  aff counter = counter + 1;
+  ```
+
+## 5. Functions
+
+Functions are declared with the `fn` keyword. Arguments are defined with the `arg` prefix. Function invocation strictly requires the `call` keyword.
+
+### Definition & Invocation
 
 ```rust
-fn int32 factorielle(arg int32 n) {
-    if (n <= 1) {
-        return 1;
-    }
-    dec int32 suivant = n - 1; // 'dec' stands for declaration. 
-    return n * call factorielle(suivant);
+fn int32 computeSum(arg int32 a, arg int32 b) {
+    return a + b;
+}
+
+fn int32 main() {
+    dec int32 total = call computeSum(10, 25);
+    return 0;
 }
 ```
 
------
+### Pass-by-Reference (`ref`) and Dereferencing (`unref`)
 
-## Control Structures
-
-### Conditional `if...else`
+To eliminate buffer copies or provide mutable references:
 
 ```rust
-if (a > b) {
-    // true block
+fn void printMessage(arg string[] text) {
+    call print(ref text);
+}
+```
+
+## 6. Control Structures
+
+### Conditional Branching (`if` / `else`)
+
+```rust
+if (value >= 0) {
+    call handlePositive(value);
 } else {
-    // false block
+    call handleNegative(value);
 }
 ```
 
 ### `while` Loop
 
-The condition is evaluated before each iteration.
-
 ```rust
-dec int32 i = 0; // 'dec' stands for declaration. 
-while (i < 10) {
-    aff i = i + 1;
+dec int32 index = 0;
+while (index < 10) {
+    call display(index);
+    aff index = index + 1;
 }
 ```
 
------
-
-## Operators
-
-| Category | Operators |
-| :--- | :--- |
-| **Arithmetic** | `+`, `-`, `*`, `/`, `%` |
-| **Comparison** | `==`, `!=`, `<`, `>`, `<=`, `>=` |
-| **Logical** | `&&`, `||`, `!` |
-| **Assignment** | `aff variable = value;` |
-| **Reference** | `ref` (access to memory address) |
-
------
-
-## Reference Examples
-
-### Creating and Manipulating a Dynamic Array
+### `for` Loop
 
 ```rust
-fn void test_array() {
-    // Declaration of a 5-integer array on the stack
-    dec int32[5] notes = [10, 15, 20, 12, 18]; // 'dec' stands for declaration. 
-    
-    // Modification
-    aff notes[0] = 20;
-    
-    call print(notes[0]);
+for (dec int32 i = 0; i < limit; aff i = i + 1) {
+    call execute(i);
 }
 ```
 
-### Using a Class and Polymorphism
+### No-Op Statement (`pass`)
+
+The `pass;` statement acts as a no-operation instruction, explicit for empty branches:
 
 ```rust
-fn void main() {
-    // Heap allocation
-    dec Chien mon_chien = new Chien(); // 'dec' stands for declaration. 
-    
-    call mon_chien.set_nom("Rex");
-    call mon_chien.aboyer();
-    
-    delete mon_chien;
+if (condition) {
+    pass;
 }
 ```
 
------
+## 7. Heap Memory Management
 
-**Technical Note:** The Prysma compiler performs a two-pass analysis to resolve symbol dependencies in classes before generating LLVM IR code. Using `ref` is recommended when passing heavy structures or character strings to functions to avoid unnecessary copies.
+Dynamic memory allocation and deallocation are manually controlled:
+
+* **`new`:** Allocates a heap memory block for an object or dynamic array.
+* **`delete`:** Deallocates previously acquired memory blocks.
+
+```rust
+dec ptr instance = new MyClass();
+// Operate on instance
+delete instance;
+```
+
+## 8. Object Model (Classes)
+
+Classes encapsulate attributes and methods within explicit visibility sections:
+
+```rust
+class Entity {
+    private:
+        dec int32 id;
+    public:
+        fn void setId(arg int32 newId) {
+            aff id = newId;
+        }
+        fn int32 getId() {
+            return id;
+        }
+}
+```
+
+### Inheritance
+
+A class may derive from a parent base class:
+
+```rust
+class Player : Entity {
+    private:
+        dec int32 score;
+    public:
+        fn void addScore(arg int32 points) {
+            aff score = score + points;
+        }
+}
+```
+
+Supported visibility labels:
+* `public:` : Members accessible from any context.
+* `private:` : Members confined to the enclosing class (default visibility).
+* `protected:` : Members accessible to the enclosing class and derived classes.
+
+## 9. Operators
+
+| Category | Symbols | Example |
+| :--- | :--- | :--- |
+| **Arithmetic** | `+`, `-`, `*`, `/`, `%` | `a + b * c` |
+| **Comparison** | `==`, `!=`, `<`, `>`, `<=`, `>=` | `if (x != y)` |
+| **Logical** | `&&`, `||`, `!` | `if (valid && !blocked)` |
+| **Assignment** | `aff` | `aff x = 5;` |
+| **Declaration** | `dec` | `dec int32 x = 5;` |
+| **Reference** | `ref` | `call func(ref data);` |
+| **Scope Resolution** | `::` | `Module::method` |

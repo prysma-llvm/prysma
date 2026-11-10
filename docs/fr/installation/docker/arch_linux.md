@@ -24,11 +24,6 @@ Ajoutez votre utilisateur au groupe `docker` afin d'exécuter les commandes sans
 
 ```bash
 sudo usermod -aG docker $USER
-```
-
-Appliquez immédiatement le changement au shell courant sans redémarrer la session :
-
-```bash
 newgrp docker
 ```
 

@@ -1,141 +1,179 @@
-# Documentation officielle du langage Prysma 
+# Spécification du Langage Prysma
 
-## Introduction
+## 1. Principes et Syntaxe Générale
 
-Prysma est un langage système compilé via LLVM, offrant un contrôle de bas niveau avec une syntaxe moderne. Il supporte le paradigme procédural et l'orienté object avec une gestion déterministe de la mémoire.
+Prysma est un langage système compilé ciblant LLVM 18. Il propose une gestion mémoire explicite sans ramasse-miettes, un typage statique strict et une compilation multi-fichiers native.
 
------
+* **Terminaison des instructions :** Chaque instruction se termine par un point-virgule (`;`).
+* **Blocs de code :** Les corps de fonctions, classes et structures de contrôle sont délimités par des accolades `{ }`.
+* **Sensibilité à la casse :** Les identifiants respectent strictement la casse.
+* **Commentaires :** Les commentaires sur une ligne débutent par `//`.
 
-## Syntaxe et blocs
+## 2. Inclusions Multi-Fichiers (`include`)
 
-  * **Fin d'instruction :** Chaque ligne de code doit se terminer par un point-virgule (`;`).
-  * **Délimitation :** Les blocs de code (functions, classes, boucles) utilisent des accolades `{ }`.
-  * **Identifiants :** Sensible à la casse (case-sensitive).
-
------
-
-## Types de données
-
-| Type | Description |
-| :--- | :--- |
-| `int32` | Integer signé 32 bits |
-| `float` | Nombre à virgule flottante 32/64 bits |
-| `bool` | Valeur logique (`true`, `false`) |
-| `string` | Chaîne de caractères native |
-| `void` | Absence de type (return de fonction uniquement) |
-| `T[]` | Array de type `T` (ex: `int32[]`) |
-
------
-
-## Gestion de la mémoire
-
-Prysma utilise une gestion **manuelle** de la mémoire sur le tas (*Heap*).
-
-### Allocation et Libération
-
-  * **`new` :** Alloue de la mémoire pour un object ou un array.
-  * **`delete` :** Libère la mémoire précédemment allouée.
-
-<!-- end list -->
+L'inclusion de modules et de bibliothèques utilise la directive native `include` :
 
 ```rust
-// Allocation d'un object
-dec MaClasse instance = new MaClasse();
+include "math/geometrie.p";
+include "outils/validation.p";
+```
 
-// Libération
+Le compilateur résout les chemins relatifs par rapport au fichier courant, déduplique les inclusions et prévient les dépendances cycliques.
+
+## 3. Système de Types
+
+| Type | Taille (bits) | Représentation LLVM IR | Description |
+| :--- | :--- | :--- | :--- |
+| `int32` | 32 | `i32` | Entier signé standard |
+| `int64` | 64 | `i64` | Entier signé 64 bits |
+| `float` | 32 | `float` | Nombre à virgule flottante IEEE 754 |
+| `bool` | 1 | `i1` | Valeur booléenne (`true`, `false`) |
+| `char` | 8 | `i8` | Caractère ASCII |
+| `string` | Variable | Tampon mémoire | Chaîne de caractères textuelle |
+| `ptr` | 64 | `ptr` | Pointeur mémoire opaque |
+| `void` | 0 | `void` | Absence de type (retour de fonction) |
+| `T[]` | Variable | Pointeur contigu | Tableau d'éléments de type `T` (ex. `int32[]`) |
+
+## 4. Déclarations et Affectations
+
+* **Déclaration de variable (`dec`) :**
+  ```rust
+  dec int32 compteur = 0;
+  dec float pi = 3.14159;
+  dec bool actif = true;
+  ```
+* **Affectation (`aff`) :**
+  Toute modification d'une variable existante requiert le mot-clé `aff` :
+  ```rust
+  aff compteur = compteur + 1;
+  ```
+
+## 5. Fonctions
+
+Les fonctions sont définies avec le mot-clé `fn`. Le passage d'arguments utilise le préfixe `arg`. L'appel de fonction s'effectue obligatoirement avec le mot-clé `call`.
+
+### Définition et appel
+
+```rust
+fn int32 calculerSomme(arg int32 a, arg int32 b) {
+    return a + b;
+}
+
+fn int32 main() {
+    dec int32 resultat = call calculerSomme(10, 25);
+    return 0;
+}
+```
+
+### Passage par référence (`ref`) et déréférencement (`unref`)
+
+Pour éviter les copies de mémoire ou transmettre un tampon modifiable :
+
+```rust
+fn void afficherMessage(arg string[] texte) {
+    call print(ref texte);
+}
+```
+
+## 6. Structures de Contrôle
+
+### Branchement conditionnel (`if` / `else`)
+
+```rust
+if (valeur >= 0) {
+    call traiterPositif(valeur);
+} else {
+    call traiterNegatif(valeur);
+}
+```
+
+### Boucle `while`
+
+```rust
+dec int32 index = 0;
+while (index < 10) {
+    call afficher(index);
+    aff index = index + 1;
+}
+```
+
+### Boucle `for`
+
+```rust
+for (dec int32 i = 0; i < limite; aff i = i + 1) {
+    call executer(i);
+}
+```
+
+### Instruction neutre (`pass`)
+
+L'instruction `pass;` agit comme une opération sans effet (no-op), utile pour expliciter un bloc vide :
+
+```rust
+if (condition) {
+    pass;
+}
+```
+
+## 7. Gestion de la Mémoire (Tas)
+
+L'allocation et la libération dynamique sur le tas sont sous le contrôle direct du développeur :
+
+* **`new` :** Alloue un bloc mémoire pour un objet ou un tableau dynamique.
+* **`delete` :** Libère immédiatement l'espace mémoire alloué.
+
+```rust
+dec ptr instance = new MaClasse();
+// Utilisation de l'instance
 delete instance;
 ```
 
------
+## 8. Modèle Objet (Classes)
 
-## Functions
-
-Déclarées avec `fn` et callées via `call`.
-
-  * **Syntaxe :** `fn typeReturn nom(arg type nomArg)`
-  * **Call :** `call nomFunction(arguments)`
-
-### Récursivité (Correction Factorielle)
+Les classes encapsulent des attributs et des méthodes avec des sections d'accès explicites :
 
 ```rust
-fn int32 factorielle(arg int32 n) {
-    if (n <= 1) {
-        return 1;
-    }
-    dec int32 suivant = n - 1;
-    return n * call factorielle(suivant);
+class Entite {
+    private:
+        dec int32 id;
+    public:
+        fn void setId(arg int32 nouvelId) {
+            aff id = nouvelId;
+        }
+        fn int32 getId() {
+            return id;
+        }
 }
 ```
 
------
+### Héritage
 
-## Structures de contrôle
-
-### Conditionnelle `if...else`
+Une classe peut dériver d'une classe parente :
 
 ```rust
-if (a > b) {
-    // bloc vrai
-} else {
-    // bloc faux
+class Joueur : Entite {
+    private:
+        dec int32 score;
+    public:
+        fn void ajouterScore(arg int32 points) {
+            aff score = score + points;
+        }
 }
 ```
 
-### Loop `while`
+Les sections d'accès supportées sont :
+* `public:` : Membres accessibles depuis l'extérieur de la classe.
+* `private:` : Membres restreints à la classe courante (visibilité par défaut).
+* `protected:` : Membres accessibles à la classe courante et à ses classes dérivées.
 
-La condition est évaluée avant chaque itération.
+## 9. Opérateurs
 
-```rust
-dec int32 i = 0;
-while (i < 10) {
-    aff i = i + 1;
-}
-```
-
------
-
-## Opérateurs
-
-| Catégorie | Opérateurs |
-| :--- | :--- |
-| **Arithmétique** | `+`, `-`, `*`, `/`, `%` |
-| **Comparison** | `==`, `!=`, `<`, `>`, `<=`, `>=` |
-| **Logique** | `&&`, `||`, `!` |
-| **Assignation** | `aff variable = valeur;` |
-| **Référence** | `ref` (accès à l'adresse mémoire) |
-
------
-
-## Exemples de référence
-
-### Création et manipulation d'un array dynamique
-
-```rust
-fn void test_array() {
-    // Déclaration d'un array de 5 entiers sur la pile
-    dec int32[5] notes = [10, 15, 20, 12, 18];
-    
-    // Modification
-    aff notes[0] = 20;
-    
-    call print(notes[0]);
-}
-```
-
-### Utilisation d'une classe et polymorphisme
-
-```rust
-fn void main() {
-    // Allocation sur le tas
-    dec Chien mon_chien = new Chien();
-    
-    call mon_chien.set_nom("Rex");
-    call mon_chien.aboyer();
-    
-    delete mon_chien;
-}
-```
-
------
-
-**Note technique :** Le compiler Prysma effectue une analyse en deux passes pour résoudre les dépendances de symboles dans les classes avant la génération du code LLVM IR. L'utilisation de `ref` est recommandée lors du passage de structures lourdes ou de chaînes de caractères aux functions pour éviter les copies inutiles.
+| Famille | Symboles | Exemple |
+| :--- | :--- | :--- |
+| **Arithmétique** | `+`, `-`, `*`, `/`, `%` | `a + b * c` |
+| **Comparaison** | `==`, `!=`, `<`, `>`, `<=`, `>=` | `if (x != y)` |
+| **Logique** | `&&`, `||`, `!` | `if (valide && !bloque)` |
+| **Affectation** | `aff` | `aff x = 5;` |
+| **Déclaration** | `dec` | `dec int32 x = 5;` |
+| **Passage adresse** | `ref` | `call fonction(ref donnee);` |
+| **Résolution de portée** | `::` | `Module::methode` |

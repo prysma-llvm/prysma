@@ -2,13 +2,13 @@
 
 Ce document décrit l'architecture de compilation de Prysma ainsi que les commandes pour construire les images Docker, compiler le projet et travailler en mode interactif.
 
-## 1. Pourquoi une architecture de centralisation ?
+## 1. Architecture de centralisation
 
 Prysma est un compilateur système qui s'appuie sur une chaîne d'outils (toolchain) complète :
 
 * **LLVM 18** et ses bibliothèques de développement (`llvm-18`, `llvm-18-dev`, `libclang-rt-18-dev`)
 * Compilateur **Clang 18** et éditeur de liens **LLD 18**
-* **C++17**, **CMake** et **ccache** pour l'accélération des compilations incrémentales
+* **C++23**, **CMake** et **ccache** pour l'accélération des compilations incrémentales
 * Outils d'analyse et d'introspection : **Bear** (génération de `compile_commands.json`) et **Graphviz**
 * Débogage natif : **GDB**, **LLDB-18** et **debugpy** pour l'outillage Python
 * Environnement virtuel Python 3 dédié avec les dépendances du compilateur
@@ -36,12 +36,10 @@ Consultez le guide correspondant à votre système pour installer et activer le 
 Le Dockerfile est structuré en multi-stage build afin de produire des cibles adaptées à chaque usage :
 
 ```bash
-cd ~/prysma
-
 # Image de développement & débogage (gdb, lldb-18, bear, graphviz, python venv)
 docker build --target debug -t prysma-debug -f docker/compiler/Dockerfile .
 
-# Image légère pour le serveur de benchmarks (linux perf tools)
+# Image pour le serveur de benchmarks (linux perf tools)
 docker build --target benchmark -t prysma-benchmark -f docker/compiler/Dockerfile .
 ```
 
@@ -55,9 +53,9 @@ La compilation à l'intérieur du conteneur est orchestrée par deux wrappers Py
 * **Génération de code automatisée en amont** : Avant d'invoquer la compilation C++, le script exécute les générateurs du compilateur (`GeneratorAST`, `GeneratorInterfaceVisitor`, `GeneratorVisitorBaseGeneral`, `GeneratorGraphViz`, `GeneratorExpression`, `GeneratorParser`) pour produire automatiquement les classes AST, les visiteurs et la grammaire.
 * **Configuration dynamique** : Il configure `ccache` (taille max de 10 Go), détecte le nombre de cœurs CPU disponibles (`--parallel`), et injecte les drapeaux de compilation adaptés.
 
-### Les deux modes de compilation
-* **`build.py` (Mode Release)** : Conçu pour les performances maximales. Injecte `-O3`, `-march=native`, `-ffast-math`, `-fomit-frame-pointer`, `-flto`, et utilise l'éditeur de liens rapide `-fuse-ld=lld` avec élimination des sections mortes (`--gc-sections`).
-* **`debug.py` (Mode Debug & Analyse)** : Conçu pour le développement et la traçabilité. Injecte `-g3`, `-O0`, `-fno-omit-frame-pointer`, `-fstack-protector-all`, les warnings stricts, ainsi que les détecteurs de bugs mémoire **AddressSanitizer** (`-fsanitize=address`) et **UndefinedBehaviorSanitizer** (`-fsanitize=undefined`) appliqués à la fois à la compilation et au lien.
+### Modes de compilation
+* **`build.py` (Mode Release)** : Compile avec les optimisations `-O3`, `-march=native`, `-ffast-math`, `-fomit-frame-pointer`, `-flto`, et l'éditeur de liens `-fuse-ld=lld` avec élimination des sections mortes (`--gc-sections`).
+* **`debug.py` (Mode Debug)** : Compile avec `-g3`, `-O0`, `-fno-omit-frame-pointer`, `-fstack-protector-all`, les avertissements stricts, ainsi que les détecteurs de corruption mémoire **AddressSanitizer** (`-fsanitize=address`) et **UndefinedBehaviorSanitizer** (`-fsanitize=undefined`).
 
 ## 5. Commandes de compilation directes depuis l'hôte
 
@@ -123,10 +121,8 @@ docker exec -it <nom_ou_id_du_conteneur> /bin/bash
 Pour exécuter la suite de tests de performance sur une branche Git avec l'ensemble des cœurs CPU :
 
 ```bash
-cd ~/prysma
-
 docker run --rm --cap-add=SYS_ADMIN \
-  -v "$HOME/prysma":/prysma \
+  -v "/tmp/prysma-bench":/prysma \
   -v "$(pwd)":/workspace \
   prysma-benchmark <nom_de_la_branche>
 ```

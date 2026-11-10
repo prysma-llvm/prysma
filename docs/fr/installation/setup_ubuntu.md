@@ -1,61 +1,52 @@
-# NOTE : Des explications de configuration sont spécifique à la version bleu de VsCode 
+# Installation Native sur Ubuntu (Alternative Hors Conteneur)
 
-## 1. Prérequis système
+> **Important :** Ce guide documente l'installation manuelle directe sur l'hôte Ubuntu. La méthode officielle et recommandée de compilation de Prysma repose sur l'architecture Docker centralisée : voir le [Guide de compilation Docker](docker_compilation.md) et le [Guide de l'environnement VS Code](vscode_environment.md).
 
-### Installation de LLVM
-```bash
-sudo apt install llvm-dev llvm
-```
+## 1. Prérequis Système
 
-### Installation de Bear (pour la génération de compile_commands.json)
-```bash
-sudo apt-get update && sudo apt-get install -y bear
-```
-
-### Installation de Graphviz (pour la visualisation des graphes)
-```bash
-sudo apt install graphviz
-```
-
-## Installation du lld pour la compilation final
+Installez la chaîne d'outils LLVM 18, le compilateur Clang, l'éditeur de liens LLD et les dépendances d'analyse :
 
 ```bash
-sudo apt install lld
+sudo apt update
+sudo apt install -y llvm-18 llvm-18-dev clang-18 lld-18 bear graphviz cmake ninja-build ccache python3 python3-venv
 ```
 
-## 2. Environnement virtuel Python
+## 2. Environnement Virtuel Python
+
+Configurez l'environnement virtuel pour exécuter les générateurs de code internes du compilateur :
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-## 3. Prérequis Python
-Assurez-vous d'avoir Python 3 installé, ainsi que les dépendances nécessaires pour le project
+## 3. Compilation du Projet
+
+Pour compiler le projet en mode débogage avec AddressSanitizer :
 
 ```bash
-uv pip install -r requirements.txt
+python3 debug.py
 ```
 
-## 4. Configuration du project
+Pour compiler le projet en mode optimisé :
 
-### Compilation du project 
- ```bash
- python3 debug.py
- ```
- 
-## 5. Configuration de VS Code (tasks.json)
+```bash
+python3 build.py
+```
 
-Incluez cette tâche dans votre `tasks.json` pour activer la vérification des erreurs lors de `Ctrl+Shift+B` :
+## 4. Configuration de VS Code (`tasks.json`)
+
+Si vous développez hors Docker, la tâche de compilation à la volée (`Ctrl+Shift+B`) invoque directement le binaire compilé dans `build/` :
 
 ```json
 {
-  "label": "Compiler Prysma (Build)",
+  "label": "Compiler Prysma (Natif)",
   "type": "shell",
-  "command": "./Prysma",
+  "command": "./build/Prysma",
   "args": ["${file}"],
   "options": {
-    "cwd": "${workspaceFolder}/build"
+    "cwd": "${workspaceFolder}"
   },
   "group": {
     "kind": "build",
@@ -81,34 +72,14 @@ Incluez cette tâche dans votre `tasks.json` pour activer la vérification des e
 }
 ```
 
-Cette configuration permet à VS Code de :
-- Souligner les erreurs et avertissements dans l'éditeur
-- Naviguer rapidement vers les errors
-- Afficher les messages diagnostiques pertinents
+## 5. Coloration Syntaxique Prysma
 
-## 6. Configuration de la coloration syntaxique Prysma
-
-### Installation des prérequis Node.js
-Vous devez avoir Node.js installé pour générer la grammaire de coloration syntaxique.
+Pour installer l'extension de coloration syntaxique locale depuis les sources :
 
 ```bash
-sudo apt install nodejs npm
+cd .vscode/SyntaxeCouleurPrysma
+npm install
+npx vsce package
 ```
 
-### Compiler la grammaire TextMate (prysma.tmLanguage.json)
-Naviguez vers le répertoire contenant le fichier de grammaire et compilez-le :
-
-```bash
-cd ${workspaceFolder}/.vscode/SyntaxeCouleurPrysma
-npm install -g vsce
-vsce package
-```
-Dans vscode bleu click droit sur le fichier généré clicker en bas sur `Install Extension VSIX`
-
-### Appliquer la coloration aux fichiers .p
-Une fois compilée, la grammaire Prysma s'applique **automatiquement** à tous les fichiers avec l'extension `.p`.
-
-Pour vérifier que la coloration functionne :
-1. Ouvrez un fichier `.p` dans VS Code
-2. Les éléments du langage devraient s'afficher avec des couleurs
-3. Si nécessaire, reloadz la fenêtre : `Ctrl+Shift+P` → "Developer: Reload Window"
+Puis installez le fichier `.vsix` généré via VS Code (*Extensions > menu `...` > Installer depuis le fichier VSIX...*).

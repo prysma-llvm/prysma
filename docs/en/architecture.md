@@ -1,229 +1,108 @@
-# Architecture - Prysma Compiler
+# Prysma Compiler Architecture
 
 ## Overview
 
-Prysma is a compiler for a Turing-complete language that generates LLVM 18 intermediate code. The architecture follows a modular three-phase structure: lexical analysis (Lexer), Abstract Syntax Tree (AST) construction, and LLVM code generation via the Visitor pattern.
+Prysma is a system compiler targeting the LLVM 18 infrastructure. Its architecture is divided into decoupled stages: lexical analysis driven by compile-time precomputed lookup tables, recursive descent syntax parsing, semantic verification and symbol resolution across a two-pass pipeline, and Intermediate Representation (LLVM IR) code generation in Single Static Assignment (SSA) form.
 
-## General Project Schema
+## Compiler Execution Flow
 
 ```
-Prysma Source Code (.prysma)
-         ↓
-    [Lexer] - Tokenization (O(n))
-         ↓
-  Token Vector
-         ↓
- [InstructionTreeBuilder] - Recursive Descent (O(t))
-         ↓
- [EquationTreeBuilder] - Mutual Recursion (O(k·e²))
-         ↓
-   Syntax Tree (AST)
-         ↓
-  [GeneralCodeGenVisitor] - Visitor Pattern
-         ↓
-   LLVM IR Code (.ll)
-         ↓
- [LLVM Backend] - Optimization & Compilation
-         ↓
- Executable Machine Code
+Prysma Source File (.p)
+           ↓
+     [FileReading] - Source buffer loading
+           ↓
+  [Lexer::tokenize] - Compile-time LUTs + SWAR (O(n))
+           ↓
+      Token Vector
+           ↓
+[BuilderTreeInstruction::build] - Recursive descent (Pass 1)
+           ↓
+  [BuilderTreeEquation] - Expression resolution
+           ↓
+  Abstract Syntax Tree (AST allocated in BumpPtr arena)
+           ↓
+[FillingVisitorRegistry & FillingVisitorBodyClass] - Declaration inspection
+           ↓
+[BuilderEnvironmentRegistryFunction & Variable] - Symbol tables (Pass 2)
+           ↓
+  [GeneralVisitorGenCode] - LLVM IR emission (.ll)
+           ↓
+ [LLVM Backend / LLD] - Optimizations & Machine code generation
+           ↓
+   Native Executable Binary
 ```
 
-## Frontend Execution Flow: AST Generation
+## Frontend & Compilation Pipeline
 
-### Components and Interactions
+### 1. Source Ingestion (`FileReading`)
 
-1. **Main**: Central controller orchestrating the sequential flow without executing analysis logic.
+The `FileReading` component retrieves the raw text of the `.p` source file from its resolved path and loads the character buffer into memory.
 
-2. **TextFileReader**: Extracts raw code from the source file and returns a `std::string`.
+### 2. Lexical Analysis (`Lexer::tokenize`)
 
-3. **Lexer**: Analyzes the text and generates a vector of tokens (lexical analysis).
-   - Classifies keywords via `O(1) amortized` hash table
-   - Processes operators via `O(1)` switch
-   - Scans character by character in `O(n)` where n = number of characters
+The `Lexer::tokenize(const std::string& sourceCode)` method transforms the character stream into a sequence of `Token` structures:
 
-4. **InstructionTreeBuilder**: Central builder driven by recursive descent.
-   - Delegates to specialized parsers via `InstructionRegistry`
-   - Each token consumed only once → `O(t)` where t = number of tokens
+* **Character Classification (256-byte LUT):** A compile-time precomputed table (`cclut_array`), generated via template metaprogramming using `std::index_sequence` (`make_cclut`), maps each ASCII byte (`CharClass`) in $O(1)$ without conditional branches.
+* **Fast Memory Loads (SWAR):** Unaligned direct memory load routines (`ld16`, `ld32`, `ld64`) fetch 2-, 4-, or 8-byte blocks into CPU registers via `std::memcpy`.
+* **Compile-Time Keyword Encoding (`to_kw`):** The `constexpr Lexer::to_kw()` function packs up to 8 ASCII characters into a Little-Endian 64-bit integer (`val |= (c << (8 * i))`).
+* **Hash-Free Keyword Resolution:** `Lexer::resolveKeyword` branches on `switch(word.size())` and matches the 64-bit integer against compile-time constants in a single processor cycle.
+* **Unary Operator Resolution (`unary_lut`):** A 128-entry compile-time boolean table determines in $O(1)$ whether operators (`+`, `-`) operate in unary or binary contexts based on the preceding token, eliminating branch mispredictions.
+* **Memory Pre-allocation:** The token vector pre-allocates memory via `tokens.reserve((sourceCode.size() / 3) + 4)` to avoid heap reallocations.
+* **Deterministic End-of-File:** A terminal `TOKEN_EOF` token is appended to the stream.
 
-5. **EquationTreeBuilder**: Recursively resolves mathematical expressions.
-   - Uses `ResponsibilityChain` to identify the lowest precedence operator
-   - Splits the left/right expression and applies recursion
-   - Worst-case complexity: `O(k·e²)` where k = precedence levels (13), e = expression tokens
+### 3. Abstract Syntax Tree Construction (AST)
 
-6. **INode**: Represents the AST logic.
-   - Base interfaces: `INode`, `IInstruction`, `IExpression`
-   - Constructed recursively, each node instantiating its children according to Prysma grammar
+The `BuilderTreeInstruction::build(std::vector<Token>& tokens)` method handles sequential instruction parsing:
 
-### Architectural Constraint
+* **Recursive Descent:** Each instruction consumes its expected tokens and delegates node construction to specialized parsers registered in `RegistryInstruction` (`ParserVariable`, `ParserIf`, `ParserWhile`, `ParserClass`, etc.).
+* **Expressions and Precedence (`BuilderTreeEquation`):** Arithmetic and boolean expressions are resolved by an operator precedence chain (`ChainOfResponsibility`) which identifies the operator of lowest precedence to divide the expression into left and right subtrees.
 
-The generated AST is returned to Main **only if complete**. This strict isolation enforces the **Fail-Fast** principle:
-- Error detected by Lexer or InstructionTreeBuilder → compilation halted immediately
-- Prevents memory corruption
-- Ensures LLVM receives a 100% valid syntax tree
+### 4. Two-Pass Compilation Pipeline (`UnitCompilation`)
 
-## Detailed Algorithm Description
+Each compilation unit is processed across two distinct passes to support out-of-order function/class declarations and cross-file symbol dependencies:
 
-### Step 1: Lexical Analysis (Lexer::tokenizer)
-```cpp
-Lexer::tokenizer(const std::string& source) → std::vector<Token>
-```
-- Scans the file character by character
-- Separates word by word, assigning a unique identifier to each token
-- Removes superfluous elements (spaces, invalid characters)
-- Result: vector of tokens with identifiers and string values
+#### Pass 1 (`UnitCompilation::pass1`)
+1. Path resolution and generation of a unique unit identifier (`<parent_directory>_<filename>`).
+2. Lexical tokenization via `Lexer::tokenize`.
+3. AST construction via `builderTreeInstruction->build(tokens)`.
+4. AST traversal via `FillingVisitorRegistry` to register global function signatures in `RegistryFunctionGlobal`.
+5. AST traversal via `FillingVisitorBodyClass` to inspect class definitions, attributes, and methods.
 
-### Step 2: Instruction Tree Construction
-```cpp
-InstructionTreeBuilder::build(
-    std::vector<Token>& tokens, int& index
-) → INode
-```
-- Scans the token vector with a recursive descent algorithm
-- For each token, retrieves the specific parser via `InstructionRegistry`
-- Delegates parsing to the found parser (e.g., VariableParser, IfParser, WhileParser)
-- Allows recursion by passing the current builder to the parser
-- Result: complete instruction tree
+#### Pass 2 (`UnitCompilation::pass2`)
+1. Allocation and population of local variable and function symbol environments via `BuilderEnvironmentRegistryFunction` and `BuilderEnvironmentRegistryVariable`.
+2. AST traversal via `GeneralVisitorGenCode` to emit LLVM IR in SSA form.
+3. Optional AST visualization via `GeneralVisitorGraphViz` producing `.dot` and `.svg` files when `--graphviz` is passed.
+4. Writing the generated LLVM module (`.ll`) to disk via `LlvmSerializer`.
 
-### Step 3: Recursive Equation Tree Construction
-```cpp
-EquationTreeBuilder::build(std::vector<Token>& equation) → INode
-```
+## Internal Memory Management
 
-**Pseudo-code:**
-```
-function build(equation : TokenVector) → INode
-    // Clean enclosing parentheses
-    equation ← removeEnclosingParentheses(equation)
-    
-    // Base case: no operator found = numeric value
-    index ← responsibilityChain.findOperator(equation)
-    if index == -1
-        return createValueNode(convertToFloat(equation[0]))
-    end if
-    
-    // Recursive case: divide and conquer
-    operator ← symbolRegistry.getNode(equation[index])
-    left ← equation[0..index-1]
-    right ← equation[index+1..end]
-    
-    // Recursive calls
-    leftSubtree ← build(left)
-    rightSubtree ← build(right)
-    
-    // Link subtrees
-    operator.add(leftSubtree, rightSubtree)
-    return operator
-end function
-```
+### Arena Allocator (`llvm::BumpPtrAllocator`)
 
-### Step 4: LLVM Code Generation via Visitor Pattern
-- Uses the `IVisitor` interface implemented by `GeneralCodeGenVisitor`
-- Traverses the AST in depth `O(n)` where n = number of nodes
-- Each node calls `accept(this)` to generate its LLVM IR
-- Produces a `.ll` file (LLVM intermediate code)
+To guarantee data cache locality and eliminate allocation overhead:
 
-### Step 5: LLVM Backend
-- Optimizes the IR code
-- Generates assembler for the target architecture
-- Produces the final executable
+* AST nodes (`INode*`) are allocated within contiguous memory arenas (`llvm::BumpPtrAllocator`).
+* Allocation requires advancing a bump pointer, operating in $O(1)$.
+* Standard reference-counted smart pointers (`std::shared_ptr`) are avoided across the AST critical path.
+* The entire AST memory of a translation unit is reclaimed simultaneously upon compilation context destruction, eliminating memory leaks without recursive deallocation traversals.
 
-## Design Patterns
+## Multi-File Compilation & Concurrency
 
-### 1. Composite + Interpreter (AST Structure)
-**Base interfaces:** `INode`, `IExpression`, `IInstruction`  
-**Benefit:** Transparent manipulation of the Turing-complete grammar, strict syntax validation before compilation.
+Multi-file compilation is coordinated by `OrchestratorInclude`:
 
-### 2. Visitor (Visitor Pattern)
-**Implementations:** `GeneralCodeGenVisitor` (LLVM IR), `GeneralGraphVizVisitor` (debugging)  
-**Benefit:** Separates the AST from the generation logic, allows multiple representations without altering the nodes.
-
-### 3. Chain of Responsibility (Chain of Responsibility)
-**Classes:** `ResponsibilityChain`, `OperatorHandler`  
-**Benefit:** Automatically manages the 13 levels of mathematical precedence, avoids nested conditions.
-
-### 4. Strategy (Strategy Pattern)
-**Interface:** `IEquationStrategy`  
-**Benefit:** Delegates analysis on the fly based on the token type (identifier, function call, etc.).
-
-### 5. Builder (Builder Pattern)
-**Classes:** `InstructionTreeBuilder`, `EquationTreeBuilder`  
-**Benefit:** Centralizes the instantiation of AST nodes and LLVM API, prevents memory leaks.
-
-### 6. Facade (Facade Pattern)
-**Class:** `LlvmBackend`  
-**Benefit:** Encapsulates the complexity of the C++ LLVM API behind high-level methods (`createAutoCast`, `declareExternal`, `loadValue`).
-
-### 7. Context Object (Context Object)
-**Structure:** `CodeGenContext`  
-**Benefit:** Encapsulates the global compilation state (registers, backend, allocation arena), injects dependencies into the visitor without overloading signatures, prepares multi-file thread safety.
-
-## Memory Management
-
-### Arena Allocator (Bump Pointer)
-- Migrated from `std::shared_ptr` to LLVM `BumpPtrAllocator`
-- Conversion to raw pointers (`INode*`)
-- Advantages:
-  - Contiguous memory → L1/L2 cache optimization
-  - Reduced fragmentation
-  - Limited risk of memory leak
-  - Performance: `O(1)` amortized allocation
-
-### Global Registers
-- `VariableRegistry`: storage for variable declarations
-- `TypeRegistry`: type introspection
-- `InstructionRegistry`: parser dispatching
-- `FileRegistry`: inclusion management (protected by mutex)
-
-## Implemented Optimizations
-
-### CMake and Clang
-- Replaces outdated Makefiles
-- Integrates `glob` function for automatic path addition
-- Improved error precision with Clang
-
-### Multithreading with LLVM::ThreadPool
-- Migrated from `std::thread` to `llvm::ThreadPool`
-- Limits created threads (vs uncontrolled creation: 2000 threads for 2000 files)
-- Split into two passes:
-  - **Pass 1**: Lexer, Parser, register filling (file-parallelized)
-  - **Pass 2**: LLVM Generation (parallelized, thread-safe registers via mutex)
-
-### AddressSanitizer (ASAN)
-- Immediate detection of memory leaks and corruptions at runtime
-- Allocation flags for automatic tracing
+* **Thread Pool (`llvm::ThreadPool`):** Parallelizes Pass 1 and Pass 2 across available CPU hardware threads to prevent resource starvation.
+* **Include Resolution (`include`):** When an `include "path/file.p";` directive is parsed, `OrchestratorInclude::includeFile()` resolves the target path.
+* **Cycle and Duplicate Prevention:** A mutex-guarded `std::set<std::string> _alreadyIncludedFiles` ensures that each file is compiled only once.
+* **Fail-Fast Error Handling:** `CompilationError` exceptions thrown within worker threads are caught, logged with the offending file and line, and flag the atomic `_hasErrors` state. If any file fails during Pass 1, Pass 2 execution is cancelled.
 
 ## Compiler Outputs
 
-**Source file:** `.prysma` (text)  
-**Intermediate file:** `.ll` (LLVM IR)  
-**Executable:** No extension (machine code)  
-**Optional debugging:**
-- AST dump to console
-- AST Graphviz export (visualization)
-- LLVM IR code to console
+* **Source file:** `.p`
+* **Intermediate representation:** `.ll` (textual LLVM IR) stored in `programme/`
+* **Optional visualization:** `.dot` and `.svg` stored in `graphe/`
+* **Native executable binary:** Linked via Clang / LLD from generated `.ll` modules.
 
-**Error handling:**
-- Precise messages with line number and error type
-- Compilation halted on invalid syntax
+## Technical Perspectives
 
-## Future Improvements
-
-### Algorithmic Optimizations
-1. **Lexer:** Replace conditional logic with DFA (Deterministic Finite Automaton)
-   - Estimated gain: 10-20x faster than linear traversal
-
-2. **Equation construction:** Replace `ResponsibilityChain` with Pratt Parser
-   - Improved complexity: `O(k·e²)` → `O(e)`
-   - Approach used by V8 and Clang
-
-3. **Parenthesis removal:** Use two indexes (start/end) instead of copying the vector
-   - Improved complexity: `O(e²)` → `O(e)`
-
-4. **File reading:** Use `mmap()` to directly map the file
-   - Eliminates dynamic `std::string` allocations
-   - Approach used by Clang
-
-### Multithreading
-- Implement bounded thread pool based on physical core count (`std::thread::hardware_concurrency()`)
-- Task queue to dispatch work
-- Standard approach of systems like Ninja and Make -j
+1. **Pratt Expression Parser:** Migrating expression parsing from the current chain of responsibility to a Pratt parser to reduce complexity from $O(k \cdot e^2)$ to $O(e)$.
+2. **Static AST Dispatch:** Transitioning from virtual visitor dispatch (`accept` / `visit`) toward static ID-based dispatch on contiguous node registries, improving branch prediction during code generation.
+3. **String Interning Pool:** Storing source identifiers in a deduplicated string pool to allow pointer-based equality comparisons rather than string scans.

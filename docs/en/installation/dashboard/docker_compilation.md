@@ -9,7 +9,7 @@ The execution of this container is fully automated by the GitHub Actions workflo
 The image build must be launched from the `~/prysma` folder on the server:
 
 ```bash
-docker build -t prysma-compiler -f Dockerfile .
+docker build --target benchmark -t prysma-compiler -f docker/compiler/Dockerfile .
 ```
 
 ## 2. Manual Execution (Debugging on the Server)
@@ -41,7 +41,7 @@ python3 save_perf_results.py ../prysma/prysma/perf_run_data.json
 
 ## 4. Hardware Counters (PMU) and Local Unlocking
 
-The container is always run with the `--privileged` option to access the host processor's hardware counters (cycles, L1/L2/L3 cache misses, branch misses). The `--cpuset-cpus="1-3"` parameter assigns execution to the cores stabilized by Laboratory Mode.
+The container is executed with `--cap-add=SYS_ADMIN` to access host hardware performance counters (cycles, L1/L2/L3 cache misses, branch misses). The `--cpuset-cpus="1-3"` parameter assigns execution to the cores stabilized by Laboratory Mode.
 
 In production, these parameters are automatically applied by the GitHub Actions workflow and Laboratory Mode manages the temporary kernel unlocking on the server itself.
 

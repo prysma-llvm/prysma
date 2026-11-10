@@ -1,47 +1,40 @@
 # Technical Analysis: Prysma Project
 
-This document provides a detailed analysis of the development of the Prysma language, covering theoretical aspects, functional requirements, low-level challenges, and the compiler architecture.
+This document details the architectural evaluation of the engineering decisions made for the Prysma compiler, specifically regarding backend selection and code generation strategies.
 
-## 1. Project Objectives
+## 1. Technical Objectives
 
-The main objective is to develop a language named "Prysma" replicating modern features. The compiler is written in C++. For code generation, three approaches were analyzed:
+Prysma aims to deliver a system language featuring deterministic execution and memory management without a garbage collector. Three code generation strategies were analyzed:
 
-- **LLVM IR (Chosen):** Intermediate Representation in SSA (Single Static Assignment). Facilitates optimizations and multi-target machine code generation.
-- **Manual x86-64 Backend:** Offers full control but requires complex management of registers and the ABI.
-- **Transpilation to C:** Simple to implement but limits fine-grained control over specific optimizations.
+* **LLVM IR (Selected Approach):** Intermediate Representation structured in Single Static Assignment (SSA) form. Provides direct access to LLVM's advanced optimization pipelines (vectorization, dead code elimination, inlining) and native cross-compilation targeting x86-64, ARM64, and WebAssembly.
+* **Manual x86-64 Backend:** Offers total control over emitted machine instructions, but requires manual register allocation (graph coloring, linear scan), stack frame alignment, and strict adherence to the System V AMD64 ABI calling conventions. Maintenance overhead heavily outweighs the granular control gained.
+* **C Source Transpilation:** Simplifies initial bootstrapping, but relinquishes low-level memory layout control and impairs the ability to emit exact debugging metadata via DWARF.
 
-Note: LLVM IR is an intermediate representation (IR) in SSA, target-independent, facilitating optimizations and code generation for different architectures. Using LLVM IR avoids having to manage all the complexities of machine code generation manually.
+### Target LLVM IR Example (LLVM 18)
 
-Example of target LLVM IR:
+LLVM 18 enforces the opaque pointer model (`ptr`), eliminating typed pointer distinctions in the intermediate representation:
 
 ```llvm
-%1 = load i32, i32* %ptr_x        ; load x from %ptr_x
-%resultat = add i32 %1, 5         ; add 5 to the loaded value
+%1 = load i32, ptr %ptr_x         ; loads 32-bit integer from opaque address %ptr_x
+%result = add i32 %1, 5           ; adds 5 to the loaded value
 ```
 
 ## 2. Machine Code Generation Challenges
 
-### Issues with a Custom Backend (x86-64 Linux)
+### Constraints of a Custom Assembly Backend
 
-1. **Register Management:** The x86-64 architecture offers 16 general-purpose registers. Efficient usage and allocation must be managed to avoid conflicts and unnecessary saves.
-2. **Register Allocation:** Requires sophisticated algorithms (graph coloring, Linear Scan) or management of stack spilling.
-3. **Symbol Table and Addressing:** Involves manual management of addresses and stack frame offsets.
-4. **Calling Conventions (ABI):** Manual implementation of argument passing, stack alignment, and return value (System V AMD64).
-5. **Encapsulation and Visibility:** Requires conventions (prefixes, sections) to control symbol visibility at link time.
-6. **Complexity:** Writing and maintaining an assembler backend is more time-consuming and error-prone than using an established backend.
+1. **CPU Register Allocation:** The x86-64 architecture provides 16 general-purpose registers. Conflict-free register allocation requires complex algorithms (stack spilling, live-range analysis).
+2. **Calling Conventions (ABI):** Manual implementation of argument passing registers (`rdi`, `rsi`, `rdx`, etc.), 16-byte stack boundary alignment, and stack frame lifecycle management.
+3. **Target-Specific Optimizations:** Pipeline scheduling and vector instruction set utilization (AVX, NEON) would require micro-architecture-specific rewrites.
 
 ### Advantages of the LLVM Infrastructure
 
-- **Abstraction and Portability:** The compiler can target multiple architectures without major modifications.
-- **Optimizations:** LLVM integrates many advanced optimizations automatically applied to the intermediate code.
-- **Ecosystem:** Rich in tools (static analysis, DWARF debug symbol generation).
-- **Register Management:** LLVM uses virtual registers in SSA form, simplifying allocation.
+* **Target Portability:** Prysma's frontend emits target-agnostic IR; the LLVM backend adapts machine code for the target architecture.
+* **Proven Optimizations:** Direct access to standard constant folding, instruction simplification, and loop vectorization passes.
+* **Tooling Ecosystem:** Native compatibility with the LLD linker, GDB/LLDB debuggers, and hardware performance profilers.
 
-## 3. Inspiring Similar Projects
+## 3. Technical References
 
-- Rust: A systems programming language focused on safety and performance. It uses LLVM as a backend for compilation. It is a very solid language and has proven itself in the industry. Moreover, the language is at an advanced stage of maturity, and the compiler is written in Rust itself to benefit from its own memory safety features, demonstrating reliability. Building a large project shows its robustness.
-GitHub project URL: https://github.com/rust-lang/rust.git
-
-- Kaleidoscope: An educational programming language developed by the LLVM team to teach basic compilation concepts using LLVM as a backend. It is a good example that shows the steps to build a functional compiler. All steps are explained and documented, which makes understanding easier. Tutorial URL: https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/
-
-- GCC: A very popular open-source compiler, it allows compiling C, C++, Fortran, etc. It is widely used in the industry, is a mature and robust project. Interesting to study for understanding the construction of an advanced compiler, although its components are very complex. GitHub project URL: https://github.com/gcc-mirror/gcc.git
+* **Rust:** Systems language compiling via LLVM, serving as a model for deterministic memory management and SSA optimizations.
+* **Kaleidoscope (LLVM Tutorial):** Didactic reference provided by the LLVM team outlining AST transformation to `IRBuilder` constructs.
+* **Zig:** Systems programming language emphasizing zero hidden control flow, explicit memory allocators, and reproducible toolchains.

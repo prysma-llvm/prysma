@@ -1,46 +1,43 @@
 # Journal de Développement - Architecture et Décisions Techniques (Prysma)
 
-## 1. Refonte de l'Tree Syntaxique Abstrait (AST) et des Visitors
-* **Injection de dépendances (Visitor Général) :** Le passage du contexte par builder exigeait des modifications sur plus de 30 emplacements distincts pour une seule functionnalité, générant des bugs liés à des objects manquants ou non initialisés. L'injection directe du `ContextGenCode` dans le visitor général centralise la boîte à outils. Cette architecture élimine la transmission fastidieuse par les parsers et réduit le temps de débogage.
-* **Récursion Mutuelle :** L'ancien algorithme d'extraction d'équations, basé sur le balayage manuel des virgules et des parenthèses, était inefficace et provoquait des plantages (ex. : intégration d'un call de fonction dans une addition). Son remplacement par un système de récursion mutuelle entre `BuilderTreeEquation` et `BuilderTreeInstruction` délègue naturellement la logique d'arrêt et la résolution des expressions imbriquées.
-* **Typage et Abstraction :** L'utilisation de LLVM et de la réflexion pour deviner les types a été supprimée. Le système de registry encapsule désormais `llvm::Value*` avec une abstraction `IType*`. Le compiler connaît exactement le type et l'adresse mémoire, éliminant la rigidité du typage.
-* **Génération dynamique des nœuds :** Le remplacement des nœuds manuels par une usine automatique utilisant un fichier YAML abstrait accélère l'ajout de nœuds. La déduction des labels par types a été automatisée dans le script Python, nettoyant le `ast.yaml`.
-* **Remplacement des Dynamic Casts :** Les `dynamic_cast` ont été retirés au profit d'une génération dynamique de code AST via des enums générés automatiquement, augmentant la vitesse d'identification des nœuds.
+## 1. Refonte de l'Arbre Syntaxique Abstrait (AST) et des Visiteurs
+
+* **Injection de dépendances (Visiteur Général) :** Le passage initial du contexte par builder imposait des modifications répétées sur des dizaines d'emplacements pour une seule fonctionnalité, créant des risques d'objets non initialisés. L'injection directe du `ContextGenCode` dans le visiteur général centralise l'accès aux registres et à l'arène mémoire.
+* **Récursion Mutuelle :** L'ancien algorithme d'extraction d'expressions, basé sur le balayage manuel de délimiteurs, manquait de robustesse lors de l'intégration d'appels de fonctions imbriqués dans des calculs arithmétiques. Son remplacement par une récursion mutuelle entre `BuilderTreeEquation` et `BuilderTreeInstruction` stabilise la résolution des expressions complexes.
+* **Typage et Abstraction :** L'encapsulation de `llvm::Value*` derrière l'abstraction `IType*` au niveau des registres fournit au compilateur l'information sémantique exacte et l'adresse mémoire associée sans nécessiter d'inférence tardive.
+* **Génération Automatique des Nœuds :** Les classes de nœuds AST et leurs visiteurs associés sont générés dynamiquement par des templates Jinja2 / Python à partir d'une description déclarative YAML (`ast.yaml`), garantissant la cohérence des énumérations de nœuds sans code répétitif manuel.
+* **Suppression des `dynamic_cast` :** Remplacement des casts dynamiques au runtime par un système d'identifiants énumérés générés à la compilation, accélérant l'identification du type de nœud.
 
 ## 2. Gestion de la Mémoire et LLVM
-* **Arena Allocator (Bump Pointer) :** La gestion de la mémoire a migré des `std::shared_ptr` vers un système d'allocation par aréna fourni par LLVM. La conversion vers des pointeurs bruts (`INode*`) rend la mémoire contiguë. Les performances des caches L1/L2 sont optimisées, la fragmentation est réduite, et le risque de fuite de mémoire est limité. 
-* **Sauts mémoire redondants :** La correction d'une erreur d'architecture sur le chargement des pointeurs a résolu des erreurs de segmentation. Lors du passage de valeurs en arguments de fonction, le système copie désormais uniquement le pointeur (8 octets) plutôt que la structure complète.
-* **Arrayx par composition :** L'architecture des arrayx a été modifiée pour utiliser la composition au lieu de l'héritage. L'utilisation de tailles dynamiques plutôt que de valeurs codées en dur (ex. : `constValue`) offre une flexibilité totale pour le stockage de variables.
-* **Décompilation LLVM :** L'analyse du code machine LLVM intermédiaire via décompilation a servi de base documentaire principale pour l'implémentation de structures complexes (ex. : logique de branchement `if/else`, alignement des octets, comportement des arrayx en mémoire).
 
-## 3. Optimisations et Flux de travail
-* **CMake et Compiler Clang :** L'abandon des fichiers `Makefile` obsolètes (qui nécessitaient deux passes `cmake` puis `make` causant des conflits) et la configuration exclusive sous Clang ont amélioré la précision des erreurs. L'intégration de la fonction `glob` dans le `CMakeLists.txt` a supprimé l'ajout manuel des chemins d'inclusion, permettant un gain de temps direct.
-* **Multithreading et LLVM::ThreadPool :** L'utilisation initiale de `std::thread` provoquait la création incontrôlée de threads (ex. : 2000 threads pour 2000 fichiers). La migration vers `llvm::ThreadPool` délègue la gestion de l'instanciation au pool, stabilisant la compilation de masse. La séparation de l'orchestrator en deux passes prévient les conflits d'accès.
-* **Thread Safety des Registrys :** L'extraction des objects LLVM (`llvm::Value`, `llvm::Function`, `llvm::AllocaInst`) de la construction des registrys a réglé les problèmes de *thread safety*. Un polymorphisme statique a été implémenté pour l'application conditionnelle de `std::mutex`.
-* **Sanitizer (ASAN) :** L'implémentation d'AddressSanitizer ajoute des drapeaux d'allocation permettant l'affichage immédiat des fuites de mémoire au *runtime*. 
-* **VTable et Classes :** Le builder de *vtable* a été déplacé à la passe 2 dans `builderEnvironnementFunction.cpp`. Lors de la première passe, les pointeurs de fonction n'existent pas encore en mémoire, ce qui entraînait le remplissage d'un registry vide.
+* **Allocateur d'Arène (`llvm::BumpPtrAllocator`) :** La gestion de la mémoire de l'AST a migré de `std::shared_ptr` vers des arènes contiguës LLVM. L'utilisation de pointeurs bruts (`INode*`) au sein de l'arène optimise la localité de cache L1/L2 et élimine les fuites mémoire sans nécessiter de parcours de désallocation récursif.
+* **Transmission par Pointeur Opaque :** Lors du passage de structures en mémoire, le compilateur transmet l'adresse mémoire directe sous forme de pointeur 64 bits (`ptr`), évitant les copies complètes de structures.
+* **Tableaux par Composition :** L'architecture des tableaux s'appuie désormais sur la composition plutôt que sur l'héritage, autorisant des dimensions dynamiques pour le stockage des variables.
+* **Décompilation LLVM 18 :** L'analyse du code machine LLVM intermédiaire via décompilation systématique de binaires C++ sert de base documentaire pour vérifier la conformité des structures de contrôle (`if-else`, boucles `while`, alignement des octets) avec les exigences de la version 18 de Clang.
 
-## 4. Corrections de Bugs Majeurs Documentés
-* **Bug de l'assignation Float :** L'erreur de segmentation lors de l'assignation d'un float 64 bits à un float 32 bits a été identifiée grâce aux attributs d'alignement de LLVM IR. Un système de *casting* dynamique a été implémenté.
-* **Bug de portée d'argument (If) :** L'call imbriqué `call testArgDanIf(param)` provoquait une corruption de la mémoire. La fonction interne vidait le `RegistryArgument` partagé et corrompait la valeur de return attendue par la fonction parente. Corrigé par la gestion stricte de la vidange des registrys.
-* **Bug de synchronisation des variables :** Les readings ont été descendues au niveau du nœud plutôt que dans le parser pour régler les désynchronisations lors des recherches dans le `RegistryVariable`.
-* **Bug des identifiants (GraphViz) :** Le remplacement des identifiants (ID) de nœuds statiques par une pile (`std::stack`) dans le visitor GraphViz a corrigé un bug où l'ancien système écrasait les ID dans les trees profonds, faussant la représentation visuelle.
+## 3. Optimisations et Flux de Travail
 
-## 5. Algorithmique et Conception 
-* **Mots-clés et Constexpr :** La vérification des types dans le parser et la définition des mots-clés du lexer ont migré d'un `std::unordered_set` vers des arrayx statiques `constexpr`, optimisant le temps de compilation.
-* **Templates Matcher :** Le système de *template matcher* variadique a été initié pour automatiser la génération du code répétitif.
-* **Dette Technique :** Des décisions pragmatiques ont été prises, telles que le report de l'implémentation des listes chaînées. Les algorithmes réalistes ont été priorisés face à l'instabilité de la gestion des pointeurs du compiler en cours de développement. Les valeurs codées en dur (ex. : types de return) ont été progressivement éliminées grâce au `RegistryType` et à l'introspection.
+* **Toolchain CMake, Clang 18 et LLD :** Configuration exclusive sous Clang 18 et l'éditeur de liens LLD avec prise en charge du cache `ccache` pour accélérer les compilations incrémentales. L'intégration de la découverte automatique de fichiers dans `CMakeLists.txt` simplifie l'arborescence des sources.
+* **Parallélisme avec `llvm::ThreadPool` :** Remplacement des threads non bornés par le pool de threads de LLVM. La compilation multi-fichiers est scindée en deux passes : la Passe 1 (analyse lexicale, AST, signatures) et la Passe 2 (environnements locaux, émission LLVM IR), prévenant les conflits d'accès mémoire.
+* **Synchronisation et Sécurité Thread-Safe :** Les registres globaux partagés sont protégés par mutex, et l'orchestrateur centralise la détection des dépendances circulaires d'inclusions via un ensemble de déduplication synchronisé.
+* **Instrumentation Continue (ASAN / UBSan) :** AddressSanitizer et UndefinedBehaviorSanitizer sont injectés automatiquement lors de la compilation en mode débogage (`debug.py`).
 
-## 6. Stratégie de débogage avec LLVM
+## 4. Corrections Majeures Documentées
 
-* **Decompilation LLVM IR pour la documentation :** J'ai adopté une technique de compilation du code C++ pour en extraire le code LLVM généré par la version 18 exactement. Cela me permet de mieux comprendre les subtilités de LLVM et d'éviter les hallucinations des IA qui généralisent souvent avec des exemples provenant de versions antérieures (LLVM 14 par exemple) qui ne functionnent pas avec ma version actuelle.
+* **Résolution de l'Assignation Float :** L'erreur de segmentation lors de l'assignation entre représentations flottantes de précisions distinctes a été résolue par l'implémentation de conversions explicites (`creerAutoCast`).
+* **Portée des Arguments dans les Appels Imbriqués :** L'appel imbriqué `call testArgDanIf(param - 1)` corrompait auparavant le registre partagé d'arguments. L'introduction d'une pile de contextes (`std::stack`) isole rigoureusement les variables locales de chaque frame d'activation.
+* **Identifiants Visuels GraphViz :** Remplacement des identifiants statiques de nœuds par une pile d'identifiants incrémentale dans le visiteur GraphViz, éliminant les collisions de labels dans les arbres profonds.
+* **Stockage des Retours de Fonctions dans des Variables :** Implémentation complète de la capture du résultat d'un appel direct : `dec <type> variable = call fonction(...)`.
+* **Constantes Numériques en Arguments :** Correction du traitement des littéraux numériques bruts passés en paramètres (`call fonction(42, 100)`), assurant la parité de traitement entre variables et valeurs immédiates.
 
-* **Sanitizers pour le débogage invisible :** Les erreurs de segmentation provoquées par des alignements mémoire incorrect (float 64-bit vs 32-bit) étaient invisibles. L'implémentation d'AddressSanitizer (--sanitize de clang) a permis d'identifier immédiatement les fuites et corruptions mémoire au runtime.
+## 5. Algorithmique et Conception du Lexer
 
-## 7. Prochaines priorités pour les itérations suivantes
+* **Tables Compile-Time (LUT) :** Classification de chaque octet ASCII en $O(1)$ sans saut conditionnel via une table de 256 entrées générée par métaprogrammation (`cclut_array`).
+* **Résolution SWAR des Mots-Clés :** Encodage des mots-clés en entiers 64 bits à la compilation (`to_kw()`) et comparaison directe par lecture de blocs mémoire non alignés (`ld16`, `ld32`, `ld64`) sous `switch(word.size())`.
+* **Résolution Unaire sans Défaut de Branchement :** Table booléenne précalculée (`unary_lut`) déterminant le rôle unaire ou binaire d'un opérateur arithmétique d'après le type de jeton précédent.
 
-* **Permetter le stockage des returns de fonction :** Je dois implémenter la capacité à stocker le résultat d'un call de fonction dans une variable. C'est un manque majeur pour la prochaine itération.
+## 6. Prochaines Priorités d'Ingénierie
 
-* **Passage de nombres bruts en arguments :** Le bug sur les calls `call(1,1)` reste à corriger. Actuellement, seules les variables passent correctement ; les constantes numériques bloquent.
-
-* **Programmation Orientée Object :** Le système de classes avec polymorphisme via vtable et la bibliothèque standard (listes chaînées, trees binaires, piles, files) sont les grands défis des itérations futures.
+* **Parseur d'Expressions de Pratt :** Remplacement de la chaîne de responsabilité par un analyseur de Pratt pour linéariser le coût de construction des arbres d'équations.
+* **Appels de Méthodes Chaînés :** Support de la syntaxe d'appels successifs sur valeurs retournées (`objet.getAutre().methode()`).
+* **Déclarations Externes C (`extern`) :** Liaison native de fonctions de la bibliothèque standard C sans adaptateur intermédiaire.

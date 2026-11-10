@@ -1,10 +1,12 @@
-# sécuriser le runner pour bloquer les commandes de merde
+# Sécurisation du Runner GitHub Actions (Safe Shell)
 
-si quelqu'un fait une pr et modifie le ci.yml pour essayer de hack le serveur, ce truc permet de tout bloquer direct. en gros on remplace le bash par défaut par un script python qui vérifie que les commandes sont exactement celles qu'on veut. si c'est pas le cas, ça bloque.
+Ce document décrit la configuration d'un shell de restriction (`prysma-safe-shell`) sur le serveur d'intégration continue Debian 12. Ce mécanisme empêche l'exécution de commandes non autorisées lors de l'exécution de workflows GitHub Actions déclenchés par des contributions externes (Pull Requests).
 
-## 1. le script python de sécurité
+Le principe consiste à remplacer le shell par défaut du runner par un script Python qui valide chaque instruction exécutée contre une liste blanche stricte d'expressions régulières. Toute commande non conforme est interceptée et bloquée avec un code de retour 127.
 
-créer le fichier `/usr/local/bin/prysma-safe-shell` en root et copier ça :
+## 1. Script de Filtrage des Commandes (`prysma-safe-shell`)
+
+Créez le fichier `/usr/local/bin/prysma-safe-shell` avec les privilèges d'administration :
 
 ```python
 #!/usr/bin/env python3
@@ -13,11 +15,11 @@ import os
 import subprocess
 import re
 
-# les commandes autorisées, si c'est pas là ça bloque direct
+# Modèles de commandes autorisées pour le runner
 ALLOWED_PATTERNS = [
-    r'^cp docker/server/compiler/Dockerfile (\$HOME|.+)/prysma/Dockerfile$',
-    r'^cp docker/server/compiler/entrypoint.sh (\$HOME|.+)/prysma/entrypoint.sh$',
-    r'^docker build -t prysma-compiler docker/server/compiler$',
+    r'^cp docker/compiler/Dockerfile (\$HOME|.+)/prysma/Dockerfile$',
+    r'^cp docker/compiler/entrypoint.sh (\$HOME|.+)/prysma/entrypoint.sh$',
+    r'^docker build --target benchmark -t prysma-compiler -f docker/compiler/Dockerfile \.$',
     r'^docker run --rm --privileged --pid=host -v /var/run/docker\.sock:/var/run/docker\.sock optiplex-lab-mode enable$',
     r'^docker run --rm --cap-add=SYS_ADMIN --cpuset-cpus="1-3" -v "(\$HOME|.+)/prysma":/prysma -v ".+":/workspace prysma-compiler ".+"$',
     r'^python3 tests/save_perf_results\.py$',
@@ -38,14 +40,14 @@ def main():
             cmd_to_run = sys.argv[idx+1].strip()
             if cmd_to_run.startswith('echo') or cmd_to_run == 'locale':
                 return subprocess.run(['/bin/bash'] + sys.argv[1:]).returncode
-            print(f"block command: {cmd_to_run}", file=sys.stderr)
+            print(f"Commande non autorisée : {cmd_to_run}", file=sys.stderr)
             return 127
         return subprocess.run(['/bin/bash'] + sys.argv[1:]).returncode
 
     with open(script_path, 'r') as f:
         content = f.read().strip()
 
-    # Combine backslash line continuations
+    # Reconstitution des lignes avec continuation par barre oblique inverse (\)
     raw_lines = content.splitlines()
     lines = []
     current_line = ""
@@ -69,7 +71,7 @@ def main():
                 matched = True
                 break
         if not matched:
-            print(f"block command: {line}", file=sys.stderr)
+            print(f"Commande non autorisée : {line}", file=sys.stderr)
             return 127
 
     return subprocess.run(['/bin/bash'] + sys.argv[1:]).returncode
@@ -78,85 +80,60 @@ if __name__ == '__main__':
     sys.exit(main())
 ```
 
-## 2. configurer le serveur
+## 2. Configuration du Serveur Hôte
 
-Exécuter ces étapes sur le serveur (en tant que `root` ou avec `sudo` depuis votre compte administrateur) :
+Exécutez ces étapes sur le serveur hôte avec les privilèges `sudo` :
 
-### A. Création de l'utilisateur dédié
+### A. Création du compte utilisateur dédié
 ```bash
-# 1. Créer l'utilisateur isolé (sans mot de passe)
+# Création d'un utilisateur système sans mot de passe
 sudo adduser --disabled-password --gecos "" actions-runner
 
-# 2. L'ajouter au groupe docker pour lui permettre de lancer les conteneurs de test
+# Attribution des droits Docker pour lancer les conteneurs de test
 sudo usermod -aG docker actions-runner
 ```
 
-### B. Configuration du Safe Shell
+### B. Enregistrement du Shell Restreint
 ```bash
-# 1. Rendre le script exécutable
+# Définition des permissions d'exécution
 sudo chmod +x /usr/local/bin/prysma-safe-shell
 
-# 2. Enregistrer le script dans la liste des shells système autorisés
+# Enregistrement dans les shells valides du système
 sudo sh -c 'echo "/usr/local/bin/prysma-safe-shell" >> /etc/shells'
 
-# 3. Définir le safe-shell comme shell par défaut pour l'utilisateur
+# Attribution comme shell par défaut pour actions-runner
 sudo chsh -s /usr/local/bin/prysma-safe-shell actions-runner
 ```
 
-### C. Déploiement et droits d'accès
-Si le runner a déjà été installé dans un autre répertoire (par exemple `/home/zyph/actions-runner`), déplacez-le dans le dossier personnel de l'utilisateur dédié pour éviter les erreurs de droits d'accès au dossier parent (`CHDIR permission denied`) :
+### C. Déploiement du Service du Runner
 ```bash
-# 1. Aller dans l'ancien dossier et désinstaller le service existant
-cd /home/zyph/actions-runner
-sudo ./svc.sh stop || true
-sudo ./svc.sh uninstall || true
-
-# 2. Déplacer le dossier vers sa nouvelle maison
+# Déplacement du runner dans le répertoire personnel dédié
 sudo mv /home/zyph/actions-runner /home/actions-runner/
-
-# 3. Attribuer la propriété des fichiers à l'utilisateur actions-runner
 sudo chown -R actions-runner:actions-runner /home/actions-runner/actions-runner
-```
 
-### D. Enregistrement du service
-```bash
-# 1. Aller dans le nouveau dossier
+# Installation et démarrage du service systemd sous l'utilisateur actions-runner
 cd /home/actions-runner/actions-runner
-
-# 2. Installer le service systemd pour qu'il s'exécute sous l'utilisateur sécurisé
 sudo ./svc.sh install actions-runner
-
-# 3. Démarrer le service
 sudo ./svc.sh start
 ```
 
-### E. Accès à la base de données du Dashboard (SQLite)
-Pour permettre à l'utilisateur isolé `actions-runner` d'enregistrer les résultats des tests de performance dans la base de données SQLite du dashboard (située dans le dossier de l'utilisateur principal `/home/zyph/dashboard-prysma/`), configurez les droits d'accès via les ACLs :
+### D. Gestion des Droits sur la Base de Données (ACLs)
+Pour permettre à l'utilisateur `actions-runner` d'enregistrer les métriques de benchmarks dans la base SQLite sans lui accorder de privilèges administratifs :
+
 ```bash
-# 1. Installer le paquet acl sur le serveur
-sudo apt-get install acl -y
-
-# 2. Autoriser actions-runner à traverser le dossier personnel /home/zyph
+sudo apt-get install -y acl
 sudo setfacl -m u:actions-runner:x /home/zyph
-
-# 3. Donner les droits de lecture/écriture complets sur le dossier du dashboard et ses fichiers
 sudo setfacl -R -m u:actions-runner:rwx /home/zyph/dashboard-prysma
 sudo setfacl -R -d -m u:actions-runner:rwx /home/zyph/dashboard-prysma
 ```
 
-## 3. test de sécurité
+## 3. Validation du Filtrage
 
-si dans le ci.yml y'a une commande suspecte comme ça :
-
-```yaml
-run: cat /etc/passwd && rm -rf /home/zyph/dashboard-prysma
-```
-
-ça va bloquer direct et crasher le step de git avec ça :
+Lorsqu'une instruction non présente dans la liste blanche est invoquée dans le workflow CI, le script intercepte l'appel :
 
 ```text
-block command: cat /etc/passwd && rm -rf /home/zyph/dashboard-prysma
+Commande non autorisée : cat /etc/passwd && rm -rf /home/zyph/dashboard-prysma
 Error: Process completed with exit code 127.
 ```
 
-pareil, impossible de lancer un autre script suspect (genre `sh /tmp/test.sh`), tout est bloqué.
+Le job GitHub Actions échoue immédiatement sans compromettre le système hôte.

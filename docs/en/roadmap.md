@@ -1,52 +1,49 @@
-# Prysma Programming Language - Development Roadmap
+# Technical Roadmap - Prysma Compiler
 
-This document details the current capabilities of the Prysma language as well as future development directions. The project is structured around a modular architecture using LLVM as the compilation backend.
+This document summarizes the current technical capabilities implemented in the Prysma compiler alongside planned engineering milestones for future iterations.
 
-## 1. Current State of the Project (Stable)
+## 1. Current Technical Capabilities (Stable)
 
 ### Core Language & Syntax
-* **Primitive Types :** Full support for integers (`int32`), floats (`float`), and booleans (`bool`).
-* **Arithmetic :** Implementation of basic operations (`+`, `-`, `*`, `/`) with management of operator precedence and parenthesization.
-* **Control Structures :**
-    * `if-else` conditional statements with complex boolean expressions.
-    * `while` loops with stack management via `alloca`.
-* **Functions :** Support for recursive functions, passing arguments by value, and managing return types.
-* **Identifier Management :** Variable declaration, assignment, and scope resolution.
+* **Primitive Types:** Signed integers (`int32`, `int64`), IEEE 754 floating-point numbers (`float`), booleans (`bool`), characters (`char`), strings (`string`), opaque pointers (`ptr`), unit type (`void`).
+* **Arithmetic & Logic Operations:** Scalar operators (`+`, `-`, `*`, `/`, `%`), comparisons (`==`, `!=`, `<`, `>`, `<=`, `>=`), and boolean connectors (`&&`, `||`, `!`).
+* **Control Flow:**
+  * Conditional branching `if-else`.
+  * Iterative loops `while` and `for`.
+  * No-op statement `pass;`.
+* **Functions:** Recursive functions, pass-by-value, pass-by-reference (`ref`), dereferencing (`unref`), scalar return values, and storing call results directly into variables (`dec <type> v = call <name>(...);`).
+* **Identifier Management:** Explicit declaration (`dec`), assignment (`aff`), and local lexical scope handling via context stacks.
 
-### Object-Oriented Programming (OOP)
-* **Class Model :** Definition of data structures and behaviors.
-* **Encapsulation :** Management of access levels `public`, `private`, and `protected`.
-* **Inheritance :** Class hierarchies and interfaces.
-* **Polymorphism :** Implementation of a dynamic **VTable** for resolving virtual methods at runtime.
+### Object Model
+* **Classes:** Data structure definitions encapsulating attributes and methods.
+* **Access Specifiers:** Visibility modifiers `public:`, `private:`, and `protected:`.
+* **Inheritance:** Single inheritance between classes (`class Child : Parent`).
+* **Polymorphism:** Dynamic virtual method tables (VTable) for runtime method resolution.
 
 ### Memory Management
-* **Dynamic Allocation :** Integration of `prysma_malloc` and `free` from the standard C library.
-* **System Operators :** Implementation of the `new` and `delete` keywords for manual heap control.
-* **Internal Optimization :** Use of a **Bump Pointer Allocator** (Arena) for managing AST nodes, reducing fragmentation, and increasing compilation performance.
+* **Heap Allocation:** System operators `new` and `delete` providing manual lifecycle management.
+* **Internal Arena Allocation:** Contiguous bump-pointer arena (`llvm::BumpPtrAllocator`) backing AST nodes, ensuring cache locality and eliminating memory leaks without deallocation traversals.
 
-## 2. Infrastructure & Tools
+### Infrastructure & Tooling
+* **Multi-File Compilation:** Native `include "file.p";` directive with deduplication and circular dependency prevention.
+* **Parallel Execution:** Two-pass pipeline orchestrated via `llvm::ThreadPool`.
+* **Centralized Docker Environment:** Complete toolchain (LLVM 18, Clang 18, LLD, CMake, ccache, debugpy, LLDB) encapsulated in a reproducible container.
+* **VS Code Integration:** Preconfigured profile, syntax highlighting for `.p` source files, on-the-fly compilation via `Ctrl+Shift+B`, and Clangd code intelligence without host-level dependencies.
+* **Diagnostics & Debugging:** Optional AST visualization via Graphviz (`--graphviz`) and continuous sanitizer instrumentation (ASAN / UBSan) in debug builds.
 
-* **Multi-threaded Compilation :** Orchestration of compilation via `llvm::ThreadPool` for parallel processing of source files.
-* **Dependency Management :** File inclusion system (`#include`) for code modularity.
-* **Diagnostics :** Precise syntax analyzer reporting errors by line and column.
-* **Visualization :** Export of the Abstract Syntax Tree (AST) in text and graphic formats (Graphviz/DOT).
-* **IDE Ecosystem :** VS Code extension for native Prysma syntax highlighting.
-
-## 3. Development Roadmap (Planned Features)
+## 2. Planned Engineering Milestones
 
 ### Short Term (v1.1)
-* **Standard Library (StdLib) :** Development of a library of native data structures (linked lists, stacks, queues).
-* **C Interoperability :** Automatic import system to link external C libraries without manual configuration.
-* **Built-in Functions :** Integration of advanced mathematical functions (power, GCD) at the runtime level.
+* **Pratt Expression Parser:** Replacing the operator precedence chain with a Pratt parser to reduce expression resolution complexity from $O(k \cdot e^2)$ to $O(e)$.
+* **C Interoperability (`extern`):** Direct declaration of external C functions without wrappers to link standard C library symbols (libc, libm).
+* **Standard Data Structures (StdLib):** Native resizable vector module and contiguous buffers.
 
 ### Medium Term (v1.2)
-* **Advanced Memory Management :** Introduction of pointers for granular low-level control.
-* **Namespaces & Modules :** Organization of code into isolated compilation units to avoid name conflicts.
-* **Generics :** Support for generic programming (templates) for functions and classes.
-* **Extended Semantic Analysis :** Strengthening of type checking to prevent logic errors at compile time.
+* **String Interning Pool:** Centralizing identifiers in a deduplicated string table to allow pointer-based equality comparisons rather than lexicographic scanning.
+* **Static AST Node Dispatch:** Transitioning from virtual `accept` / `visit` traversal toward static ID-based dispatch on contiguous node arrays, improving CPU branch prediction during LLVM emission.
+* **Namespaces:** Explicit symbol namespacing per module to prevent identifier collisions in large codebases.
 
 ### Long Term (Vision)
-* **JIT Compilation (Just-In-Time) :** Immediate execution mode for scripting.
-* **SSA Optimizations :** Custom optimization passes on LLVM IR.
-* **Inline Assembly :** `asm` block for direct injection of processor instructions.
-* **Meta-programming :** Macros and code execution at compile time (Compile-time execution).
+* **Just-In-Time (JIT) Compilation:** In-memory direct execution for interactive testing and tooling.
+* **Domain-Specific SSA Optimization Passes:** Custom LLVM IR optimization passes tailored to Prysma's language semantics.
+* **Inline Assembly (`asm`):** Direct machine instruction blocks for hardware-critical low-level routines.

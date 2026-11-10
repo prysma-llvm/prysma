@@ -9,7 +9,7 @@ L'exécution de ce conteneur est entièrement automatisée par le workflow GitHu
 Le build de l'image doit être lancé depuis le dossier `~/prysma` sur le serveur :
 
 ```bash
-docker build -t prysma-compiler -f Dockerfile .
+docker build --target benchmark -t prysma-compiler -f docker/compiler/Dockerfile .
 ```
 
 ## 2. Exécution manuelle (débogage sur le serveur)
@@ -41,7 +41,7 @@ python3 save_perf_results.py ../prysma/prysma/perf_run_data.json
 
 ## 4. Compteurs matériels (PMU) et Déverrouillage Local
 
-Le conteneur est toujours exécuté avec l'option `--privileged` pour accéder aux compteurs matériels du processeur hôte (cycles, ratés de cache L1/L2/L3, branch misses). Le paramètre `--cpuset-cpus="1-3"` assigne l'exécution aux cœurs stabilisés par le Mode Laboratoire.
+Le conteneur est exécuté avec l'option `--cap-add=SYS_ADMIN` pour accéder aux compteurs matériels du processeur hôte (cycles, ratés de cache L1/L2/L3, branch misses). Le paramètre `--cpuset-cpus="1-3"` assigne l'exécution aux cœurs stabilisés par le Mode Laboratoire.
 
 En production, ces paramètres sont appliqués automatiquement par le workflow GitHub Actions et le Mode Laboratoire gère lui-même le déverrouillage temporaire du noyau sur le serveur.
 

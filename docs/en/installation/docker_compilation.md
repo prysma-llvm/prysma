@@ -2,13 +2,13 @@
 
 This document describes Prysma's compilation architecture and the commands to build Docker images, compile the project, and work in interactive mode.
 
-## 1. Why a Centralized Architecture?
+## 1. Centralized Architecture
 
 Prysma is a system compiler requiring a complete toolchain:
 
 * **LLVM 18** and development libraries (`llvm-18`, `llvm-18-dev`, `libclang-rt-18-dev`)
 * **Clang 18** compiler and **LLD 18** linker
-* **C++17**, **CMake**, and **ccache** for fast incremental compilation
+* **C++23**, **CMake**, and **ccache** for fast incremental compilation
 * Analysis and diagnostic tooling: **Bear** (`compile_commands.json` generation) and **Graphviz**
 * Native debugging: **GDB**, **LLDB-18**, and **debugpy** for Python tooling
 * Dedicated Python 3 virtual environment preloaded with compiler dependencies
@@ -36,8 +36,6 @@ Refer to your operating system's guide to install and configure Docker:
 The Dockerfile is structured using a multi-stage build to produce tailored targets:
 
 ```bash
-cd ~/prysma
-
 # Development and debug image (gdb, lldb-18, bear, graphviz, python venv)
 docker build --target debug -t prysma-debug -f docker/compiler/Dockerfile .
 
@@ -55,9 +53,9 @@ Compilation inside the container is orchestrated by two Python wrappers: `build.
 * **Automated code generation**: Before C++ compilation begins, the script runs the compiler's code generators (`GeneratorAST`, `GeneratorInterfaceVisitor`, `GeneratorVisitorBaseGeneral`, `GeneratorGraphViz`, `GeneratorExpression`, `GeneratorParser`) to automatically generate the AST classes, visitor interfaces, and parser.
 * **Dynamic configuration**: Configures `ccache` (10 GB cache limit), detects available CPU cores (`--parallel`), and dynamically injects fine-tuned compilation flags.
 
-### The Two Compilation Modes
-* **`build.py` (Release Mode)**: Built for maximum execution speed. Injects `-O3`, `-march=native`, `-ffast-math`, `-fomit-frame-pointer`, `-flto`, and utilizes the `-fuse-ld=lld` linker with dead-code elimination (`--gc-sections`).
-* **`debug.py` (Debug & Analysis Mode)**: Built for diagnostics and development safety. Injects `-g3`, `-O0`, `-fno-omit-frame-pointer`, `-fstack-protector-all`, strict warnings, and activates memory safety tooling with **AddressSanitizer** (`-fsanitize=address`) and **UndefinedBehaviorSanitizer** (`-fsanitize=undefined`), applied to both compile and link stages.
+### Compilation Modes
+* **`build.py` (Release Mode)**: Optimized build. Injects `-O3`, `-march=native`, `-ffast-math`, `-fomit-frame-pointer`, `-flto`, and utilizes the `-fuse-ld=lld` linker with dead-code elimination (`--gc-sections`).
+* **`debug.py` (Debug Mode)**: Instrumented build. Injects `-g3`, `-O0`, `-fno-omit-frame-pointer`, `-fstack-protector-all`, strict warnings, and activates memory safety tooling with **AddressSanitizer** (`-fsanitize=address`) and **UndefinedBehaviorSanitizer** (`-fsanitize=undefined`).
 
 ## 5. Direct Compilation Commands from the Host
 
@@ -123,10 +121,8 @@ docker exec -it <container_name_or_id> /bin/bash
 To execute the benchmark suite on a specific Git branch across all host CPU cores:
 
 ```bash
-cd ~/prysma
-
 docker run --rm --cap-add=SYS_ADMIN \
-  -v "$HOME/prysma":/prysma \
+  -v "/tmp/prysma-bench":/prysma \
   -v "$(pwd)":/workspace \
   prysma-benchmark <branch_name>
 ```
