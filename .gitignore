@@ -55,6 +55,7 @@
 
 .cache
 /.cache-*/
+.clangd-includes/
 
 # Tools 
 

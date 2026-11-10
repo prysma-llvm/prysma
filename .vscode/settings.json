@@ -1,6 +1,7 @@
 {
     // ===== Clangd Configuration =====
     "clangd.arguments": [
+        "--compile-commands-dir=${workspaceFolder}/build",
         "--background-index",
         "--clang-tidy",
         "--completion-style=bundled",
@@ -13,11 +14,11 @@
     "clangd.onConfigChanged": "restart",
 
     // ===== C++ Configuration =====
-    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.default.cppStandard": "c++23",
     "C_Cpp.default.cStandard": "c11",
     "C_Cpp.default.intelliSenseEngine": "disabled",
     "C_Cpp.formatting": "disabled",
-    "C_Cpp.default.compilerPath": "/usr/bin/g++",
+    "C_Cpp.default.compilerPath": "/usr/bin/clang++",
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/include",
         "${workspaceFolder}/build",

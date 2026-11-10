@@ -6,6 +6,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+#include "compiler/ast/registry/data/id_generator.hpp"
+#include "compiler/ast/registry/data/node_data_registry.hpp"
 #include "compiler/ast/utils/orchestrator_include/configuration_facade_environment.h"
 #include "compiler/ast/utils/orchestrator_include/orchestrator_include.h"
 #include "compiler/file_processing/builder_systeme.h"
@@ -18,7 +20,6 @@
 #include <llvm-18/llvm/IR/Instructions.h>
 #include <llvm-18/llvm/IR/Value.h>
 #include <filesystem>
-#include <cstdlib>
 #include <memory>
 #include <mutex>
 #include <llvm/Support/TargetSelect.h>
@@ -81,8 +82,7 @@
 // Qu'un simple switch case c'est seulement un jump à un déterminé précis donc c'est parfait pour le prédict branchement du cpu.
 // Vitesse de flux de contrôle par switch case, hypothèse à analyser. 
 
-auto main(int argc, char* argv[]) -> int
-{
+auto main(int argc, char* argv[]) -> int {
     if (argc < 2) {
         std::cerr << "Error: Aucun fichier spécifié" << std::endl;
         std::cerr << "Usage: Prysma <fichier.p> [--graphviz]" << std::endl;

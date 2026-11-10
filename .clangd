@@ -10,6 +10,8 @@ InlayHints:
 
 CompileFlags:
   Add: 
+    - "-I.clangd-includes"
+    - "-isystem.clangd-includes"
     - "-fno-rtti" 
     - "-frtti"
     - "-std=c++23"
@@ -27,6 +29,10 @@ Index:
   Background: Build
 
 Diagnostics:
+  Suppress:
+    - unknown_template_name
+    - unknown_nested_typename_suggest
+    - "no member named 'value' in 'std::is_same"
   UnusedIncludes: Strict
   MissingIncludes: Strict
   ClangTidy:
