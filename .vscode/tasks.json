@@ -47,7 +47,7 @@
         {
             "label": "Start Python Debug Server (Docker)",
             "type": "shell",
-            "command": "\"${workspaceFolder}/docker-debug-python.sh\" \"${relativeFile}\"",
+            "command": "\"${workspaceFolder}/docker/docker-debug-python.sh\" \"${relativeFile}\"",
             "presentation": {
                 "reveal": "never",
                 "panel": "shared"
@@ -57,7 +57,7 @@
         {
             "label": "Stop Python Debug Server (Docker)",
             "type": "shell",
-            "command": "\"${workspaceFolder}/docker-stop-python.sh\"",
+            "command": "\"${workspaceFolder}/docker/docker-stop-python.sh\"",
             "presentation": {
                 "reveal": "never",
                 "panel": "shared"
