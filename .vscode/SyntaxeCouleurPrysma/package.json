@@ -10,15 +10,27 @@
     "Programming Languages"
   ],
   "contributes": {
-    "languages": [{
-      "id": "prysma",
-      "aliases": ["Prysma", "prysma"],
-      "extensions": [".p"]
-    }],
-    "grammars": [{
-      "language": "prysma",
-      "scopeName": "source.prysma",
-      "path": "./prysma.tmLanguage.json"
-    }]
+    "languages": [
+      {
+        "id": "prysma",
+        "aliases": [
+          "Prysma",
+          "prysma"
+        ],
+        "extensions": [
+          ".p"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "prysma",
+        "scopeName": "source.prysma",
+        "path": "./prysma.tmLanguage.json"
+      }
+    ]
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^4.1.0"
   }
 }

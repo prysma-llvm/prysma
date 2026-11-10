@@ -38,21 +38,23 @@ docker ps
 
 ---
 
-## 2. builder l'image du compiler prysma
+## 2. builder les images docker
 
 **important :** le build doit se faire depuis la **racine du projet** `prysma` pour que le dockerfile puisse voir tous les fichiers du repo.
+
+le dockerfile utilise un multi-stage build. tu construis uniquement ce dont t'as besoin :
 
 ```bash
 cd ~/prysma
 
-# installation du docker de compilation
-docker build -t prysma-compiler -f docker/compiler/Dockerfile .
+# image de dev (avec gdb, lldb, bear, graphviz)
+docker build --target debug -t prysma-debug -f docker/compiler/Dockerfile .
 
-# ou si tu l'as laissé dans docker/server/compiler/ :
-# docker build -t prysma-compiler -f docker/server/compiler/Dockerfile .
+# image du serveur de benchmarks (légère, sans les outils de debug)
+docker build --target benchmark -t prysma-benchmark -f docker/compiler/Dockerfile .
 ```
 
-ça va installer ubuntu 24.04, llvm-18, clang, python, etc. directement dans l'image.
+les deux images partagent la même couche de base (ubuntu 24.04, llvm-18, clang, python), donc le cache docker évite de tout retélécharger quand tu rebuildes l'une ou l'autre.
 
 ---
 
@@ -68,7 +70,7 @@ cd ~/prysma
 docker run --rm --cap-add=SYS_ADMIN \
   -v "$HOME/prysma":/prysma \
   -v "$(pwd)":/workspace \
-  prysma-compiler main
+  prysma-benchmark main
 ```
 
 *(remplace `main` par le nom de ta branche)*.
@@ -80,21 +82,19 @@ si tu veux juste compiler le code local actuel monté dans le container :
 ```bash
 docker run --rm \
   -v "$(pwd)":/workspace \
-  --entrypoint python3 \
-  prysma-compiler /workspace/build.py
+  prysma-debug python3 build.py
 ```
 
 ---
 
 ## 4. commande pour entrer dans le docker (shell interactif)
 
-comme l'image a un `ENTRYPOINT` configuré sur `entrypoint.sh`, pour rentrer directement dedans avec un bash interactif faut écraser l'entrypoint avec `--entrypoint /bin/bash` :
+l'image debug a `CMD ["/bin/bash"]`, donc pour rentrer dedans c'est direct :
 
 ```bash
 docker run --rm -it \
-  --entrypoint /bin/bash \
   -v "$(pwd)":/workspace \
-  prysma-compiler
+  prysma-debug
 ```
 
 une fois dedans, t'es dans `/workspace` avec llvm 18, clang et le venv déjà prêts dans le PATH. tu peux directement compiler prysma ou tester :

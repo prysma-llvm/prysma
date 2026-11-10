@@ -3,6 +3,7 @@ fn int32 factorial(arg int32 n) {
    dec int32 m = n - 1;
    return n * call factorial(m);
 }
+
 fn int32 fibonacci(arg int32 n) {
    if (n <= 1) { return n; }
    dec int32 one = n - 1; dec int32 two = n - 2;

@@ -80,3 +80,6 @@ dashboard_config.json
 perf_*.json
 config.toml
 .streamlit/
+
+# Prysma node module from SyntaxeCouleurPrysma
+.vscode/SyntaxeCouleurPrysma/node_modules

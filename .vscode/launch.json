@@ -1,63 +1,56 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug C++ (LLDB)",
-            "type": "lldb",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/Prysma",
-            "args": ["${workspaceFolder}/tests/prysma_code_tests/project_test_multi_thread_edge_case_file/test_depth/main.p"],
-            "stopOnEntry": false,
-            "cwd": "${workspaceFolder}",
-            "preLaunchTask": "CMake: build"
-        },
-        {
-            "name": "Debug C++ (GDB)",
+            "name": "Debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/Prysma",
-            "args": ["${workspaceFolder}/tests/prysma_code_tests/project_test_multi_thread_edge_case_file/test_depth/main.p"],
-            "stopAtEntry": true,
-            "cwd": "${workspaceFolder}",
+            "program": "/workspace/build/Prysma",
+            "args": [
+                "/workspace/tests/prysma_code_tests/project_test_multi_thread_edge_case_file/test_depth/main.p"
+            ],
+            "stopAtEntry": false,
+            "cwd": "/workspace",
             "environment": [],
             "externalConsole": false,
-            "miDebuggerPath": "/usr/bin/gdb",
+            "pipeTransport": {
+                "pipeCwd": "${workspaceFolder}",
+                "pipeProgram": "${workspaceFolder}/docker-cli.sh",
+                "pipeArgs": [
+                    "run",
+                    "-i",
+                    "--rm",
+                    "--cap-add=SYS_PTRACE",
+                    "--security-opt",
+                    "seccomp=unconfined",
+                    "-v",
+                    "${workspaceFolder}:/workspace",
+                    "-w",
+                    "/workspace",
+                    "--entrypoint",
+                    "/bin/sh",
+                    "prysma-debug",
+                    "-c"
+                ],
+                "debuggerPath": "/usr/bin/gdb"
+            },
+            "sourceFileMap": {
+                "/workspace": "${workspaceFolder}"
+            },
+            "MIMode": "gdb",
             "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
                 {
                     "description": "Disable debuginfod",
                     "text": "-gdb-set debuginfod enabled off",
                     "ignoreFailures": true
                 }
             ],
-            "MIMode": "gdb",
-            "preLaunchTask": "CMake: build"
-        },
-        {
-            "name": "Build Python",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/debug.py",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "name": "Test Python",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/Tests/main.py",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "name": "update_license Python",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/tools/update_license/main.py",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}"
+            "preLaunchTask": "Build"
         }
     ]
 }

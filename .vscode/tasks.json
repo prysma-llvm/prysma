@@ -2,99 +2,25 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "CMake: build",
-            "dependsOn": [
-                "CMake: configure",
-                "CMake: rebuild (C++ Code)"
-            ],
-            "dependsOrder": "sequence",
+            "label": "Compile Prysma Program",
+            "type": "shell",
+            "command": "\"${workspaceFolder}/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug /workspace/build/Prysma \"${relativeFile}\"",
             "group": {
                 "kind": "build",
-                "isDefault": false
+                "isDefault": true
             },
-            "problemMatcher": []
-        },
-        {
-            "label": "Clangd: Setup & Build",
-            "type": "shell",
-            "command": "${workspaceFolder}/setup-clangd.sh",
             "presentation": {
                 "reveal": "always",
-                "panel": "new"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": false
-            },
-            "detail": "Configure cmake with clangd support and build"
-        },
-        {
-            "label": "CMake: configure",
-            "type": "shell",
-            "command": "cmake",
-            "args": [
-                "-B",
-                "${workspaceFolder}/build",
-                "-DCMAKE_BUILD_TYPE=Debug",
-                "-DCMAKE_CXX_FLAGS=-g -O0",
-                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-                "${workspaceFolder}"
-            ],
-            "presentation": {
-                "reveal": "always",
-                "panel": "shared"
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "CMake: rebuild (C++ Code)",
-            "type": "shell",
-            "command": "cmake",
-            "args": [
-                "--build",
-                "${workspaceFolder}/build",
-                "--config",
-                "Debug",
-                "--",
-                "-j",
-                "4" 
-            ],
-            "presentation": {
-                "reveal": "always",
-                "panel": "shared"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": false 
-            }
-        },
-        {
-            "label": "Run Prysma Compiler",
-            "type": "shell",
-            "command": "./Prysma",
-            "args": ["${file}"],
-            "options": {
-                "cwd": "${workspaceFolder}/build"
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true 
-            },
-            "presentation": {
-                "reveal": "always", 
                 "panel": "shared",
                 "clear": false,
                 "focus": true
             },
             "problemMatcher": {
                 "owner": "prysma_language",
-                "fileLocation": ["absolute"],
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}"
+                ],
                 "pattern": {
                     "regexp": "^([^:]+):(\\d+):(\\d+):\\s+(?:Error|error|warning):\\s+(.*)$",
                     "file": 1,
@@ -103,6 +29,20 @@
                     "message": 4
                 }
             }
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "\"${workspaceFolder}/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug python3 debug.py",
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
         }
     ]
 }
