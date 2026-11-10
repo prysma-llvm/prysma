@@ -43,6 +43,77 @@
                 "panel": "shared"
             },
             "problemMatcher": []
+        },
+        {
+            "label": "Start Python Debug Server (Docker)",
+            "type": "shell",
+            "command": "\"${workspaceFolder}/docker-debug-python.sh\" \"${relativeFile}\"",
+            "presentation": {
+                "reveal": "never",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Stop Python Debug Server (Docker)",
+            "type": "shell",
+            "command": "\"${workspaceFolder}/docker-stop-python.sh\"",
+            "presentation": {
+                "reveal": "never",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Debug Python with pdb (Docker)",
+            "type": "shell",
+            "command": "\"${workspaceFolder}/docker-cli.sh\" run --rm -it --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug python3 -m pdb \"${relativeFile}\"",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Python (Docker)",
+            "type": "shell",
+            "command": "\"${workspaceFolder}/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug python3 \"${relativeFile}\"",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Start LLDB Server (Docker)",
+            "type": "shell",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Build"
+            ],
+            "command": "\"${workspaceFolder}/docker-cli.sh\" rm -f prysma-lldb-debug 2>/dev/null || true; echo 'lldb-server ready on 1234' && ARG=\"${relativeFile}\"; [ \"${ARG##*.}\" = \"p\" ] || ARG=\"tests/prysma_code_tests/project_test_multi_thread_edge_case_file/test_depth/main.p\"; exec \"${workspaceFolder}/docker-cli.sh\" run --rm --name prysma-lldb-debug -p 1234:1234 --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v \"${workspaceFolder}\":/workspace -w /workspace -e ASAN_OPTIONS=detect_leaks=0 prysma-debug /usr/lib/llvm-18/bin/lldb-server-18 gdbserver 0.0.0.0:1234 -- /workspace/build/Prysma \"/workspace/$ARG\"",
+            "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "pattern": [
+                    {
+                        "regexp": "^(?!.*)$",
+                        "file": 1,
+                        "location": 2,
+                        "message": 3
+                    }
+                ],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*lldb-server ready.*$",
+                    "endsPattern": "^.*lldb-server ready.*$"
+                }
+            }
         }
     ]
 }

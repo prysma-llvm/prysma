@@ -157,11 +157,11 @@ auto main(int argc, char* argv[]) -> int {
         std::string nomExecutable = std::filesystem::path(cheminFile).stem().string();
 
         BuilderSystem::BuilderParams params = {
-            srcLib,
-            objLib,
-            buildDir.string(),
-            registryFiles->getAllFiles(),
-            nomExecutable
+            .libPath=srcLib,
+            .libObjDir=objLib,
+            .buildDir=buildDir.string(),
+            .outputLL=registryFiles->getAllFiles(),
+            .executable=nomExecutable
         };
         BuilderSystem builder(params);
         builder.compileLib();

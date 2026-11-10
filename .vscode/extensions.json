@@ -13,6 +13,7 @@
         "CppCast.cppcast",
         "ms-vscode.hexeditor",
         "ms-vscode-remote.remote-containers",
-        "ms-vscode-remote.remote-ssh"
+        "ms-vscode-remote.remote-ssh",
+        "undefined_publisher.prysma-language-support"
     ]
 }

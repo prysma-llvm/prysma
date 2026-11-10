@@ -2,55 +2,42 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "/workspace/build/Prysma",
-            "args": [
-                "/workspace/tests/prysma_code_tests/project_test_multi_thread_edge_case_file/test_depth/main.p"
+            "name": "C++: Debug Prysma in Docker (LLDB)",
+            "type": "lldb",
+            "request": "custom",
+            "initCommands": [
+                "settings set target.source-map /workspace ${workspaceFolder}"
             ],
-            "stopAtEntry": false,
-            "cwd": "/workspace",
-            "environment": [],
-            "externalConsole": false,
-            "pipeTransport": {
-                "pipeCwd": "${workspaceFolder}",
-                "pipeProgram": "${workspaceFolder}/docker-cli.sh",
-                "pipeArgs": [
-                    "run",
-                    "-i",
-                    "--rm",
-                    "--cap-add=SYS_PTRACE",
-                    "--security-opt",
-                    "seccomp=unconfined",
-                    "-v",
-                    "${workspaceFolder}:/workspace",
-                    "-w",
-                    "/workspace",
-                    "--entrypoint",
-                    "/bin/sh",
-                    "prysma-debug",
-                    "-c"
-                ],
-                "debuggerPath": "/usr/bin/gdb"
-            },
-            "sourceFileMap": {
+            "targetCreateCommands": [
+                "target create ${workspaceFolder}/build/Prysma",
+                "settings set target.source-map /workspace ${workspaceFolder}"
+            ],
+            "processCreateCommands": [
+                "gdb-remote 127.0.0.1:1234",
+                "continue"
+            ],
+            "sourceMap": {
                 "/workspace": "${workspaceFolder}"
             },
-            "MIMode": "gdb",
-            "setupCommands": [
+            "preLaunchTask": "Start LLDB Server (Docker)"
+        },
+        {
+            "name": "Python: Debug in Docker",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "pathMappings": [
                 {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Disable debuginfod",
-                    "text": "-gdb-set debuginfod enabled off",
-                    "ignoreFailures": true
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/workspace"
                 }
             ],
-            "preLaunchTask": "Build"
+            "justMyCode": false,
+            "preLaunchTask": "Start Python Debug Server (Docker)",
+            "postDebugTask": "Stop Python Debug Server (Docker)"
         }
     ]
 }

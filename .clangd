@@ -32,7 +32,8 @@ Diagnostics:
   Suppress:
     - unknown_template_name
     - unknown_nested_typename_suggest
-    - "no member named 'value' in 'std::is_same"
+    - no_member
+    - no_member_template
   UnusedIncludes: Strict
   MissingIncludes: Strict
   ClangTidy:
