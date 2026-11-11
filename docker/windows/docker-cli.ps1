@@ -58,6 +58,13 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $RootDir = Split-Path -Parent (Split-Path -Parent $ScriptDir)
 $ForwardRootDir = $RootDir.Replace("\", "/")
 
+# Ensure persistent ccache volume exists with write permissions
+& docker.exe volume inspect prysma-ccache 2>$null | Out-Null
+if ($LASTEXITCODE -ne 0) {
+    & docker.exe volume create prysma-ccache 2>$null | Out-Null
+    & docker.exe run --rm -v prysma-ccache:/tmp/.ccache prysma-debug chmod 777 /tmp/.ccache 2>$null | Out-Null
+}
+
 # Ensure .clangd-includes is populated for host Clangd indexing
 $ClangdIncludesDir = Join-Path $RootDir ".clangd-includes"
 if (-not (Test-Path (Join-Path $ClangdIncludesDir "llvm\Support\TargetSelect.h"))) {

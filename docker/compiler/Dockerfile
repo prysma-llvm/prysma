@@ -30,6 +30,7 @@ RUN python3 -m venv /opt/venv
 
 ENV LLVM_DIR=/usr/lib/llvm-18/lib/cmake/llvm
 ENV PATH="/usr/lib/llvm-18/bin:/opt/venv/bin:$PATH"
+ENV CCACHE_DIR=/tmp/.ccache
 
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt

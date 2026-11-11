@@ -17,9 +17,9 @@
         {
             "label": "Compile Prysma Program",
             "type": "shell",
-            "command": "\"${workspaceFolder}/docker/linux/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug /workspace/build/Prysma \"${relativeFile}\"",
+            "command": "\"${workspaceFolder}/docker/linux/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug /workspace/build/Prysma \"${relativeFile}\"",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/windows/docker-cli.ps1\" -- run --rm -e HOME=/tmp -v \"${workspaceFolder}:/workspace\" -w /workspace prysma-debug /workspace/build/Prysma \"${relativeFile}\""
+                "command": "& \"${workspaceFolder}/docker/windows/docker-cli.ps1\" -- run --rm -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v \"${workspaceFolder}:/workspace\" -w /workspace prysma-debug /workspace/build/Prysma \"${relativeFile}\""
             },
             "group": {
                 "kind": "build",
@@ -49,9 +49,9 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "\"${workspaceFolder}/docker/linux/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug python3 debug.py",
+            "command": "\"${workspaceFolder}/docker/linux/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug python3 debug.py",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/windows/docker-cli.ps1\" -- run --rm -e HOME=/tmp -v \"${workspaceFolder}:/workspace\" -w /workspace prysma-debug python3 debug.py"
+                "command": "& \"${workspaceFolder}/docker/windows/docker-cli.ps1\" -- run --rm -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v \"${workspaceFolder}:/workspace\" -w /workspace prysma-debug python3 debug.py"
             },
             "group": {
                 "kind": "build",
@@ -156,9 +156,9 @@
             "dependsOn": [
                 "Build"
             ],
-            "command": "\"${workspaceFolder}/docker/linux/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace/tests/unit_tests prysma-debug sh -c \"cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j \\$(nproc)\"",
+            "command": "\"${workspaceFolder}/docker/linux/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v \"${workspaceFolder}\":/workspace -w /workspace/tests/unit_tests prysma-debug sh -c \"cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j \\$(nproc)\"",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/windows/docker-cli.ps1\" -- run --rm -e HOME=/tmp -v \"${workspaceFolder}:/workspace\" -w /workspace/tests/unit_tests prysma-debug sh -c 'cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(nproc)'"
+                "command": "& \"${workspaceFolder}/docker/windows/docker-cli.ps1\" -- run --rm -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v \"${workspaceFolder}:/workspace\" -w /workspace/tests/unit_tests prysma-debug sh -c 'cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(nproc)'"
             },
             "presentation": {
                 "reveal": "always",

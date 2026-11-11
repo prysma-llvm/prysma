@@ -3,33 +3,40 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-if command -v flatpak-spawn >/dev/null 2>&1; then
-    flatpak-spawn --host docker "$@"
-    EXIT_CODE=$?
-else
-    if command -v docker >/dev/null 2>&1; then
+run_docker() {
+    if command -v flatpak-spawn >/dev/null 2>&1; then
+        flatpak-spawn --host docker "$@"
+    elif command -v docker >/dev/null 2>&1; then
         docker "$@"
-        EXIT_CODE=$?
     elif [ -x /usr/bin/docker ]; then
         /usr/bin/docker "$@"
-        EXIT_CODE=$?
     else
         echo "Erreur: Docker est introuvable sur le système hôte." >&2
-        exit 127
+        return 127
     fi
+}
+
+# Ensure persistent ccache volume exists with write permissions BEFORE running commands
+if ! run_docker volume inspect prysma-ccache >/dev/null 2>&1; then
+    run_docker volume create prysma-ccache >/dev/null 2>&1 || true
+    run_docker run --rm -v prysma-ccache:/tmp/.ccache prysma-debug chmod 777 /tmp/.ccache >/dev/null 2>&1 || true
 fi
 
 # Ensure .clangd-includes is populated for host Clangd indexing
 if [ ! -d "$ROOT_DIR/.clangd-includes/llvm" ]; then
-    TEMP_C=$(docker create prysma-debug 2>/dev/null)
+    TEMP_C=$(run_docker create prysma-debug 2>/dev/null)
     if [ -n "$TEMP_C" ]; then
         mkdir -p "$ROOT_DIR/.clangd-includes"
-        docker cp "$TEMP_C:/usr/lib/llvm-18/include/." "$ROOT_DIR/.clangd-includes" 2>/dev/null
-        docker rm -f "$TEMP_C" >/dev/null 2>&1
+        run_docker cp "$TEMP_C:/usr/lib/llvm-18/include/." "$ROOT_DIR/.clangd-includes" 2>/dev/null
+        run_docker rm -f "$TEMP_C" >/dev/null 2>&1
         mkdir -p "$ROOT_DIR/.clangd-includes/llvm-18"
         cp -r "$ROOT_DIR/.clangd-includes/llvm" "$ROOT_DIR/.clangd-includes/llvm-18/llvm" 2>/dev/null
     fi
 fi
+
+# Execute requested docker command
+run_docker "$@"
+EXIT_CODE=$?
 
 # Mettre à jour compile_commands.json pour Clangd sur l'hôte si généré dans Docker
 for CDB in "$ROOT_DIR/build/compile_commands.json" "$ROOT_DIR/tests/unit_tests/build/compile_commands.json"; do
