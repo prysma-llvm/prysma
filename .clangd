@@ -1,73 +1,61 @@
----
-# Configuration globale pour Prysma
-InlayHints:
-  Enabled: true
-  ParameterNames: true
-  DeducedTypes: true
-  Designators: true       
-  TypeNameLimit: 0
-  BlockEnd: true
+# Prysma — strict config for clangd
+# The actual build flags are provided
+# by CMake via build/compile_commands.json.
 
 CompileFlags:
-  Add: 
-    - "-Iinclude"
-    - "-Ibuild/generationCode/include"
-    - "-I.clangd-includes"
-    - "-isystem.clangd-includes"
-    - "-I.clangd-includes/llvm-18"
-    - "-isystem.clangd-includes/llvm-18"
-    - "-I.clangd-includes/llvm-c-18"
-    - "-isystem.clangd-includes/llvm-c-18"
-    - "-Itests/lib"
-    - "-Itests/unit_tests/include"
-    - "-fno-rtti" 
-    - "-frtti"
-    - "-std=c++23"
-    - "-Wall"
-    - "-Wextra"
-    - "-Wpedantic"
-    - "-Wshadow"
-    - "-Wconversion"
-    - "-Wsign-conversion"
-    - "-Wnull-dereference"
-    - "-fcolor-diagnostics"
-    - "-Wno-deprecated-declarations"
-    - "-Wno-unknown-warning-option"
-    - "-Wno-unused-command-line-argument"
-  Remove:
-    - "-fsanitize=*"
-    - "-fstack-protector*"
   CompilationDatabase: build
+
+  Add:
+    # Project headers
+    - -Iinclude
+    - -Ibuild/generationCode/include
+    - -I.clangd-includes
+    - -Itests/lib
+    - -Itests/unit_tests/include
+
+    # External LLVM headers
+    # Make sure it matches your LLVM version
+    - -isystem.clangd-includes/llvm-18
+    - -isystem.clangd-includes/llvm-c-18
+
+    # Strict C++ diagnostics
+    - -Wall
+    - -Wextra
+    - -Wpedantic
+    - -Wshadow
+    - -Wconversion
+    - -Wsign-conversion
+    - -Wnull-dereference
 
 Index:
   Background: Build
+  StandardLibrary: true
 
 Diagnostics:
-  Suppress:
-    - unknown_template_name
-    - unknown_nested_typename_suggest
-    - no_member
-    - no_member_template
-    - typename_nested_not_found
-    - invalid_type_template_arg
-    - "no type named 'char_traits' in namespace 'std'"
-    - "char_traits"
-    - "no type named"
   UnusedIncludes: Strict
   MissingIncludes: Strict
+
   ClangTidy:
-    Add: 
+    Add:
       - bugprone-*
       - performance-*
       - cert-*
       - clang-analyzer-*
       - concurrency-*
+
     Remove:
       - bugprone-easily-swappable-parameters
+
+InlayHints:
+  Enabled: true
+  ParameterNames: true
+  DeducedTypes: true
+  Designators: true
+  TypeNameLimit: 0
+  BlockEnd: true
 
 Hover:
   ShowAKA: true
 
 Completion:
   AllScopes: true
-
