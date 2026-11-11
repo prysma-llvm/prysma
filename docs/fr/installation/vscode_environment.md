@@ -7,7 +7,7 @@ Ce document détaille la configuration de l'environnement de travail sous VS Cod
 L'architecture combine l'éditeur VS Code sur votre machine hôte et l'isolation du conteneur de compilation :
 
 * **Aucune dépendance système lourde sur l'hôte** : LLVM 18, Clang 18, LLD, GDB et LLDB tournent exclusivement dans le conteneur `prysma-debug`.
-* **Indexation C++ avec Clangd** : Le wrapper `docker-cli.sh` réécrit automatiquement les chemins dans `compile_commands.json` pour que Clangd sur l'hôte fournisse l'autocomplétion et la navigation de code sans nécessiter LLVM en local.
+* **Indexation C++ avec Clangd** : Le wrapper `docker/linux/docker-cli.sh` (ou `docker/windows/docker-cli.ps1`) réécrit automatiquement les chemins dans `compile_commands.json` pour que Clangd sur l'hôte fournisse l'autocomplétion et la navigation de code sans nécessiter LLVM en local.
 * **Débogage complet (C++ et Python)** : Des profils de lancement permettent de poser des points d'arrêt et d'inspecter l'exécution dans le conteneur via LLDB et debugpy.
 * **Coloration syntaxique Prysma** : Une extension interne gère les fichiers sources `.p`.
 
@@ -54,7 +54,7 @@ Les fichiers `.p` sont désormais automatiquement reconnus et colorés.
 
 ## 4. Tâches de compilation intégrées (`tasks.json`)
 
-Le fichier `.vscode/tasks.json` fournit des tâches automatisées exécutées via le wrapper `docker-cli.sh` :
+Le fichier `.vscode/tasks.json` fournit des tâches automatisées exécutées via le wrapper `docker/linux/docker-cli.sh` (ou `docker/windows/docker-cli.ps1` sous Windows) :
 
 * **Compiler le fichier Prysma actif (`Ctrl+Shift+B`)** :  
   La tâche par défaut `Compile Prysma Program` compile directement le fichier source `.p` actuellement ouvert dans l'éditeur en invoquant l'exécutable `./build/Prysma` à l'intérieur du conteneur. Les erreurs et avertissements éventuels sont capturés par le regex `problemMatcher` et soulignés dans l'éditeur.
@@ -76,11 +76,11 @@ Recompile automatiquement les tests via `Build Unit Tests`, démarre `lldb-serve
 
 ### Débogage des scripts Python (`Python: Debug in Docker`)
 Permet de déboguer les générateurs d'AST, le parseur ou les scripts d'orchestration (`debug.py` / `build.py`).  
-La tâche `Start Python Debug Server (Docker)` lance `debugpy` dans le conteneur sur le port `5678` via `docker/docker-debug-python.sh`. VS Code s'y connecte avec mappage des chemins locaux vers `/workspace`. À la fermeture de la session, le conteneur s'arrête automatiquement.
+La tâche `Start Python Debug Server (Docker)` lance `debugpy` dans le conteneur sur le port `5678` via `docker/linux/docker-debug-python.sh`. VS Code s'y connecte avec mappage des chemins locaux vers `/workspace`. À la fermeture de la session, le conteneur s'arrête automatiquement.
 
 ## 6. Autocomplétion et navigation C++ (Clangd)
 
 Le fichier `.vscode/settings.json` délègue l'analyse du code C++ à **Clangd** :
-* `docker-cli.sh` convertit automatiquement les chemins `/workspace` en chemins absolus locaux dans `build/compile_commands.json` après chaque build.
+* `docker/linux/docker-cli.sh` (ou `docker/windows/docker-cli.ps1`) convertit automatiquement les chemins `/workspace` en chemins absolus locaux dans `build/compile_commands.json` après chaque build.
 * Les en-têtes LLVM internes sont accessibles via le lien `.clangd-includes`.
 * Clangd fournit l'analyse sémantique, la navigation vers les définitions (`F12`), les diagnostics Clang-Tidy et les indications d'inlay hints en temps réel.

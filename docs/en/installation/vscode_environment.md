@@ -7,7 +7,7 @@ This document outlines the VS Code development environment for building, debuggi
 The architecture combines VS Code on your host machine with the isolation of the Docker compilation container:
 
 * **No heavy host dependencies**: LLVM 18, Clang 18, LLD, GDB, and LLDB run exclusively inside the `prysma-debug` container.
-* **C++ indexing with Clangd**: The `docker-cli.sh` wrapper translates paths in `compile_commands.json` so host Clangd provides autocompletion and code navigation without requiring local LLVM.
+* **C++ indexing with Clangd**: The `docker/linux/docker-cli.sh` (or `docker/windows/docker-cli.ps1`) wrapper translates paths in `compile_commands.json` so host Clangd provides autocompletion and code navigation without requiring local LLVM.
 * **Full debugging support (C++ and Python)**: Launch profiles allow setting breakpoints and inspecting executions inside the container via LLDB and debugpy.
 * **Prysma syntax highlighting**: An internal extension handles syntax coloring and delimiter matching for `.p` source files.
 
@@ -54,7 +54,7 @@ Files ending in `.p` will now have syntax highlighting enabled.
 
 ## 4. Integrated Build Tasks (`tasks.json`)
 
-The `.vscode/tasks.json` file provides automated tasks routed through `docker-cli.sh`:
+The `.vscode/tasks.json` file provides automated tasks routed through `docker/linux/docker-cli.sh` (or `docker/windows/docker-cli.ps1` on Windows):
 
 * **Compile Active Prysma File (`Ctrl+Shift+B`)**:  
   The default `Compile Prysma Program` task compiles the currently active `.p` source file by invoking `./build/Prysma` inside the container. Compilation errors and warnings are parsed via `problemMatcher` regex and underlined directly in the editor.
@@ -76,11 +76,11 @@ Automatically builds the unit tests via `Build Unit Tests`, launches `lldb-serve
 
 ### Python Debugging (`Python: Debug in Docker`)
 Allows debugging AST generators, the parser, or build orchestration scripts (`debug.py` / `build.py`).  
-The `Start Python Debug Server (Docker)` task starts `debugpy` inside the container listening on port `5678` via `docker/docker-debug-python.sh`. VS Code connects with path mappings between the local workspace and `/workspace`. The container terminates automatically when debugging ends.
+The `Start Python Debug Server (Docker)` task starts `debugpy` inside the container listening on port `5678` via `docker/linux/docker-debug-python.sh`. VS Code connects with path mappings between the local workspace and `/workspace`. The container terminates automatically when debugging ends.
 
 ## 6. C++ Code Navigation & Autocompletion (Clangd)
 
 The `.vscode/settings.json` file configures **Clangd** as the language engine:
-* `docker-cli.sh` translates `/workspace` paths to absolute host paths in `build/compile_commands.json` after every build.
+* `docker/linux/docker-cli.sh` (or `docker/windows/docker-cli.ps1`) translates `/workspace` paths to absolute host paths in `build/compile_commands.json` after every build.
 * Internal LLVM headers are bridged via `.clangd-includes`.
 * Clangd provides semantic analysis, "Go to Definition" (`F12`), real-time Clang-Tidy diagnostics, and inlay hints.

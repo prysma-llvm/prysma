@@ -136,9 +136,9 @@ sudo sysctl -w kernel.perf_event_paranoid=-1
 sudo sysctl -w kernel.kptr_restrict=0
 ```
 
-## 10. Intégration VS Code et wrapper `docker-cli.sh`
+## 10. Intégration VS Code et wrappers Docker CLI
 
-Le dépôt inclut le script `docker-cli.sh` à la racine ainsi qu'une configuration prête à l'emploi dans `.vscode/tasks.json` :
+Le dépôt inclut des scripts wrappers par plateforme (`docker/linux/docker-cli.sh` et `docker/windows/docker-cli.ps1`) ainsi qu'une configuration prête à l'emploi dans `.vscode/tasks.json` :
 
 * **Détection d'environnement** : Détecte automatiquement l'environnement d'exécution (VS Code natif ou sandbox Flatpak via `flatpak-spawn`).
 * **Gestion des permissions** : Exécute les commandes avec votre UID/GID hôte (`--user $(id -u):$(id -g)`), garantissant que les fichiers générés dans `build/` restent modifiables sans `sudo`.

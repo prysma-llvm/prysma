@@ -81,7 +81,7 @@ The `build.py` / `debug.py` script automatically runs internal AST node, visitor
 
 The provided `.vscode` configuration interfaces directly with the container:
 
-* **Compilation (`Ctrl+Shift+B`):** Compiles the active `.p` source file via `docker-cli.sh`.
+* **Compilation (`Ctrl+Shift+B`):** Compiles the active `.p` source file via `docker/linux/docker-cli.sh` (or `docker/windows/docker-cli.ps1` on Windows).
 * **Debugging (`F5`):** Debugger launch profiles for LLDB (C++ compiler, port 1234) and debugpy (Python generators, port 5678).
 * **Clangd Code Intelligence:** C++ code navigation and completion on the host without local LLVM dependencies.
 * **Syntax Highlighting:** Extension in `.vscode/SyntaxeCouleurPrysma` for `.p` files.

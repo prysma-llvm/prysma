@@ -17,7 +17,7 @@
         {
             "label": "Compile Prysma Program",
             "type": "shell",
-            "command": "\"${workspaceFolder}/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug /workspace/build/Prysma \"${relativeFile}\"",
+            "command": "\"${workspaceFolder}/docker/linux/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug /workspace/build/Prysma \"${relativeFile}\"",
             "windows": {
                 "command": "& \"${workspaceFolder}/docker/windows/docker-cli.ps1\" -- run --rm -e HOME=/tmp -v \"${workspaceFolder}:/workspace\" -w /workspace prysma-debug /workspace/build/Prysma \"${relativeFile}\""
             },
@@ -49,7 +49,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "\"${workspaceFolder}/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug python3 debug.py",
+            "command": "\"${workspaceFolder}/docker/linux/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug python3 debug.py",
             "windows": {
                 "command": "& \"${workspaceFolder}/docker/windows/docker-cli.ps1\" -- run --rm -e HOME=/tmp -v \"${workspaceFolder}:/workspace\" -w /workspace prysma-debug python3 debug.py"
             },
@@ -66,7 +66,7 @@
         {
             "label": "Start Python Debug Server (Docker)",
             "type": "shell",
-            "command": "\"${workspaceFolder}/docker/docker-debug-python.sh\" \"${relativeFile}\"",
+            "command": "\"${workspaceFolder}/docker/linux/docker-debug-python.sh\" \"${relativeFile}\"",
             "windows": {
                 "command": "& \"${workspaceFolder}/docker/windows/docker-debug-python.ps1\" -- \"${relativeFile}\""
             },
@@ -79,7 +79,7 @@
         {
             "label": "Stop Python Debug Server (Docker)",
             "type": "shell",
-            "command": "\"${workspaceFolder}/docker/docker-stop-python.sh\"",
+            "command": "\"${workspaceFolder}/docker/linux/docker-stop-python.sh\"",
             "windows": {
                 "command": "& \"${workspaceFolder}/docker/windows/docker-stop-python.ps1\""
             },
@@ -92,7 +92,7 @@
         {
             "label": "Debug Python with pdb (Docker)",
             "type": "shell",
-            "command": "\"${workspaceFolder}/docker-cli.sh\" run --rm -it --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug python3 -m pdb \"${relativeFile}\"",
+            "command": "\"${workspaceFolder}/docker/linux/docker-cli.sh\" run --rm -it --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug python3 -m pdb \"${relativeFile}\"",
             "windows": {
                 "command": "& \"${workspaceFolder}/docker/windows/docker-cli.ps1\" -- run --rm -it -e HOME=/tmp -v \"${workspaceFolder}:/workspace\" -w /workspace prysma-debug python3 -m pdb \"${relativeFile}\""
             },
@@ -106,7 +106,7 @@
         {
             "label": "Run Python (Docker)",
             "type": "shell",
-            "command": "\"${workspaceFolder}/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug python3 \"${relativeFile}\"",
+            "command": "\"${workspaceFolder}/docker/linux/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug python3 \"${relativeFile}\"",
             "windows": {
                 "command": "& \"${workspaceFolder}/docker/windows/docker-cli.ps1\" -- run --rm -e HOME=/tmp -v \"${workspaceFolder}:/workspace\" -w /workspace prysma-debug python3 \"${relativeFile}\""
             },
@@ -124,7 +124,7 @@
             "dependsOn": [
                 "Build"
             ],
-            "command": "\"${workspaceFolder}/docker-cli.sh\" rm -f prysma-lldb-debug 2>/dev/null || true; echo 'lldb-server ready on 1234' && ARG=\"${relativeFile}\"; [ \"${ARG##*.}\" = \"p\" ] || ARG=\"tests/prysma_code_tests/project_test_multi_thread_edge_case_file/test_depth/main.p\"; exec \"${workspaceFolder}/docker-cli.sh\" run --rm --name prysma-lldb-debug -p 1234:1234 --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v \"${workspaceFolder}\":/workspace -w /workspace -e ASAN_OPTIONS=detect_leaks=0 prysma-debug /usr/lib/llvm-18/bin/lldb-server-18 gdbserver 0.0.0.0:1234 -- /workspace/build/Prysma \"/workspace/$ARG\"",
+            "command": "\"${workspaceFolder}/docker/linux/docker-debug-lldb.sh\" \"${relativeFile}\"",
             "windows": {
                 "command": "& \"${workspaceFolder}/docker/windows/docker-debug-lldb.ps1\" -- \"${relativeFile}\""
             },
@@ -156,7 +156,7 @@
             "dependsOn": [
                 "Build"
             ],
-            "command": "\"${workspaceFolder}/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace/tests/unit_tests prysma-debug sh -c \"cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j \\$(nproc)\"",
+            "command": "\"${workspaceFolder}/docker/linux/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace/tests/unit_tests prysma-debug sh -c \"cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j \\$(nproc)\"",
             "windows": {
                 "command": "& \"${workspaceFolder}/docker/windows/docker-cli.ps1\" -- run --rm -e HOME=/tmp -v \"${workspaceFolder}:/workspace\" -w /workspace/tests/unit_tests prysma-debug sh -c 'cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(nproc)'"
             },
@@ -173,7 +173,7 @@
             "dependsOn": [
                 "Build Unit Tests"
             ],
-            "command": "\"${workspaceFolder}/docker-cli.sh\" rm -f prysma-lldb-tests-debug 2>/dev/null || true; echo 'lldb-server ready on 1234' && exec \"${workspaceFolder}/docker-cli.sh\" run --rm --name prysma-lldb-tests-debug -p 1234:1234 --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -v \"${workspaceFolder}\":/workspace -w /workspace/tests/unit_tests -e ASAN_OPTIONS=detect_leaks=0 prysma-debug /usr/lib/llvm-18/bin/lldb-server-18 gdbserver 0.0.0.0:1234 -- /workspace/tests/unit_tests/build/PrysmaTests",
+            "command": "\"${workspaceFolder}/docker/linux/docker-debug-lldb-tests.sh\"",
             "windows": {
                 "command": "& \"${workspaceFolder}/docker/windows/docker-debug-lldb-tests.ps1\""
             },

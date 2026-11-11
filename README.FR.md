@@ -77,7 +77,7 @@ Le script `build.py` / `debug.py` génère automatiquement les classes de nœuds
 
 La configuration fournie dans `.vscode` s'interface directement avec le conteneur :
 
-* **Compilation (`Ctrl+Shift+B`) :** Compile le fichier source `.p` actif via `docker-cli.sh`.
+* **Compilation (`Ctrl+Shift+B`) :** Compile le fichier source `.p` actif via `docker/linux/docker-cli.sh` (ou `docker/windows/docker-cli.ps1` sous Windows).
 * **Débogage (`F5`) :** Profils LLDB pour le compilateur C++ (port 1234) et debugpy pour les générateurs Python (port 5678).
 * **Indexation Clangd :** Navigation de code et autocomplétion C++ sur l'hôte sans nécessiter LLVM en local.
 * **Coloration syntaxique :** Extension `.vscode/SyntaxeCouleurPrysma` pour les fichiers `.p`.

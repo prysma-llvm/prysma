@@ -1,6 +1,7 @@
 #!/bin/bash
 # Wrapper transparent pour exécuter Docker que VS Code tourne en Flatpak ou en natif
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 if command -v flatpak-spawn >/dev/null 2>&1; then
     flatpak-spawn --host docker "$@"
@@ -19,42 +20,42 @@ else
 fi
 
 # Ensure .clangd-includes is populated for host Clangd indexing
-if [ ! -d "$SCRIPT_DIR/.clangd-includes/llvm" ]; then
+if [ ! -d "$ROOT_DIR/.clangd-includes/llvm" ]; then
     TEMP_C=$(docker create prysma-debug 2>/dev/null)
     if [ -n "$TEMP_C" ]; then
-        mkdir -p "$SCRIPT_DIR/.clangd-includes"
-        docker cp "$TEMP_C:/usr/lib/llvm-18/include/." "$SCRIPT_DIR/.clangd-includes" 2>/dev/null
+        mkdir -p "$ROOT_DIR/.clangd-includes"
+        docker cp "$TEMP_C:/usr/lib/llvm-18/include/." "$ROOT_DIR/.clangd-includes" 2>/dev/null
         docker rm -f "$TEMP_C" >/dev/null 2>&1
-        mkdir -p "$SCRIPT_DIR/.clangd-includes/llvm-18"
-        cp -r "$SCRIPT_DIR/.clangd-includes/llvm" "$SCRIPT_DIR/.clangd-includes/llvm-18/llvm" 2>/dev/null
+        mkdir -p "$ROOT_DIR/.clangd-includes/llvm-18"
+        cp -r "$ROOT_DIR/.clangd-includes/llvm" "$ROOT_DIR/.clangd-includes/llvm-18/llvm" 2>/dev/null
     fi
 fi
 
 # Mettre à jour compile_commands.json pour Clangd sur l'hôte si généré dans Docker
-for CDB in "$SCRIPT_DIR/build/compile_commands.json" "$SCRIPT_DIR/tests/unit_tests/build/compile_commands.json"; do
+for CDB in "$ROOT_DIR/build/compile_commands.json" "$ROOT_DIR/tests/unit_tests/build/compile_commands.json"; do
     if [ -f "$CDB" ]; then
         if grep -q "/workspace" "$CDB" 2>/dev/null; then
-            sed -i "s|/workspace|$SCRIPT_DIR|g" "$CDB"
+            sed -i "s|/workspace|$ROOT_DIR|g" "$CDB"
         fi
         if grep -q "/usr/lib/llvm-18/include" "$CDB" 2>/dev/null; then
-            sed -i "s|/usr/lib/llvm-18/include|$SCRIPT_DIR/.clangd-includes|g" "$CDB"
+            sed -i "s|/usr/lib/llvm-18/include|$ROOT_DIR/.clangd-includes|g" "$CDB"
         fi
     fi
 done
 
-if [ -f "$SCRIPT_DIR/build/compile_commands.json" ] && [ -f "$SCRIPT_DIR/tests/unit_tests/build/compile_commands.json" ]; then
+if [ -f "$ROOT_DIR/build/compile_commands.json" ] && [ -f "$ROOT_DIR/tests/unit_tests/build/compile_commands.json" ]; then
     python3 -c "
 import json
 try:
-    with open('$SCRIPT_DIR/build/compile_commands.json') as f:
+    with open('$ROOT_DIR/build/compile_commands.json') as f:
         main_cdb = json.load(f)
-    with open('$SCRIPT_DIR/tests/unit_tests/build/compile_commands.json') as f:
+    with open('$ROOT_DIR/tests/unit_tests/build/compile_commands.json') as f:
         tests_cdb = json.load(f)
     files = {e['file'] for e in main_cdb}
     merged = main_cdb + [e for e in tests_cdb if e['file'] not in files]
-    with open('$SCRIPT_DIR/build/compile_commands.json', 'w') as f:
+    with open('$ROOT_DIR/build/compile_commands.json', 'w') as f:
         json.dump(merged, f, indent=2)
-    with open('$SCRIPT_DIR/compile_commands.json', 'w') as f:
+    with open('$ROOT_DIR/compile_commands.json', 'w') as f:
         json.dump(merged, f, indent=2)
 except Exception:
     pass
@@ -62,3 +63,4 @@ except Exception:
 fi
 
 exit $EXIT_CODE
+
