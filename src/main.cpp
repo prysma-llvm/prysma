@@ -6,6 +6,19 @@
 //
 //===----------------------------------------------------------------------===//
 
+#include <exception>
+#include <filesystem>
+#include <iostream>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <vector>
+
+#include <llvm/Support/TargetSelect.h>
+#include <llvm-18/llvm/IR/DerivedTypes.h>
+#include <llvm-18/llvm/IR/Instructions.h>
+#include <llvm-18/llvm/IR/Value.h>
+
 #include "compiler/ast/registry/data/id_generator.hpp"
 #include "compiler/ast/registry/data/node_data_registry.hpp"
 #include "compiler/ast/utils/orchestrator_include/configuration_facade_environment.h"
@@ -14,18 +27,6 @@
 #include "compiler/file_processing/file_reading.h"
 #include "compiler/manager_error.h"
 #include "compiler/registry/registry_file.h"
-#include <exception>
-#include <iostream>
-#include <llvm-18/llvm/IR/DerivedTypes.h>
-#include <llvm-18/llvm/IR/Instructions.h>
-#include <llvm-18/llvm/IR/Value.h>
-#include <filesystem>
-#include <memory>
-#include <mutex>
-#include <llvm/Support/TargetSelect.h>
-#include <string>
-#include <vector>
-
 
 //#include "compiler/ast/nodes/expression/soa-node-register-backend/experiment.hpp" // INCLUDE TEMPORAIRE, DÉPLACER DANS compiler/ast/registry/
 

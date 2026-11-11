@@ -18,6 +18,18 @@ else
     fi
 fi
 
+# Ensure .clangd-includes is populated for host Clangd indexing
+if [ ! -d "$SCRIPT_DIR/.clangd-includes/llvm" ]; then
+    TEMP_C=$(docker create prysma-debug 2>/dev/null)
+    if [ -n "$TEMP_C" ]; then
+        mkdir -p "$SCRIPT_DIR/.clangd-includes"
+        docker cp "$TEMP_C:/usr/lib/llvm-18/include/." "$SCRIPT_DIR/.clangd-includes" 2>/dev/null
+        docker rm -f "$TEMP_C" >/dev/null 2>&1
+        mkdir -p "$SCRIPT_DIR/.clangd-includes/llvm-18"
+        cp -r "$SCRIPT_DIR/.clangd-includes/llvm" "$SCRIPT_DIR/.clangd-includes/llvm-18/llvm" 2>/dev/null
+    fi
+fi
+
 # Mettre à jour compile_commands.json pour Clangd sur l'hôte si généré dans Docker
 for CDB in "$SCRIPT_DIR/build/compile_commands.json" "$SCRIPT_DIR/tests/unit_tests/build/compile_commands.json"; do
     if [ -f "$CDB" ]; then

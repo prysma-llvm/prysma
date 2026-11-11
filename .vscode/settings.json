@@ -10,7 +10,7 @@
         "--function-arg-placeholders=false",
         "--inlay-hints=true"
     ],
-    "clangd.checkUpdates": false,
+    "clangd.checkUpdates": true,
     "clangd.onConfigChanged": "restart",
 
     // ===== C++ Configuration =====
@@ -77,7 +77,7 @@
 
     // ===== LLDB Debugger =====
     "lldb.displayFormat": "decimal",
-    "lldb.showDisassembly": "auto",
+    "lldb.showDisassembly": "never",
     "lldb.dereferencePointers": true,
     "lldb.consoleMode": "commands"
 }

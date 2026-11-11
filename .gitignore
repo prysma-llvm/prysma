@@ -85,3 +85,4 @@ config.toml
 
 # Prysma node module from SyntaxeCouleurPrysma
 .vscode/SyntaxeCouleurPrysma/node_modules
+.vscode/lldb_source_map.txt

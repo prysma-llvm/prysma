@@ -6,6 +6,7 @@
             "type": "lldb",
             "request": "custom",
             "initCommands": [
+                "process handle -s false -p true -n true SIGSTOP",
                 "settings set target.source-map /workspace ${workspaceFolder}"
             ],
             "targetCreateCommands": [
@@ -14,10 +15,29 @@
             ],
             "processCreateCommands": [
                 "gdb-remote 127.0.0.1:1234",
-                "continue"
+                "process handle -s false -p true -n true SIGSTOP"
             ],
             "sourceMap": {
                 "/workspace": "${workspaceFolder}"
+            },
+            "breakpointMode": "file",
+            "windows": {
+                "breakpointMode": "file",
+                "sourceMap": {
+                    "/workspace": "${workspaceFolder}"
+                },
+                "initCommands": [
+                    "process handle -s false -p true -n true SIGSTOP",
+                    "command source .vscode/lldb_source_map.txt"
+                ],
+                "targetCreateCommands": [
+                    "target create build/Prysma",
+                    "command source .vscode/lldb_source_map.txt"
+                ],
+                "processCreateCommands": [
+                    "gdb-remote 127.0.0.1:1234",
+                    "process handle -s false -p true -n true SIGSTOP"
+                ]
             },
             "preLaunchTask": "Start LLDB Server (Docker)"
         },
@@ -26,6 +46,7 @@
             "type": "lldb",
             "request": "custom",
             "initCommands": [
+                "process handle -s false -p true -n true SIGSTOP",
                 "settings set target.source-map /workspace ${workspaceFolder}"
             ],
             "targetCreateCommands": [
@@ -34,10 +55,29 @@
             ],
             "processCreateCommands": [
                 "gdb-remote 127.0.0.1:1234",
-                "continue"
+                "process handle -s false -p true -n true SIGSTOP"
             ],
             "sourceMap": {
                 "/workspace": "${workspaceFolder}"
+            },
+            "breakpointMode": "file",
+            "windows": {
+                "breakpointMode": "file",
+                "sourceMap": {
+                    "/workspace": "${workspaceFolder}"
+                },
+                "initCommands": [
+                    "process handle -s false -p true -n true SIGSTOP",
+                    "command source .vscode/lldb_source_map.txt"
+                ],
+                "targetCreateCommands": [
+                    "target create tests/unit_tests/build/PrysmaTests",
+                    "command source .vscode/lldb_source_map.txt"
+                ],
+                "processCreateCommands": [
+                    "gdb-remote 127.0.0.1:1234",
+                    "process handle -s false -p true -n true SIGSTOP"
+                ]
             },
             "preLaunchTask": "Start LLDB Server for Unit Tests (Docker)"
         },

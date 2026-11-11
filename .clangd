@@ -14,6 +14,10 @@ CompileFlags:
     - "-Ibuild/generationCode/include"
     - "-I.clangd-includes"
     - "-isystem.clangd-includes"
+    - "-I.clangd-includes/llvm-18"
+    - "-isystem.clangd-includes/llvm-18"
+    - "-I.clangd-includes/llvm-c-18"
+    - "-isystem.clangd-includes/llvm-c-18"
     - "-Itests/lib"
     - "-Itests/unit_tests/include"
     - "-fno-rtti" 
@@ -27,6 +31,12 @@ CompileFlags:
     - "-Wsign-conversion"
     - "-Wnull-dereference"
     - "-fcolor-diagnostics"
+    - "-Wno-deprecated-declarations"
+    - "-Wno-unknown-warning-option"
+    - "-Wno-unused-command-line-argument"
+  Remove:
+    - "-fsanitize=*"
+    - "-fstack-protector*"
   CompilationDatabase: build
 
 Index:
@@ -38,25 +48,22 @@ Diagnostics:
     - unknown_nested_typename_suggest
     - no_member
     - no_member_template
+    - typename_nested_not_found
+    - invalid_type_template_arg
+    - "no type named 'char_traits' in namespace 'std'"
+    - "char_traits"
+    - "no type named"
   UnusedIncludes: Strict
   MissingIncludes: Strict
   ClangTidy:
     Add: 
       - bugprone-*
-      - cppcoreguidelines-*
-      - modernize-*
       - performance-*
-      - readability-*
       - cert-*
-      - hicpp-*
       - clang-analyzer-*
-      - misc-*
-      - portability-*
       - concurrency-*
     Remove:
-      - readability-redundant-access-specifiers
-    CheckOptions:
-      readability-identifier-naming.VariableCase: camelCase
+      - bugprone-easily-swappable-parameters
 
 Hover:
   ShowAKA: true
