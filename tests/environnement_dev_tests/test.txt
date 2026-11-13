@@ -1,0 +1,392 @@
+Tests d’intégration de l’environnement de développement Prysma
+
+**Objectif et périmètre**
+
+Vérifier la fiabilité de l’environnement de développement du compilateur Prysma sous Linux et Windows : compilation dans Docker, exécution des scripts, intégration avec VS Code, débogage et analyse du code source.
+
+Les tests doivent couvrir les scénarios normaux, les erreurs prévisibles et les cas limites. Chaque test doit préciser ses préconditions, les actions exécutées et les résultats attendus.
+
+La validation repose exclusivement sur des tests d’intégration, incluant les parcours complets de bout en bout lorsque cela est nécessaire.
+
+Deux niveaux de validation sont distingués :
+
+- **Tests d’intégration** : vérifier plusieurs composants réels ensemble, par exemple un script Bash ou PowerShell avec Docker.
+- **Tests de bout en bout** : vérifier le parcours complet depuis VS Code jusqu’au programme exécuté dans le conteneur.
+
+Le démarrage d’un vrai conteneur, la vérification de ses volumes et l’exécution des scripts dans leurs environnements respectifs relèvent de ces tests d’intégration. Les dépendances réelles doivent être utilisées pour les scénarios concernés.
+
+**Environnements à vérifier**
+
+| Environnement | Éléments particuliers à vérifier |
+|---|---|
+| Linux, VS Code natif et Docker Engine | Scripts Bash, permissions, UID/GID, signaux et chemins Linux |
+| Windows, VS Code natif et Docker Desktop utilisant des conteneurs Linux | Scripts PowerShell, chemins Windows, montages, encodage et transmission des arguments |
+| VS Code dans WSL, si officiellement pris en charge | Scripts Linux, accès aux fichiers et disponibilité de Docker depuis WSL |
+| VS Code Flatpak, si officiellement pris en charge | Accès à Docker sur l’hôte par `flatpak-spawn` |
+
+Un test PowerShell exécuté sous Linux ne remplace pas une validation sur Windows.
+
+**1. Tests d’intégration du débogage dans VS Code**
+
+**1.1. Démarrage des deux configurations**
+
+Vérifier séparément :
+
+- Le débogage du compilateur Prysma en C++.
+- Le débogage d’un script Python.
+
+Pour chaque configuration :
+
+- Ouvrir un espace de travail valide.
+- Lancer la configuration depuis VS Code.
+- Vérifier l’exécution de la tâche préparatoire.
+- Vérifier que le programme demandé est lancé dans le bon répertoire.
+- Vérifier que l’adaptateur se connecte au serveur correspondant.
+- Atteindre un point d’arrêt déterminé, puis terminer la session.
+
+**Résultat attendu :** le bon programme est débogué, avec les bons arguments et les bonnes sources, sans intervention manuelle supplémentaire.
+
+Pour le débogage C++, vérifier également qu’une compilation échouée empêche le lancement silencieux d’un ancien binaire.
+
+**1.2. Validation des points d’arrêt**
+
+Placer des points d’arrêt sur des instructions exécutables connues :
+
+- Dans le programme principal.
+- Dans une fonction appelée.
+- Dans un autre fichier source.
+- Dans un script Python.
+
+Vérifier que chaque point d’arrêt devient vérifié lorsque le programme est chargé, puis qu’il est effectivement atteint si le chemin d’exécution le traverse.
+
+Cas limites :
+
+- Point d’arrêt créé avant le démarrage du débogueur.
+- Point d’arrêt ajouté, déplacé ou supprimé pendant une pause.
+- Plusieurs points d’arrêt dans un même fichier.
+- Deux fichiers de même nom dans des dossiers différents.
+- Point d’arrêt sur une ligne vide, un commentaire ou une ligne sans instruction.
+- Source modifiée après compilation.
+- Binaire sans informations de débogage.
+
+**Résultat attendu :** un point d’arrêt valide arrête le bon programme au bon emplacement. Un point d’arrêt impossible à résoudre est signalé comme tel, sans blocage.
+
+L’absence absolue de points d’arrêt gris n’est pas un critère de réussite : un point d’arrêt peut rester temporairement non vérifié ou viser une ligne non exécutable.
+
+**1.3. Correspondance entre les sources locales et Docker**
+
+Vérifier les correspondances entre les chemins locaux et `/workspace`, pour C++ et Python.
+
+Cas à couvrir :
+
+- Projet placé dans un dossier ordinaire.
+- Chemin contenant des espaces.
+- Chemin contenant des accents.
+- Projet Windows situé sur un lecteur différent de `C:`.
+- Séparateurs Windows `\` et chemins normalisés `/`.
+- Déplacement du projet vers un autre dossier.
+- Fichiers portant le même nom dans plusieurs sous-dossiers.
+
+**Résultat attendu :** la pile d’appels et les points d’arrêt ouvrent le bon fichier local, sans confusion avec une autre copie du projet.
+
+**1.4. Lecture des variables et contrôle de l’exécution**
+
+Utiliser de petits programmes de test dont les valeurs sont connues.
+
+Vérifier :
+
+- La lecture d’entiers, de booléens, de chaînes et de nombres flottants.
+- La lecture des champs d’une structure C++ et des éléments d’une liste Python.
+- L’inspection d’un pointeur valide et d’un pointeur nul en C++.
+- L’évaluation d’une expression simple.
+- La mise à jour des valeurs après une instruction.
+- La sélection d’un autre cadre de la pile d’appels.
+- Le pas à pas, l’entrée dans une fonction, la sortie d’une fonction et la reprise.
+
+Cas limites :
+
+- Variable hors de portée.
+- Variable masquée par une autre variable du même nom.
+- Chaîne vide ou contenant des caractères Unicode.
+- Collection volumineuse.
+- Variable indisponible à cause des optimisations.
+
+**Résultat attendu :** les valeurs correspondent au programme et au cadre sélectionné. Les valeurs indisponibles sont signalées sans être présentées comme des valeurs valides.
+
+Ces tests concernent LLDB et debugpy. L’analyse statique de clangd est vérifiée séparément.
+
+**1.5. Démarrage lent, erreurs et interruptions**
+
+Vérifier le comportement lorsque :
+
+- Le démarrage du conteneur est retardé.
+- Le serveur de débogage devient disponible après plusieurs tentatives.
+- Le port est déjà occupé.
+- Le port appartient à un autre processus qui n’est pas le débogueur attendu.
+- Docker n’est pas disponible.
+- L’image est absente.
+- Le programme demandé est absent.
+- Le conteneur s’arrête avant la connexion.
+- Le serveur disparaît pendant une session.
+- L’utilisateur annule le lancement.
+
+**Résultat attendu :**
+
+- Le signal de disponibilité n’est pas émis avant que le serveur soit effectivement prêt.
+- L’ouverture d’un port ne suffit pas à valider toute la session : les échanges avec l’adaptateur doivent aussi réussir.
+- Chaque attente possède une échéance.
+- Un dépassement produit une erreur explicite et les diagnostics nécessaires.
+- Aucun échec n’est présenté comme un lancement réussi.
+
+Séparer les délais de compilation, de démarrage du conteneur et de réponse du débogueur. Le temps passé volontairement en pause sur un point d’arrêt ne constitue pas un blocage.
+
+**1.6. Arrêt, nettoyage et relance**
+
+Tester :
+
+- Une fin normale du programme.
+- Un arrêt depuis VS Code.
+- Une fermeture de VS Code pendant la session.
+- Un lancement annulé.
+- Plusieurs cycles successifs de démarrage et d’arrêt.
+- Une nouvelle session après une session interrompue.
+
+Vérifier que les ports sont libérés et que les ressources temporaires sont nettoyées selon le comportement prévu.
+
+Avec deux espaces de travail ouverts, vérifier qu’un lancement ne supprime pas silencieusement le conteneur de l’autre projet. Si les sessions simultanées ne sont pas prises en charge, le conflit doit être annoncé clairement.
+
+**2. Tests de l’analyse du code et des tâches VS Code**
+
+**2.1. Intégration de clangd**
+
+Après compilation :
+
+- Vérifier que `compile_commands.json` est un JSON valide.
+- Vérifier que les entrées nécessaires à l’analyse des fichiers sources du compilateur sont présentes.
+- Vérifier que les chemins utilisés par clangd sont accessibles depuis l’environnement où il s’exécute.
+- Ouvrir un fichier utilisant des en-têtes LLVM.
+- Vérifier la navigation vers une définition, la complétion et l’affichage d’un type.
+- Introduire une erreur volontaire, vérifier le diagnostic, puis la corriger.
+
+Cas limites :
+
+- Base de compilation absente ou invalide.
+- En-têtes copiés partiellement.
+- Projet déplacé.
+- Fichier source nouvellement ajouté.
+- Base de compilation régénérée après une première adaptation pour l’hôte.
+
+**Résultat attendu :** clangd analyse le projet avec les paramètres appropriés, sans erreurs artificielles liées aux chemins ou aux en-têtes.
+
+**2.2. Intégration des tâches**
+
+Vérifier :
+
+- L’ordre des tâches dépendantes.
+- La transmission du fichier actif à la commande.
+- La gestion d’un fichier actif dont l’extension ne correspond pas à la tâche.
+- La propagation d’un échec de compilation.
+- L’annulation d’une tâche.
+- L’affichage des erreurs dans le panneau des problèmes.
+- L’ouverture du bon fichier à la bonne ligne depuis un diagnostic.
+
+Tester également un profil VS Code vierge pour identifier les extensions et outils réellement nécessaires.
+
+**3. Tests d’intégration Docker**
+
+**3.1. Construction et contenu de l’image**
+
+Construire l’image de développement et vérifier :
+
+- La présence des outils nécessaires.
+- L’existence des exécutables aux chemins utilisés par les scripts.
+- L’import de debugpy.
+- Les variables d’environnement nécessaires.
+- Une compilation C++ minimale.
+- L’exécution d’un petit script Python.
+
+La validation complète de la construction doit utiliser le contexte du dépôt, notamment les fichiers de dépendances référencés par le Dockerfile.
+
+**3.2. Volumes et permissions**
+
+Vérifier :
+
+- La lecture d’un fichier de l’hôte depuis le conteneur.
+- La création d’un fichier dans `build/` depuis le conteneur.
+- Sa modification et sa suppression depuis l’hôte.
+- La visibilité d’une modification faite depuis l’hôte.
+- Le comportement avec un montage en lecture seule.
+- Le comportement en cas de permissions insuffisantes.
+
+Sous Linux, vérifier particulièrement les fichiers produits avec l’UID/GID de l’utilisateur.
+
+**Résultat attendu :** les fichiers produits restent utilisables par le développeur. Une interdiction d’écriture provoque une erreur explicite, sans réussite apparente.
+
+**3.3. Fonctionnement de ccache**
+
+Avec un cache isolé pour le test :
+
+- Compiler une petite source en utilisant effectivement ccache.
+- Supprimer l’objet produit, sans supprimer le cache.
+- Recompiler dans un nouveau conteneur utilisant le même volume.
+- Vérifier qu’un cache hit est enregistré.
+- Modifier la source et vérifier que le résultat est reconstruit correctement.
+- Tester un cache vide et un cache non accessible en écriture.
+
+Ne pas considérer un simple build incrémental sans recompilation comme une preuve du fonctionnement de ccache.
+
+**3.4. Commandes, résultats et journaux**
+
+Vérifier que les scripts ciblent le bon conteneur pour les commandes `exec`, `logs` et de nettoyage.
+
+Tester un conteneur actif, arrêté et inexistant.
+
+Pour l’exécution d’un programme C++ ou Prysma dans Docker, couvrir :
+
+- Une exécution réussie.
+- Une exécution produisant volontairement un code de sortie non nul.
+- Un programme interrompu ou terminé anormalement.
+
+**Résultat attendu :** le statut final est correctement transmis à VS Code ou au script lanceur. Les sorties utiles sont conservées, y compris lorsque le conteneur doit être supprimé automatiquement.
+
+**4. Critères de réussite et ordre de mise en place**
+
+La première étape couvre les deux parcours de débogage réussis : compilateur C++ et script Python.
+
+La deuxième couvre les régressions prioritaires : démarrage lent, expiration de connexion, port occupé, chemins avec espaces et accents, compilation échouée et arrêt-relance.
+
+La troisième complète les tests d’intégration Docker, les permissions, ccache, clangd et les tâches VS Code.
+
+Chaque exécution doit enregistrer :
+
+- Le système et les versions des composants utilisés.
+- L’identifiant du test.
+- Le résultat attendu et le résultat observé.
+- La durée.
+- Les codes de sortie.
+- Les journaux utiles en cas d’échec.
+
+Les versions de référence doivent être maîtrisées pour rendre les résultats reproductibles. Les mises à jour des outils peuvent être validées dans une campagne distincte.
+
+Un test réussit lorsqu’il vérifie le comportement attendu, y compris lorsqu’il attend une erreur. Une simple absence de message d’erreur ne constitue pas une validation suffisante.
+
+Les tests doivent être placés dans `tests/environnement_dev_tests/`, avec un dossier `window` pour les scénarios propres à Windows et un dossier `linux` pour ceux propres à Linux.
+
+**1. Emplacement et organisation des tests**
+
+Créer la suite dans `tests/environnement_dev_tests/`, relativement à la racine du dépôt.
+
+Organiser les tests dans les sous-dossiers suivants :
+
+| Sous-dossier | Contenu |
+|---|---|
+| `common/integration/` | Tests d’intégration communs aux deux systèmes : Docker, volumes, ccache, démarrage et arrêt des services de débogage |
+| `window/integration/` | Tests d’intégration propres à Windows |
+| `linux/integration/` | Tests d’intégration propres à Linux |
+| `vscode/` | Tests utilisant une véritable instance de VS Code |
+| `fixtures/` | Programmes et fichiers de référence utilisés par les tests |
+
+Conserver le nom `window` pour le dossier Windows.
+
+À l’intérieur des dossiers de tests, regrouper les tests par famille fonctionnelle : arguments et chemins, gestion des erreurs, bases de compilation, permissions, cache, débogage ou nettoyage. Ne créer que les sous-dossiers nécessaires.
+
+Réutiliser les scénarios communs plutôt que les dupliquer entre `window/` et `linux/`. Chaque test doit correspondre à une famille du plan de tests fourni.
+
+**2. Langages et outils**
+
+Utiliser **Python avec pytest** pour les tests d’intégration des scripts, les tests Docker et leur orchestration.
+
+Les tests d’intégration doivent utiliser les composants réels. Les tests Bash et PowerShell doivent être lancés dans leur environnement cible, avec les dépendances nécessaires aux scénarios exécutés.
+
+Les tests nécessitant l’API de VS Code peuvent utiliser TypeScript ou JavaScript avec `@vscode/test-electron`. Ils appartiennent à la famille des tests d’intégration et sont déclenchés par son orchestrateur.
+
+**3. Point d’entrée unique et un nouvel appel**
+
+Conserver strictement `tests/run_unit_tests.py` comme point d’entrée principal de la suite globale. Ne pas créer un autre lanceur global concurrent.
+
+Ajouter exactement **un appel de haut niveau** dans ce fichier : celui de l’orchestrateur des **tests d’intégration de l’environnement de développement**, incluant les scénarios Docker, Bash, PowerShell et VS Code.
+
+Cet orchestrateur découvre et exécute les tests de ses familles. Ne pas ajouter un appel individuel dans `tests/run_unit_tests.py` pour chaque fichier ou chaque scénario.
+
+Des sous-lanceurs internes sont autorisés dans `tests/environnement_dev_tests/`. Ils restent pilotés par le point d’entrée principal.
+
+**4. Numérotation des étapes**
+
+Le lanceur actuel comporte cinq étapes. L’ajout d’une étape porte le total à **six**.
+
+Conserver les cinq étapes existantes et mettre à jour leurs compteurs :
+
+```text
+[1/6] ...
+[2/6] ...
+[3/6] ...
+[4/6] ...
+[5/6] Running LLVM/Prysma integration test orchestrator...
+[6/6] Running development environment integration tests...
+```
+
+Ne pas modifier la logique des cinq étapes existantes. Seul leur compteur total passe de cinq à six, avec un nouvel appel pour les tests d’intégration de l’environnement.
+
+Si une sélection partielle des suites est utilisée, afficher une progression correspondant aux étapes réellement sélectionnées.
+
+**5. Sélection et emplacement d’exécution**
+
+Autoriser des options dans `tests/run_unit_tests.py` pour sélectionner les suites existantes ou les tests d’intégration de l’environnement. La sélection doit permettre de lancer les tests Windows sans imposer une compilation native préalable de Prysma sous Windows.
+
+Respecter les emplacements suivants :
+
+- Les tests PowerShell doivent réellement s’exécuter sous Windows.
+- Les tests Bash doivent s’exécuter sous Linux ou dans WSL, selon le scénario.
+- Les compilations et programmes prévus pour Docker doivent s’exécuter dans le conteneur.
+- Les tests de bout en bout Windows doivent utiliser VS Code sous Windows lorsqu’ils vérifient le parcours Windows.
+
+Ne pas exécuter toute la suite dans WSL en considérant que cela valide les scripts PowerShell.
+
+Éviter toute récursion : un test lançant des commandes dans Docker ne doit pas relancer la suite globale qui déclencherait à nouveau les mêmes tests Docker.
+
+**6. CI Ubuntu et Windows**
+
+Prévoir deux workflows GitHub Actions distincts, utilisant des runners fournis par GitHub :
+
+- Un workflow Ubuntu pour les tests Linux et les scénarios communs applicables.
+- Un workflow Windows pour les tests Windows et les scénarios WSL2/Docker applicables.
+
+Les deux workflows doivent utiliser `tests/run_unit_tests.py` avec les options adaptées.
+
+Pour le workflow Windows, vérifier explicitement que WSL2 démarre et que Docker fonctionne avant de lancer les tests qui en dépendent.
+
+Documenter en anglais que **la partie WSL2 et virtualisation imbriquée du workflow Windows est expérimentale**. Préciser la configuration réellement utilisée : Docker Engine dans WSL2 ou Docker Desktop. Ne pas présenter un test de Docker Engine dans WSL2 comme une validation complète de Docker Desktop.
+
+Distinguer clairement :
+
+- Un échec de préparation de WSL2 ou Docker.
+- Un échec d’un test après préparation réussie.
+- Un test non applicable au système.
+- Un test exécuté avec succès.
+
+L’indisponibilité d’un composant requis ne doit pas produire une réussite apparente. Les tests Windows indépendants de WSL2 doivent pouvoir s’exécuter même si la préparation de WSL2 échoue.
+
+**7. Résultats, isolation et documentation**
+
+Chaque famille doit produire un résultat exploitable par le lanceur principal. Celui-ci doit retourner un code non nul lorsqu’une famille obligatoire échoue ou ne peut pas être exécutée.
+
+Un échec d’une famille de tests d’intégration ne doit pas empêcher l’exécution des autres familles indépendantes, lorsque cela reste techniquement possible.
+
+Utiliser des fichiers temporaires et des ressources Docker dédiées aux tests. Ne pas modifier ni supprimer les conteneurs, volumes ou caches personnels du développeur.
+
+Prévoir des délais configurables et un nettoyage des ressources après réussite, échec ou expiration.
+
+La documentation, rédigée en anglais, doit expliquer :
+
+- L’organisation des familles et leur répartition dans les sous-dossiers.
+- Les prérequis et commandes d’exécution.
+- La sélection des suites depuis `tests/run_unit_tests.py`.
+- Ce qui est exécuté sur l’hôte, dans WSL et dans Docker.
+- Les limites de la CI Windows expérimentale.
+- La consultation des résultats et journaux.
+
+La documentation doit préciser que les scénarios WSL2 et de virtualisation imbriquée de la CI GitHub Actions Windows sont expérimentaux.
+
+Conserver strictement `tests/run_unit_tests.py` pour intégrer la nouvelle suite, avec un seul nouvel appel à l’orchestrateur d’intégration. Regrouper les scénarios par famille fonctionnelle au sein des sous-dossiers correspondants.
+
+Ne pas affaiblir les assertions pour masquer un défaut existant. Tout comportement non conforme au plan doit être signalé explicitement.

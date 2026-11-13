@@ -1,4 +1,4 @@
-# docker/windows/docker-debug-lldb-tests.ps1 - LLDB Server starter for Unit Tests on Windows 10/11
+# docker/environnement_dev/windows/docker-debug-lldb-tests.ps1 - LLDB Server starter for Unit Tests on Windows 10/11
 $ErrorActionPreference = "Continue"
 
 # Check Docker availability
@@ -21,7 +21,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
-$RootDir = Split-Path -Parent (Split-Path -Parent $ScriptDir)
+$RootDir = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $ScriptDir))
 $ForwardRootDir = $RootDir.Replace("\", "/")
 
 # Write forward-slash source-map script for LLDB on Windows

@@ -1,7 +1,7 @@
 #!/bin/bash
-# docker/linux/docker-debug-lldb-tests.sh - LLDB Server starter for Unit Tests on Linux
+# docker/environnement_dev/linux/docker-debug-lldb-tests.sh - LLDB Server starter for Unit Tests on Linux
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
 # Clean up any existing container and release port 1234
 "$SCRIPT_DIR/docker-cli.sh" rm -f prysma-lldb-tests-debug prysma-lldb-debug 2>/dev/null || true

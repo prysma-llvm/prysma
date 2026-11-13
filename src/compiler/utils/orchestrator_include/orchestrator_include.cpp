@@ -83,5 +83,4 @@ void OrchestratorInclude::includeFile(const std::string& absolutePath)
             std::cerr << "Error in file '" << absolutePath << "': " << e.what() << std::endl;
         }
     });
-
 }

@@ -138,7 +138,7 @@ sudo sysctl -w kernel.kptr_restrict=0
 
 ## 10. VS Code Integration and Docker CLI Wrappers
 
-The repository includes platform-specific wrapper scripts (`docker/linux/docker-cli.sh` and `docker/windows/docker-cli.ps1`) and pre-configured `.vscode/tasks.json` tasks:
+The repository includes platform-specific wrapper scripts (`docker/environnement_dev/linux/docker-cli.sh` and `docker/environnement_dev/windows/docker-cli.ps1`) and pre-configured `.vscode/tasks.json` tasks:
 
 * **Environment detection**: Transparently detects host vs. Flatpak sandbox execution (`flatpak-spawn`).
 * **Permission preservation**: Executes commands with host user UID/GID (`--user $(id -u):$(id -g)`), ensuring generated `build/` files remain accessible without `sudo`.

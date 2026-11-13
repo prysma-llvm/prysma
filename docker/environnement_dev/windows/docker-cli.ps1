@@ -1,4 +1,4 @@
-# docker/windows/docker-cli.ps1 - Transparent Docker runner and Clangd indexer for Windows 10/11
+# docker/environnement_dev/windows/docker-cli.ps1 - Transparent Docker runner and Clangd indexer for Windows 10/11
 $ErrorActionPreference = "Continue"
 
 # Check Docker CLI availability
@@ -55,7 +55,7 @@ if ($rawArgs.Count -gt 0 -and $rawArgs[0] -eq '--') {
 }
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
-$RootDir = Split-Path -Parent (Split-Path -Parent $ScriptDir)
+$RootDir = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $ScriptDir))
 $ForwardRootDir = $RootDir.Replace("\", "/")
 
 # Ensure persistent ccache volume exists with write permissions

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Wrapper transparent pour exécuter Docker que VS Code tourne en Flatpak ou en natif
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
 run_docker() {
     if command -v flatpak-spawn >/dev/null 2>&1; then

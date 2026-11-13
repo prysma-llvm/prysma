@@ -83,6 +83,11 @@
 // Qu'un simple switch case c'est seulement un jump à un déterminé précis donc c'est parfait pour le prédict branchement du cpu.
 // Vitesse de flux de contrôle par switch case, hypothèse à analyser. 
 
+
+// N'oublie pas, je dois autoriser Docker à écrire dans le dossier build
+// sudo chown -R "$(id -u):$(id -g)" build/
+// chmod -R u+rwX build/
+
 auto main(int argc, char* argv[]) -> int {
     if (argc < 2) {
         std::cerr << "Error: Aucun fichier spécifié" << std::endl;
@@ -109,7 +114,6 @@ auto main(int argc, char* argv[]) -> int {
 
     std::string nomFile = std::filesystem::path(cheminFile).filename().string(); 
     try {  
-        
         llvm::InitializeAllTargetInfos();
         llvm::InitializeAllTargets();
         llvm::InitializeAllTargetMCs();

@@ -1,4 +1,4 @@
-# docker/windows/docker-debug-python.ps1 - Python debugpy server for Windows 10/11
+# docker/environnement_dev/windows/docker-debug-python.ps1 - Python debugpy server for Windows 10/11
 $ErrorActionPreference = "Continue"
 
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
@@ -7,7 +7,7 @@ if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
 }
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
-$RootDir = Split-Path -Parent (Split-Path -Parent $ScriptDir)
+$RootDir = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $ScriptDir))
 $ForwardRootDir = $RootDir.Replace("\", "/")
 
 $Target = ""
