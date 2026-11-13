@@ -79,7 +79,7 @@
         {
             "label": "Stop Python Debug Server (Docker)",
             "type": "shell",
-            "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-stop-python.sh\"",
+            "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-cli.sh\" rm -f prysma-python-debug",
             "windows": {
                 "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-stop-python.ps1\""
             },
@@ -173,7 +173,7 @@
             "dependsOn": [
                 "Build Unit Tests"
             ],
-            "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-debug-lldb-tests.sh\"",
+            "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-debug-lldb.sh\" --tests",
             "windows": {
                 "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-debug-lldb-tests.ps1\""
             },
