@@ -23,14 +23,18 @@ if ! run_docker volume inspect prysma-ccache >/dev/null 2>&1; then
 fi
 
 # Ensure .clangd-includes is populated for host Clangd indexing
-if [ ! -d "$ROOT_DIR/.clangd-includes/llvm" ]; then
+if [ ! -f "$ROOT_DIR/.clangd-includes/llvm/Support/TargetSelect.h" ]; then
     TEMP_C=$(run_docker create prysma-debug 2>/dev/null)
     if [ -n "$TEMP_C" ]; then
         mkdir -p "$ROOT_DIR/.clangd-includes"
-        run_docker cp "$TEMP_C:/usr/lib/llvm-18/include/." "$ROOT_DIR/.clangd-includes" 2>/dev/null
+        # Copy the real header directories (avoiding broken relative symlinks from /usr/lib)
+        run_docker cp "$TEMP_C:/usr/include/llvm-18/llvm/." "$ROOT_DIR/.clangd-includes/llvm" 2>/dev/null
+        run_docker cp "$TEMP_C:/usr/include/llvm-c-18/llvm-c/." "$ROOT_DIR/.clangd-includes/llvm-c" 2>/dev/null
         run_docker rm -f "$TEMP_C" >/dev/null 2>&1
-        mkdir -p "$ROOT_DIR/.clangd-includes/llvm-18"
+        # Create llvm-18 and llvm-c-18 subdirectories for includes like <llvm-18/llvm/...>
+        mkdir -p "$ROOT_DIR/.clangd-includes/llvm-18" "$ROOT_DIR/.clangd-includes/llvm-c-18"
         cp -r "$ROOT_DIR/.clangd-includes/llvm" "$ROOT_DIR/.clangd-includes/llvm-18/llvm" 2>/dev/null
+        cp -r "$ROOT_DIR/.clangd-includes/llvm-c" "$ROOT_DIR/.clangd-includes/llvm-c-18/llvm-c" 2>/dev/null
     fi
 fi
 

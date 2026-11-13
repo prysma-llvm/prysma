@@ -73,13 +73,22 @@ if (-not (Test-Path (Join-Path $ClangdIncludesDir "llvm\Support\TargetSelect.h")
         if ($tempContainer -and $LASTEXITCODE -eq 0) {
             $tempContainer = $tempContainer.Trim()
             New-Item -ItemType Directory -Force -Path $ClangdIncludesDir | Out-Null
-            & docker.exe cp "${tempContainer}:/usr/lib/llvm-18/include/." "$ClangdIncludesDir" 2>$null | Out-Null
+            $llvmDir = Join-Path $ClangdIncludesDir "llvm"
+            $llvmCDir = Join-Path $ClangdIncludesDir "llvm-c"
+            New-Item -ItemType Directory -Force -Path $llvmDir | Out-Null
+            New-Item -ItemType Directory -Force -Path $llvmCDir | Out-Null
+            & docker.exe cp "${tempContainer}:/usr/include/llvm-18/llvm/." "$llvmDir" 2>$null | Out-Null
+            & docker.exe cp "${tempContainer}:/usr/include/llvm-c-18/llvm-c/." "$llvmCDir" 2>$null | Out-Null
             & docker.exe rm -f $tempContainer 2>$null | Out-Null
             $llvm18Dir = Join-Path $ClangdIncludesDir "llvm-18"
             if (-not (Test-Path $llvm18Dir)) {
                 New-Item -ItemType Directory -Force -Path $llvm18Dir | Out-Null
-                Copy-Item -Path (Join-Path $ClangdIncludesDir "llvm") -Destination (Join-Path $llvm18Dir "llvm") -Recurse -Force -ErrorAction SilentlyContinue
-                Copy-Item -Path (Join-Path $ClangdIncludesDir "llvm-c") -Destination (Join-Path $llvm18Dir "llvm-c") -Recurse -Force -ErrorAction SilentlyContinue
+                Copy-Item -Path $llvmDir -Destination (Join-Path $llvm18Dir "llvm") -Recurse -Force -ErrorAction SilentlyContinue
+            }
+            $llvmC18Dir = Join-Path $ClangdIncludesDir "llvm-c-18"
+            if (-not (Test-Path $llvmC18Dir)) {
+                New-Item -ItemType Directory -Force -Path $llvmC18Dir | Out-Null
+                Copy-Item -Path $llvmCDir -Destination (Join-Path $llvmC18Dir "llvm-c") -Recurse -Force -ErrorAction SilentlyContinue
             }
         }
     } catch {}
