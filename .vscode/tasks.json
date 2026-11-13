@@ -81,7 +81,7 @@
             "type": "shell",
             "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-cli.sh\" rm -f prysma-python-debug",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-stop-python.ps1\""
+                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-cli.ps1\" -- rm -f prysma-python-debug"
             },
             "presentation": {
                 "reveal": "never",
@@ -175,7 +175,7 @@
             ],
             "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-debug-lldb.sh\" --tests",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-debug-lldb-tests.ps1\""
+                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-debug-lldb.ps1\" -- --tests"
             },
             "isBackground": true,
             "presentation": {
