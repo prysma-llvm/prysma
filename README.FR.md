@@ -39,7 +39,7 @@ fn int32 main() {
 
 ## Compilation sous Docker
 
-La chaîne de compilation officielle (LLVM 18, Clang 18, LLD, CMake, ccache, Python) est encapsulée dans une image Docker pour garantir des builds reproductibles.
+La chaîne de compilation officielle (LLVM 18, Clang 18, LLD, CMake, ccache, Python) est encapsulée dans une image Docker pour partager la même chaîne d’outils. Des reconstructions peuvent sélectionner des versions de paquets différentes ; le digest de l’image identifie la version effectivement utilisée.
 
 ### Installation de Docker
 

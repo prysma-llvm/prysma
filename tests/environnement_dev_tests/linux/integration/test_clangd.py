@@ -10,11 +10,12 @@ from common.lsp_client import LSPClient
 pytestmark = [pytest.mark.linux, pytest.mark.docker]
 
 
-def test_clangd_analysis_with_docker_database(docker, workspace, tmp_path):
+def test_clangd_analysis_with_docker_database(docker, workspace, tmp_path, repo_root):
+    shutil.copy2(repo_root / ".clangd", workspace / ".clangd")
     clangd = shutil.which("clangd") or shutil.which("clangd-18")
     assert clangd, "Host clangd is required"
     source = workspace / "main.cpp"
-    text = '#include <llvm/ADT/StringRef.h>\nint answer() { return 42; }\nint main() { llvm::StringRef name("prysma"); return answer(); }\n'
+    text = '#include <llvm/ADT/StringRef.h>\nint answer() { return 42; }\nint main() { llvm::StringRef name("prysma"); (void)name; return answer(); }\n'
     source.write_text(text, encoding="utf-8")
     (workspace / "CMakeLists.txt").write_text(
         'cmake_minimum_required(VERSION 3.12)\nproject(Probe)\n'

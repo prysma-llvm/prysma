@@ -13,6 +13,7 @@
     "languages": [
       {
         "id": "prysma",
+        "configuration": "./prysma-language-configuration.json",
         "aliases": [
           "Prysma",
           "prysma"

@@ -16,8 +16,8 @@ Prysma is a system compiler requiring a complete toolchain:
 Manual local installation of these components frequently leads to toolchain divergence, ABI mismatches, and portability issues across different operating systems.
 
 The official build workflow relies on **Docker as a centralized architecture**:
-- **Reproducible environment**: developers, CI runners, and benchmark servers share the exact same tool versions.
-- **No heavy host dependencies**: no LLVM packages or specialized libraries are required on the host system. Only Docker is needed.
+- **Reproducible environment**: the Dockerfile defines a shared toolchain. Rebuilding can select newer Ubuntu packages; use the same image digest when identical versions are required.
+- **No heavy host dependencies**: no LLVM packages or specialized libraries are required on the host system. Docker is sufficient for container compilation; host integration tests and VS Code require additional tools.
 - **Ready to use**: pre-configured environment variables, LLVM paths, and Python virtual environment ready for immediate use.
 
 ## 2. Prerequisites: Host Docker Installation
@@ -65,14 +65,14 @@ The local source directory is mounted into `/workspace` inside the container. Co
 # Compile Prysma (optimized release build with ccache)
 docker run --rm -v "$(pwd)":/workspace prysma-debug python3 build.py
 
-# Compile in debug mode (with Bear and injected sanitizer flags)
+# Compile in debug mode (with CMake compilation database generation and sanitizer flags)
 docker run --rm -v "$(pwd)":/workspace prysma-debug python3 debug.py
 
 # Run test suite
-docker run --rm -v "$(pwd)":/workspace prysma-debug python3 tests/run_unit_tests.py
+docker run --rm -v "$(pwd)":/workspace prysma-debug python3 tests/run_unit_tests.py --existing
 
 # Execute the compiled binary
-docker run --rm -v "$(pwd)":/workspace prysma-debug ./build/Prysma --help
+docker run --rm -v "$(pwd)":/workspace prysma-debug ./build/Prysma tests/prysma_code_tests/project_test_edge_case/test_recursion/test_simple_recursion.p
 ```
 
 > **Windows PowerShell:** Replace `"$(pwd)"` with `"${PWD}"`.
@@ -95,10 +95,10 @@ python3 build.py
 python3 debug.py
 
 # Run unit tests
-python3 tests/run_unit_tests.py
+python3 tests/run_unit_tests.py --existing
 
 # Test the compiled executable
-./build/Prysma --help
+./build/Prysma tests/prysma_code_tests/project_test_edge_case/test_recursion/test_simple_recursion.p
 
 # Exit the container
 exit
@@ -145,3 +145,5 @@ The repository includes platform-specific wrapper scripts (`docker/environnement
 * **Clangd indexing**: Automatically rewrites `/workspace` paths to absolute host paths in `build/compile_commands.json` and bridges LLVM headers (`.clangd-includes`), delivering immediate IDE autocompletion and diagnostics without requiring host LLVM installation.
 
 For instructions on configuring `.vscode/Prysma.code-profile`, packaging the syntax coloring extension, and interactive debugging, see the [VS Code Environment Guide](vscode_environment.md).
+
+The `--existing` selection runs the original compiler suites inside Docker. Run development environment tests on the host with `python3 tests/run_unit_tests.py --dev-env`; see [prerequisites and coverage](../../../tests/environnement_dev_tests/README.md).

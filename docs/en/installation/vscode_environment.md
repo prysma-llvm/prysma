@@ -6,7 +6,7 @@ This document outlines the VS Code development environment for building, debuggi
 
 The architecture combines VS Code on your host machine with the isolation of the Docker compilation container:
 
-* **No heavy host dependencies**: LLVM 18, Clang 18, LLD, GDB, and LLDB run exclusively inside the `prysma-debug` container.
+* **No heavy host dependencies**: Compilation and debug servers run in `prysma-debug`. Host Python, clangd and the CodeLLDB/debugpy VS Code extensions are also required.
 * **C++ indexing with Clangd**: The `docker/environnement_dev/linux/docker-cli.sh` (or `docker/environnement_dev/windows/docker-cli.ps1`) wrapper translates paths in `compile_commands.json` so host Clangd provides autocompletion and code navigation without requiring local LLVM.
 * **Full debugging support (C++ and Python)**: Launch profiles allow setting breakpoints and inspecting executions inside the container via LLDB and debugpy.
 * **Prysma syntax highlighting**: An internal extension handles syntax coloring and delimiter matching for `.p` source files.
@@ -23,7 +23,7 @@ The `.vscode/Prysma.code-profile` file bundles recommended extensions, formattin
    `.vscode/Prysma.code-profile`
 4. Select the components to import (Settings, Extensions, Keybindings) and click **Create Profile** (or **Import**).
 
-Once applied, VS Code automatically installs recommended extensions (`llvm-vs-code-extensions.vscode-clangd`, `llvm-vs-code-extensions.lldb-dap`, `ms-python.debugpy`, etc.) and configures Clangd as the primary C++ engine.
+Once applied, VS Code automatically installs recommended extensions (`llvm-vs-code-extensions.vscode-clangd`, `vadimcn.vscode-lldb`, `ms-python.debugpy`, etc.) and configures Clangd as the primary C++ engine.
 
 ## 3. Installing Prysma Syntax Highlighting (`SyntaxeCouleurPrysma`)
 
@@ -41,7 +41,7 @@ npx vsce package
 
 This command generates `prysma-language-support-0.0.2.vsix`.
 
-> **Note:** If Node.js / npm is not installed on your host system, you can run this command in any environment with Node 18+.
+> **Note:** If Node.js / npm is not installed on your host system, you can run this command in any environment with a Node version compatible with the `engines` requirement of `@vscode/vsce`.
 
 ### Step 2: Install the `.vsix` Package in VS Code
 
@@ -84,3 +84,5 @@ The `.vscode/settings.json` file configures **Clangd** as the language engine:
 * `docker/environnement_dev/linux/docker-cli.sh` (or `docker/environnement_dev/windows/docker-cli.ps1`) translates `/workspace` paths to absolute host paths in `build/compile_commands.json` after every build.
 * Internal LLVM headers are bridged via `.clangd-includes`.
 * Clangd provides semantic analysis, "Go to Definition" (`F12`), real-time Clang-Tidy diagnostics, and inlay hints.
+
+`Prepare LLDB Debugging` sequences `Build` and server startup. `Prepare Python Debugging` waits for debugpy readiness. A failed build must abort debugging (`debug.onTaskErrors: abort`).

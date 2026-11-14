@@ -68,7 +68,7 @@ This document details the architectural guarantees, error containment mechanisms
   file_c.p includes file_a.p  ← potential infinite cycle
   ```
 * **Handling:**
-  1. On each `include` directive, the resolved file path is canonicalized via `std::filesystem::absolute`.
+  1. On each `include` directive, the resolved file path is made absolute via `std::filesystem::absolute` (this does not resolve symlinks).
   2. Access to `_alreadyIncludedFiles` is guarded by a mutex (`std::lock_guard<std::mutex>`).
   3. If the path already exists in the set, the inclusion request returns immediately.
   4. If the path is new, it is inserted into the set and a new `UnitCompilation` task is dispatched to the thread pool.
@@ -93,7 +93,7 @@ This document details the architectural guarantees, error containment mechanisms
 
 * **Scenario:** Assigning a 64-bit integer into a 32-bit register, or floating-point to integer conversion without explicit truncation.
 * **Handling:** Code generation requires explicit casting paths (`creerAutoCast`). Conversion instructions map directly to LLVM SSA instructions (`CreateFPTrunc`, `CreateFPExt`, `CreateSExt`, `CreateTrunc`).
-* **Memory Diagnostics:** Debug builds (`python3 debug.py`) enable **AddressSanitizer (ASAN)** (`-fsanitize=address`) and **UndefinedBehaviorSanitizer (UBSan)** (`-fsanitize=undefined`), immediately detecting buffer overflows, double frees, or unaligned memory loads.
+* **Memory Diagnostics:** Debug builds (`python3 debug.py`) enable **AddressSanitizer (ASAN)** (`-fsanitize=address`) and **UndefinedBehaviorSanitizer (UBSan)** (`-fsanitize=undefined`), detecting supported errors on instrumented execution paths. They do not prove the absence of memory errors and do not automatically instrument programs produced by Prysma.
 
 ## 5. Security & Robustness Matrix
 
@@ -105,4 +105,4 @@ This document details the architectural guarantees, error containment mechanisms
 | **Parser** | Malformed parentheses | Upfront structural integrity check | Syntax exception prior to node allocation |
 | **Orchestrator** | Circular include dependencies | Mutex-guarded deduplication set | Cycle prevention without infinite recursion |
 | **Orchestrator** | Thread worker failure | Atomic error tracking + synchronization barrier | Cancellation of Pass 2 (fail-fast) |
-| **Backend** | Type representation mismatch | Explicit LLVM SSA casts + ASAN/UBSan | Absence of undefined behavior |
+| **Backend** | Type representation mismatch | Explicit LLVM SSA casts + ASAN/UBSan | Diagnostics for supported errors on exercised paths |

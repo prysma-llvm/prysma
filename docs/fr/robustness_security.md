@@ -93,7 +93,7 @@ Ce document détaille les garanties architecturales, la gestion des erreurs et l
 
 * **Scénario :** Assignation d'un scalaire 64 bits dans un registre 32 bits, ou conversion flottant / entier sans tronquage explicite.
 * **Traitement :** La génération de code impose un mécanisme de conversion explicite (`creerAutoCast`). Les opérations de conversion utilisent les instructions adaptées du modèle LLVM SSA (`CreateFPTrunc`, `CreateFPExt`, `CreateSExt`, `CreateTrunc`).
-* **Vérification mémoire :** La compilation en mode débogage (`python3 debug.py`) active en continu **AddressSanitizer (ASAN)** (`-fsanitize=address`) et **UndefinedBehaviorSanitizer (UBSan)** (`-fsanitize=undefined`), garantissant la détection immédiate de tout débordement de tampon, double libération ou accès non aligné.
+* **Vérification mémoire :** La compilation en mode débogage (`python3 debug.py`) active en continu **AddressSanitizer (ASAN)** (`-fsanitize=address`) et **UndefinedBehaviorSanitizer (UBSan)** (`-fsanitize=undefined`), détectant les erreurs prises en charge sur les chemins instrumentés effectivement exécutés. Ces outils ne prouvent pas l’absence de défauts et n’instrumentent pas automatiquement les programmes produits par Prysma.
 
 ## 5. Synthèse des Protections
 

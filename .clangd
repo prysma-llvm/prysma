@@ -6,17 +6,8 @@ CompileFlags:
   CompilationDatabase: build
 
   Add:
-    # Project headers
-    - -Iinclude
-    - -Ibuild/generationCode/include
-    - -I.clangd-includes
-    - -Itests/lib
-    - -Itests/unit_tests/include
-
-    # External LLVM headers
-    # Make sure it matches your LLVM version
-    - -isystem.clangd-includes/llvm-18
-    - -isystem.clangd-includes/llvm-c-18
+    # Include paths come from the compilation database. Relative paths here
+    # would otherwise resolve against each compilation working directory.
 
     # Strict C++ diagnostics
     - -Wall

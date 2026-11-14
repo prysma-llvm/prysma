@@ -6,7 +6,7 @@ Ce document détaille la configuration de l'environnement de travail sous VS Cod
 
 L'architecture combine l'éditeur VS Code sur votre machine hôte et l'isolation du conteneur de compilation :
 
-* **Aucune dépendance système lourde sur l'hôte** : LLVM 18, Clang 18, LLD, GDB et LLDB tournent exclusivement dans le conteneur `prysma-debug`.
+* **Aucune dépendance système lourde sur l'hôte** : La compilation et les serveurs de débogage tournent dans `prysma-debug`. Python, clangd et les extensions VS Code CodeLLDB/debugpy sont également nécessaires sur l’hôte.
 * **Indexation C++ avec Clangd** : Le wrapper `docker/environnement_dev/linux/docker-cli.sh` (ou `docker/environnement_dev/windows/docker-cli.ps1`) réécrit automatiquement les chemins dans `compile_commands.json` pour que Clangd sur l'hôte fournisse l'autocomplétion et la navigation de code sans nécessiter LLVM en local.
 * **Débogage complet (C++ et Python)** : Des profils de lancement permettent de poser des points d'arrêt et d'inspecter l'exécution dans le conteneur via LLDB et debugpy.
 * **Coloration syntaxique Prysma** : Une extension interne gère les fichiers sources `.p`.
@@ -23,7 +23,7 @@ Le fichier `.vscode/Prysma.code-profile` regroupe les extensions recommandées, 
    `.vscode/Prysma.code-profile`
 4. Cochez les éléments à importer (Paramètres, Extensions, Raccourcis) et cliquez sur **Créer le profil** (ou **Importer**).
 
-Une fois le profil appliqué, VS Code installe automatiquement les extensions recommandées (`llvm-vs-code-extensions.vscode-clangd`, `llvm-vs-code-extensions.lldb-dap`, `ms-python.debugpy`, etc.) et désactive l'IntelliSense C++ par défaut au profit de Clangd.
+Une fois le profil appliqué, VS Code installe automatiquement les extensions recommandées (`llvm-vs-code-extensions.vscode-clangd`, `vadimcn.vscode-lldb`, `ms-python.debugpy`, etc.) et désactive l'IntelliSense C++ par défaut au profit de Clangd.
 
 ## 3. Installation de la coloration syntaxique Prysma (`SyntaxeCouleurPrysma`)
 
@@ -41,7 +41,7 @@ npx vsce package
 
 Cette commande génère le fichier `prysma-language-support-0.0.2.vsix`.
 
-> **Note :** Si Node.js / npm n'est pas installé sur votre hôte, vous pouvez exécuter cette commande dans n'importe quel environnement disposant de Node 18+.
+> **Note :** Si Node.js / npm n'est pas installé sur votre hôte, vous pouvez exécuter cette commande dans n'importe quel environnement disposant de une version de Node compatible avec le champ `engines` de `@vscode/vsce`.
 
 ### Étape 2 : Installer le `.vsix` dans VS Code
 
@@ -84,3 +84,5 @@ Le fichier `.vscode/settings.json` délègue l'analyse du code C++ à **Clangd**
 * `docker/environnement_dev/linux/docker-cli.sh` (ou `docker/environnement_dev/windows/docker-cli.ps1`) convertit automatiquement les chemins `/workspace` en chemins absolus locaux dans `build/compile_commands.json` après chaque build.
 * Les en-têtes LLVM internes sont accessibles via le lien `.clangd-includes`.
 * Clangd fournit l'analyse sémantique, la navigation vers les définitions (`F12`), les diagnostics Clang-Tidy et les indications d'inlay hints en temps réel.
+
+`Prepare LLDB Debugging` enchaîne `Build` et le démarrage du serveur. `Prepare Python Debugging` attend la disponibilité de debugpy. Une compilation échouée doit arrêter le lancement (`debug.onTaskErrors: abort`).
