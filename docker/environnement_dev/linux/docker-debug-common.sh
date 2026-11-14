@@ -20,14 +20,27 @@ debug_name() {
 }
 
 stop_debug() {
-    local container owner
-    container="$(docker_command inspect --format '{{.Id}}' "$CONTAINER_NAME" 2>/dev/null)" || return 0
-    owner="$(docker_command inspect --format '{{index .Config.Labels "prysma.workspace"}}' "$container")"
+    local details container owner output status remaining
+    # Read identity and ownership together; the launcher may remove the container at any time.
+    details="$(docker_command ps -a --no-trunc --filter "name=^/${CONTAINER_NAME}$" \
+        --format '{{.ID}} {{.Label "prysma.workspace"}}')" || return $?
+    [ -n "$details" ] || return 0
+    container="${details%% *}"
+    owner="${details#* }"
     if [ "$owner" != "$ROOT_DIR" ]; then
         echo "ERROR: Refusing to stop a container owned by another workspace." >&2
         return 1
     fi
-    docker_command stop --time 2 "$container" >/dev/null
+    if output="$(docker_command stop --time 2 "$container" 2>&1)"; then
+        return 0
+    else
+        status=$?
+    fi
+    # A concurrent cleanup is success, but a daemon/stop error must still fail.
+    remaining="$(docker_command ps -aq --no-trunc --filter "id=$container")" || return $?
+    [ -n "$remaining" ] || return 0
+    printf '%s\n' "$output" >&2
+    return "$status"
 }
 
 target_path() {

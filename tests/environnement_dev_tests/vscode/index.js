@@ -64,11 +64,14 @@ exports.run = async function () {
         assert.strictEqual(value.result, expectedValue);
         vscode.debug.removeBreakpoints([breakpoint]);
         let terminated = false;
+        const beforeStop = tasks.length;
         const listener = vscode.debug.onDidTerminateDebugSession(event => { if (event.id === session.id) terminated = true; });
         await vscode.debug.stopDebugging(session);
         await until(() => terminated, `${name} termination`);
         listener.dispose();
-        await until(() => tasks.some(task => task.name === (name.startsWith('Python') ? 'Stop Python Debug Server (Docker)' : 'Stop LLDB Server (Docker)') && task.state === 'end' && task.code === 0), 'postDebugTask');
+        const stopTaskName = name.startsWith('Python') ? 'Stop Python Debug Server (Docker)' : 'Stop LLDB Server (Docker)';
+        const stopTask = await until(() => tasks.slice(beforeStop).find(task => task.name === stopTaskName && task.state === 'end'), `${stopTaskName} completion`);
+        assert.strictEqual(stopTask.code, 0, `${stopTaskName} failed with exit code ${stopTask.code}`);
         report.push({ name, status: 'passed', source: frame.source.path, line: frame.line });
         save();
     }
