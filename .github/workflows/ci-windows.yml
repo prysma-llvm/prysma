@@ -27,22 +27,36 @@ jobs:
           path: build/dev-env-results
 
   # Experimental: Docker Engine inside WSL2, not Docker Desktop.
+  # windows-2025 includes WSL2; windows-2022 only enables the legacy WSL1 feature.
   # This job must fail when nested virtualization or WSL preparation is unavailable.
   wsl-docker:
-    runs-on: windows-2022
+    runs-on: windows-2025
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+      - name: Check preinstalled WSL2
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $destination = Join-Path $env:GITHUB_WORKSPACE "build/wsl-results"
+          New-Item -ItemType Directory -Force $destination | Out-Null
+          Start-Transcript -Path "$destination/wsl-preflight.log"
+          try {
+            wsl --version
+            if ($LASTEXITCODE -ne 0) { throw "Modern WSL is unavailable; this job requires the windows-2025 image with WSL2 preinstalled" }
+            $platform = Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
+            $platform | Format-List FeatureName, State
+            if ($platform.State -ne "Enabled") { throw "VirtualMachinePlatform must be enabled in the runner image before the job starts; enabling it here requires a reboot" }
+          } finally {
+            Stop-Transcript
+          }
+
       - name: Prepare WSL2
         id: wsl
         shell: pwsh
         timeout-minutes: 12
         run: |
           $ErrorActionPreference = "Stop"
-          wsl --install --no-distribution
-          if ($LASTEXITCODE -ne 0) { throw "WSL preparation failed; a reboot or nested virtualization may be required" }
-          wsl --update --web-download
-          if ($LASTEXITCODE -ne 0) { throw "WSL update failed" }
           wsl --set-default-version 2
           if ($LASTEXITCODE -ne 0) { throw "WSL2 is unavailable" }
           $archive = Join-Path $env:RUNNER_TEMP "ubuntu-24.04.5.wsl"

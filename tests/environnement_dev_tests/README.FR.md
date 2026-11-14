@@ -73,9 +73,9 @@ Utilisez `--results-dir PATH` pour changer cet emplacement. Pytest capture les s
 ## CI Windows
 
 Les parties WSL2 et virtualisation imbriquée du workflow GitHub Actions Windows sont **expérimentales**.
-Le workflow utilise des machines `windows-2022` hébergées par GitHub et **Docker Engine dans une distribution Ubuntu 24.04 importée sous WSL2**, plutôt que Docker Desktop.
+Les tests PowerShell natifs utilisent des machines `windows-2022` hébergées par GitHub. La tâche WSL utilise `windows-2025`, qui inclut WSL2, et **Docker Engine dans une distribution Ubuntu 24.04 importée sous WSL2**, plutôt que Docker Desktop.
 
-Les tests PowerShell natifs s’exécutent dans une tâche CI distincte, même si la préparation de WSL échoue. La tâche WSL tente l’installation, importe et démarre WSL2, installe Docker Engine et vérifie l’exécution d’un véritable conteneur avant de construire l’image de développement. Un échec de préparation fait échouer cette tâche ; il ne compte pas comme une exécution de tests réussie ou ignorée. Les tests démarrent seulement après une préparation réussie.
+Les tests PowerShell natifs s’exécutent dans une tâche CI distincte, même si la préparation de WSL échoue. La tâche WSL vérifie la version de WSL préinstallée et la fonctionnalité VirtualMachinePlatform, importe et démarre WSL2, installe Docker Engine et vérifie l’exécution d’un véritable conteneur avant de construire l’image de développement. Elle ne réinstalle ni ne met à jour WSL pendant la tâche : l’activation de fonctionnalités Windows peut nécessiter un redémarrage et la version historique de WSL incluse dans `windows-2022` ne garantit pas la prise en charge des options modernes d’installation. Un échec de préparation fait échouer cette tâche ; il ne compte pas comme une exécution de tests réussie ou ignorée. Les tests démarrent seulement après une préparation réussie.
 
 La tâche WSL exécute les familles `common`, `linux` et `vscode`, avec de véritables points d’arrêt Python et C++ de Prysma, ainsi que le refus de démarrer après une compilation échouée lorsqu’un binaire existe déjà. VS Code 1.96.4 fonctionne sous Xvfb avec un utilisateur Linux ordinaire ayant accès à Docker. La copie de travail est placée dans le système de fichiers Linux de la distribution pour conserver le comportement Linux des propriétaires et permissions d’exécution. Le script d’installation est destiné uniquement à la distribution neuve de la CI, pas à la machine d’un développeur.
 
@@ -83,7 +83,7 @@ Les tests WSL valident le comportement Linux dans WSL, y compris l’application
 
 Le workflow s’exécute lors des push et des pull requests. Il peut aussi être lancé depuis **Actions → CI Windows → Run workflow** une fois présent sur la branche par défaut. Les deux tâches doivent réussir : `windows-native` vérifie PowerShell natif et `wsl-docker` vérifie l’environnement WSL. Téléchargez les artefacts `windows-native-results` et `wsl-docker-results` de l’exécution pour consulter les journaux, les résultats JUnit, `summary.json` et `vscode-scenarios.json`. Les diagnostics WSL sont récupérés même après un échec des tests ; les échecs antérieurs au démarrage de WSL restent visibles dans le journal de l’étape de préparation. La distribution dédiée est arrêtée à la fin.
 
-La préparation WSL suit la [référence des commandes Microsoft](https://learn.microsoft.com/fr-fr/windows/wsl/basic-commands). L’instance VS Code utilise le [point d’entrée documenté pour les tests d’extension](https://code.visualstudio.com/api/working-with-extensions/testing-extension).
+L’artefact `wsl-docker-results` contient `wsl-preflight.log` même si la vérification initiale de WSL échoue. Les prérequis du runner figurent dans la [documentation de l’image Windows 2025](https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md). La préparation WSL suit la [référence des commandes Microsoft](https://learn.microsoft.com/fr-fr/windows/wsl/basic-commands). L’instance VS Code utilise le [point d’entrée documenté pour les tests d’extension](https://code.visualstudio.com/api/working-with-extensions/testing-extension).
 
 ## Limites de couverture restantes
 

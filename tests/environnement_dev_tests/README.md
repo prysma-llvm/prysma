@@ -75,9 +75,9 @@ Use `--results-dir PATH` to change the location. Pytest captures subprocess outp
 ## Windows CI
 
 The WSL2 and nested virtualization portions of the Windows GitHub Actions workflow are **experimental**.
-The workflow uses GitHub-hosted `windows-2022` runners and **Docker Engine inside an imported Ubuntu 24.04 WSL2 distribution**, not Docker Desktop.
+Native PowerShell tests use GitHub-hosted `windows-2022` runners. The WSL job uses `windows-2025`, which includes WSL2, and **Docker Engine inside an imported Ubuntu 24.04 WSL2 distribution**, not Docker Desktop.
 
-Native PowerShell tests run in a separate job, even if WSL preparation fails. The WSL job attempts installation, imports and boots WSL2, installs Docker Engine, and verifies a real container before building the development image. Preparation failures fail that job; they are not successful or skipped test runs. Tests only start after preparation succeeds.
+Native PowerShell tests run in a separate job, even if WSL preparation fails. The WSL job checks the preinstalled WSL version and VirtualMachinePlatform feature, imports and boots WSL2, installs Docker Engine, and verifies a real container before building the development image. It does not reinstall or update WSL during the job: enabling Windows features can require a reboot, and the legacy WSL included in `windows-2022` cannot be assumed to support modern installation options. Preparation failures fail that job; they are not successful or skipped test runs. Tests only start after preparation succeeds.
 
 The WSL job runs the `common`, `linux` and `vscode` families, including real Python and Prysma C++ breakpoints and rejection of a failed build with an existing binary. VS Code 1.96.4 runs under Xvfb as an ordinary Linux user with access to Docker. The checkout is copied to the distribution's Linux filesystem so that ownership and executable permissions have Linux semantics. The setup script is intended only for the fresh CI distribution, not a developer's machine.
 
@@ -85,7 +85,7 @@ WSL tests validate Linux behavior inside WSL, including the Linux VS Code applic
 
 The workflow runs on pushes and pull requests. It can also be started from **Actions → CI Windows → Run workflow** once present on the default branch. Both jobs must succeed: `windows-native` checks native PowerShell, while `wsl-docker` checks the WSL environment. Download `windows-native-results` and `wsl-docker-results` from the run to inspect logs, JUnit results, `summary.json` and `vscode-scenarios.json`. WSL diagnostics are collected even after a test failure; failures before WSL boots remain visible in the preparation step's log. The dedicated distribution is stopped at the end.
 
-WSL setup follows [Microsoft's command reference](https://learn.microsoft.com/en-us/windows/wsl/basic-commands). The VS Code test host uses the [documented extension test entry point](https://code.visualstudio.com/api/working-with-extensions/testing-extension).
+The `wsl-docker-results` artifact includes `wsl-preflight.log` even when the WSL preflight check fails. Runner prerequisites are listed in the [Windows 2025 image documentation](https://github.com/actions/runner-images/blob/main/images/windows/Windows2025-Readme.md). WSL setup follows [Microsoft's command reference](https://learn.microsoft.com/en-us/windows/wsl/basic-commands). The VS Code test host uses the [documented extension test entry point](https://code.visualstudio.com/api/working-with-extensions/testing-extension).
 
 ## Remaining coverage limits
 
