@@ -30,7 +30,7 @@ jobs:
   # This job must fail when nested virtualization or WSL preparation is unavailable.
   wsl-docker:
     runs-on: windows-2022
-    timeout-minutes: 40
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - name: Prepare WSL2
@@ -52,32 +52,54 @@ jobs:
           wsl -d Prysma -u root -- sh -ec 'uname -r; uname -r | grep -i microsoft-standard-WSL2'
           if ($LASTEXITCODE -ne 0) { throw "WSL2 did not boot successfully" }
 
-      - name: Prepare Docker Engine inside WSL2
+      - name: Prepare Docker, VS Code and the Linux test workspace
         id: docker
         shell: pwsh
-        timeout-minutes: 10
+        timeout-minutes: 15
         run: |
-          wsl -d Prysma -u root -- sh -ec 'apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y docker.io python3-venv clangd-18; service docker start; docker info; docker run --rm ubuntu:24.04 true'
-          if ($LASTEXITCODE -ne 0) { throw "Docker preparation failed inside WSL2" }
+          $root = (wsl -d Prysma -- wslpath -a $env:GITHUB_WORKSPACE).Trim()
+          if ($LASTEXITCODE -ne 0) { throw "Cannot resolve the checkout path in WSL" }
+          wsl -d Prysma -u root --cd $root -- bash tests/environnement_dev_tests/window/setup_wsl.sh $root
+          if ($LASTEXITCODE -ne 0) { throw "Docker/VS Code preparation failed inside WSL2" }
+          wsl -d Prysma -u prysma -- docker info
+          if ($LASTEXITCODE -ne 0) { throw "The test user cannot access Docker" }
 
       - name: Build development image
         shell: pwsh
         timeout-minutes: 12
         run: |
-          $root = (wsl -d Prysma -- wslpath -a $env:GITHUB_WORKSPACE).Trim()
-          wsl -d Prysma -u root --cd $root -- docker build --target debug -t prysma-debug -f docker/compiler/Dockerfile .
+          wsl -d Prysma -u prysma --cd /home/prysma/workspace -- docker build --target debug -t prysma-debug -f docker/compiler/Dockerfile .
           if ($LASTEXITCODE -ne 0) { throw "Development image build failed" }
 
-      - name: Run Linux and common tests inside WSL2
+      - name: Run Docker, Bash, clangd and VS Code end-to-end tests inside WSL2
+        id: tests
+        shell: pwsh
+        timeout-minutes: 25
+        run: |
+          wsl -d Prysma -u prysma --cd /home/prysma/workspace -- env DONT_PROMPT_WSL_INSTALL=1 PRYSMA_VSCODE_BIN=/opt/prysma-vscode/bin/code xvfb-run -a /opt/prysma-tests/bin/python tests/run_unit_tests.py --dev-env --family common --family linux --family vscode --family-timeout 1200
+          if ($LASTEXITCODE -ne 0) { throw "Tests failed after successful WSL2/Docker preparation" }
+
+      - name: Collect WSL reports and diagnostics
+        if: always() && steps.wsl.outcome == 'success'
         shell: pwsh
         run: |
-          $root = (wsl -d Prysma -- wslpath -a $env:GITHUB_WORKSPACE).Trim()
-          wsl -d Prysma -u root --cd $root -- sh -ec 'python3 -m venv /tmp/prysma-test-venv; /tmp/prysma-test-venv/bin/pip install -r tests/environnement_dev_tests/requirements.txt; /tmp/prysma-test-venv/bin/python tests/run_unit_tests.py --dev-env --family common --family linux'
-          if ($LASTEXITCODE -ne 0) { throw "Tests failed after successful WSL2/Docker preparation" }
+          $destination = Join-Path $env:GITHUB_WORKSPACE "build/wsl-results"
+          New-Item -ItemType Directory -Force $destination | Out-Null
+          wsl -d Prysma -u root -- uname -a 2>&1 | Out-File "$destination/kernel.log"
+          wsl -d Prysma -u root -- docker info 2>&1 | Out-File "$destination/docker.log"
+          $target = (wsl -d Prysma -- wslpath -a $destination).Trim()
+          if ($LASTEXITCODE -ne 0) { throw "Cannot resolve the report destination in WSL" }
+          wsl -d Prysma -u root -- sh -c 'if [ -d /home/prysma/workspace/build/dev-env-results ]; then cp -r /home/prysma/workspace/build/dev-env-results "$1/"; fi' sh $target
+          if ($LASTEXITCODE -ne 0) { throw "Could not collect WSL test reports" }
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: wsl-docker-results
-          path: build/dev-env-results
+          path: build/wsl-results
           if-no-files-found: warn
+
+      - name: Stop the dedicated WSL distribution
+        if: always() && steps.wsl.outcome == 'success'
+        shell: pwsh
+        run: wsl --terminate Prysma
