@@ -19,7 +19,7 @@ jobs:
           wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
           echo "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-18 main" | sudo tee /etc/apt/sources.list.d/llvm.list
           sudo apt-get update
-          sudo apt-get install -y llvm-18-dev clang-18 clangd-18 cmake g++ make python3 python3-venv bear xvfb libasound2t64 libgbm1 libgtk-3-0
+          sudo apt-get install -y llvm-18-dev clang-18 clangd-18 cmake g++ make python3 python3-venv bear xvfb xauth libasound2t64 libgbm1 libgtk-3-0 libnss3 libxss1 libatk-bridge2.0-0 libxkbfile1 libsecret-1-0
 
       - name: Configure LLVM
         run: |
@@ -42,6 +42,8 @@ jobs:
           mkdir -p "$RUNNER_TEMP/vscode"
           curl --fail --location https://update.code.visualstudio.com/1.96.4/linux-x64/stable -o "$RUNNER_TEMP/vscode.tar.gz"
           tar -xzf "$RUNNER_TEMP/vscode.tar.gz" -C "$RUNNER_TEMP/vscode" --strip-components=1
+          sudo chown root:root "$RUNNER_TEMP/vscode/chrome-sandbox"
+          sudo chmod 4755 "$RUNNER_TEMP/vscode/chrome-sandbox"
           echo "$RUNNER_TEMP/vscode/bin" >> "$GITHUB_PATH"
 
       - name: Build debug container

@@ -71,7 +71,8 @@ jobs:
         shell: pwsh
         timeout-minutes: 15
         run: |
-          $root = (wsl -d Prysma -- wslpath -a $env:GITHUB_WORKSPACE).Trim()
+          $workspace = $env:GITHUB_WORKSPACE -replace '\\', '/'
+          $root = (wsl -d Prysma -- wslpath -a $workspace).Trim()
           if ($LASTEXITCODE -ne 0) { throw "Cannot resolve the checkout path in WSL" }
           wsl -d Prysma -u root --cd $root -- bash tests/environnement_dev_tests/window/setup_wsl.sh $root
           if ($LASTEXITCODE -ne 0) { throw "Docker/VS Code preparation failed inside WSL2" }
@@ -101,7 +102,8 @@ jobs:
           New-Item -ItemType Directory -Force $destination | Out-Null
           wsl -d Prysma -u root -- uname -a 2>&1 | Out-File "$destination/kernel.log"
           wsl -d Prysma -u root -- docker info 2>&1 | Out-File "$destination/docker.log"
-          $target = (wsl -d Prysma -- wslpath -a $destination).Trim()
+          $dest = $destination -replace '\\', '/'
+          $target = (wsl -d Prysma -- wslpath -a $dest).Trim()
           if ($LASTEXITCODE -ne 0) { throw "Cannot resolve the report destination in WSL" }
           wsl -d Prysma -u root -- sh -c 'if [ -d /home/prysma/workspace/build/dev-env-results ]; then cp -r /home/prysma/workspace/build/dev-env-results "$1/"; fi' sh $target
           if ($LASTEXITCODE -ne 0) { throw "Could not collect WSL test reports" }

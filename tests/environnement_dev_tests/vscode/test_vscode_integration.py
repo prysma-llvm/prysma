@@ -56,7 +56,7 @@ def test_vscode_debugging_and_failed_build(docker, repo_root, tmp_path):
                                 env=env, capture_output=True, text=True, timeout=180)
         assert result.returncode == 0, result.stdout + result.stderr
     command = [code, *profile, "--wait", "--new-window", "--disable-workspace-trust", "--skip-welcome",
-               "--skip-release-notes", "--disable-gpu",
+               "--skip-release-notes", "--disable-gpu", "--no-sandbox", "--disable-gpu-sandbox",
                f"--extensionDevelopmentPath={repo_root / 'tests/environnement_dev_tests/vscode'}",
                f"--extensionTestsPath={repo_root / 'tests/environnement_dev_tests/vscode/index.js'}", str(root)]
     report_path = tmp_path / "vscode-results.json"
