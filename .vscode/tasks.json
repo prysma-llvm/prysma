@@ -38,7 +38,7 @@
                     "${workspaceFolder}"
                 ],
                 "pattern": {
-                    "regexp": "^([^:]+):(\\d+):(\\d+):\\s+(?:Error|error|warning):\\s+(.*)$",
+                    "regexp": "^(.+):(\\d+):(\\d+):\\s+(?:Error|error|warning):\\s+(.*)$",
                     "file": 1,
                     "line": 2,
                     "column": 3,
@@ -74,14 +74,24 @@
                 "reveal": "never",
                 "panel": "shared"
             },
-            "problemMatcher": []
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(?!)$"
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^debugpy server starting",
+                    "endsPattern": "^debugpy server ready on "
+                }
+            },
+            "isBackground": true
         },
         {
             "label": "Stop Python Debug Server (Docker)",
             "type": "shell",
-            "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-cli.sh\" rm -f prysma-python-debug",
+            "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-debug-python.sh\" --stop",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-cli.ps1\" -- rm -f prysma-python-debug"
+                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-debug-python.ps1\" -- --stop"
             },
             "presentation": {
                 "reveal": "never",
@@ -120,10 +130,6 @@
         {
             "label": "Start LLDB Server (Docker)",
             "type": "shell",
-            "dependsOrder": "sequence",
-            "dependsOn": [
-                "Build"
-            ],
             "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-debug-lldb.sh\" \"${relativeFile}\"",
             "windows": {
                 "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-debug-lldb.ps1\" -- \"${relativeFile}\""
@@ -169,10 +175,6 @@
         {
             "label": "Start LLDB Server for Unit Tests (Docker)",
             "type": "shell",
-            "dependsOrder": "sequence",
-            "dependsOn": [
-                "Build Unit Tests"
-            ],
             "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-debug-lldb.sh\" --tests",
             "windows": {
                 "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-debug-lldb.ps1\" -- --tests"
@@ -197,6 +199,41 @@
                     "endsPattern": "^.*lldb-server ready.*$"
                 }
             }
+        },
+        {
+            "label": "Stop LLDB Server (Docker)",
+            "type": "shell",
+            "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-debug-lldb.sh\" --stop",
+            "windows": {
+                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-debug-lldb.ps1\" -- --stop"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Prepare LLDB Debugging",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Build",
+                "Start LLDB Server (Docker)"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Prepare Unit Test Debugging",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Build Unit Tests",
+                "Start LLDB Server for Unit Tests (Docker)"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Prepare Python Debugging",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Start Python Debug Server (Docker)"
+            ],
+            "problemMatcher": []
         }
     ]
 }

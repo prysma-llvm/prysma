@@ -2,9 +2,10 @@
 # Wrapper transparent pour exécuter Docker que VS Code tourne en Flatpak ou en natif
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+IMAGE="${PRYSMA_DEBUG_IMAGE:-prysma-debug}"
 
 run_docker() {
-    if command -v flatpak-spawn >/dev/null 2>&1; then
+    if [ -f /.flatpak-info ] && command -v flatpak-spawn >/dev/null 2>&1; then
         flatpak-spawn --host docker "$@"
     elif command -v docker >/dev/null 2>&1; then
         docker "$@"
@@ -16,15 +17,21 @@ run_docker() {
     fi
 }
 
+# Debug lifecycle commands must not populate caches or rewrite source databases.
+if [ "${PRYSMA_DOCKER_RAW:-0}" = "1" ]; then
+    run_docker "$@"
+    exit $?
+fi
+
 # Ensure persistent ccache volume exists with write permissions BEFORE running commands
-if ! run_docker volume inspect prysma-ccache >/dev/null 2>&1; then
+if [[ " $* " == *" prysma-ccache:/tmp/.ccache "* ]] && ! run_docker volume inspect prysma-ccache >/dev/null 2>&1; then
     run_docker volume create prysma-ccache >/dev/null 2>&1 || true
-    run_docker run --rm -v prysma-ccache:/tmp/.ccache prysma-debug chmod 777 /tmp/.ccache >/dev/null 2>&1 || true
+    run_docker run --rm -v prysma-ccache:/tmp/.ccache "$IMAGE" chmod 777 /tmp/.ccache >/dev/null 2>&1 || true
 fi
 
 # Ensure .clangd-includes is populated for host Clangd indexing
-if [ ! -f "$ROOT_DIR/.clangd-includes/llvm/Support/TargetSelect.h" ]; then
-    TEMP_C=$(run_docker create prysma-debug 2>/dev/null)
+if [ "${1:-}" = "run" ] && [ "${PRYSMA_DOCKER_RAW:-0}" != "1" ] && [ ! -f "$ROOT_DIR/.clangd-includes/llvm/Support/TargetSelect.h" ]; then
+    TEMP_C=$(run_docker create "$IMAGE" 2>/dev/null)
     if [ -n "$TEMP_C" ]; then
         mkdir -p "$ROOT_DIR/.clangd-includes"
         # Copy the real header directories (avoiding broken relative symlinks from /usr/lib)
@@ -42,36 +49,8 @@ fi
 run_docker "$@"
 EXIT_CODE=$?
 
-# Mettre à jour compile_commands.json pour Clangd sur l'hôte si généré dans Docker
-for CDB in "$ROOT_DIR/build/compile_commands.json" "$ROOT_DIR/tests/unit_tests/build/compile_commands.json"; do
-    if [ -f "$CDB" ]; then
-        if grep -q "/workspace" "$CDB" 2>/dev/null; then
-            sed -i "s|/workspace|$ROOT_DIR|g" "$CDB"
-        fi
-        if grep -q "/usr/lib/llvm-18/include" "$CDB" 2>/dev/null; then
-            sed -i "s|/usr/lib/llvm-18/include|$ROOT_DIR/.clangd-includes|g" "$CDB"
-        fi
-    fi
-done
-
-if [ -f "$ROOT_DIR/build/compile_commands.json" ] && [ -f "$ROOT_DIR/tests/unit_tests/build/compile_commands.json" ]; then
-    python3 -c "
-import json
-try:
-    with open('$ROOT_DIR/build/compile_commands.json') as f:
-        main_cdb = json.load(f)
-    with open('$ROOT_DIR/tests/unit_tests/build/compile_commands.json') as f:
-        tests_cdb = json.load(f)
-    files = {e['file'] for e in main_cdb}
-    merged = main_cdb + [e for e in tests_cdb if e['file'] not in files]
-    with open('$ROOT_DIR/build/compile_commands.json', 'w') as f:
-        json.dump(merged, f, indent=2)
-    with open('$ROOT_DIR/compile_commands.json', 'w') as f:
-        json.dump(merged, f, indent=2)
-except Exception:
-    pass
-" 2>/dev/null || true
+# Adapt JSON structurally so spaces, quotes and Unicode paths remain valid.
+if [ "$EXIT_CODE" -eq 0 ] && [ "${1:-}" = "run" ]; then
+    python3 "$SCRIPT_DIR/../compile_commands.py" "$ROOT_DIR" || exit $?
 fi
-
-exit $EXIT_CODE
-
+exit "$EXIT_CODE"

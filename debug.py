@@ -1,5 +1,4 @@
 import os
-import filecmp
 import shutil
 import subprocess
 from generation.generator_ast import GeneratorAST
@@ -72,7 +71,7 @@ def main():
     os.makedirs("build", exist_ok=True)
     shutil.rmtree(os.path.join("build", "obj"), ignore_errors=True)
 
-    nb_coeurs = str(os.cpu_count() or 1)
+    nb_coeurs = str(max(1, int(os.environ.get("PRYSMA_BUILD_JOBS", os.cpu_count() or 1))))
 
     subprocess.run([
         "cmake", "--build", "build", "--parallel", nb_coeurs

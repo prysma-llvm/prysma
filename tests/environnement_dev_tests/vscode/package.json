@@ -1,0 +1,7 @@
+{
+    "name": "prysma-integration-tests",
+    "publisher": "prysma",
+    "version": "0.0.1",
+    "main": "./extension.js",
+    "engines": { "vscode": "^1.96.0" }
+}

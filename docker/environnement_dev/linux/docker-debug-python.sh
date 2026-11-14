@@ -1,25 +1,17 @@
 #!/bin/bash
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-TARGET="$1"
-if [ -z "$TARGET" ] || [ "${TARGET##*.}" != "py" ]; then
+# Docker debugpy server for the current workspace.
+source "$(dirname "${BASH_SOURCE[0]}")/docker-debug-common.sh"
+debug_name python
+if [ "${1:-}" = "--stop" ]; then
+    stop_debug
+    exit $?
+fi
+TARGET="${1:-debug.py}"
+if [ "${TARGET##*.}" != "py" ]; then
     TARGET="debug.py"
 fi
-
-"$SCRIPT_DIR/docker-cli.sh" rm -f prysma-python-debug 2>/dev/null || true
-"$SCRIPT_DIR/docker-cli.sh" run -d --rm --name prysma-python-debug \
-    -p 5678:5678 --user "$(id -u):$(id -g)" -e HOME=/tmp \
-    -v "$ROOT_DIR":/workspace -w /workspace \
-    prysma-debug python3 -m debugpy --listen 0.0.0.0:5678 --wait-for-client "$TARGET"
-
-python3 -c "
-import socket, time
-for _ in range(60):
-    try:
-        s = socket.socket()
-        s.connect(('127.0.0.1', 5678))
-        s.close()
-        break
-    except Exception:
-        time.sleep(0.1)
-"
+TARGET="$(target_path "$TARGET")"
+PORT="${PRYSMA_DEBUG_PORT:-5678}"
+start_debug "$PORT" "debugpy server ready" \
+    --user "$(id -u):$(id -g)" -e HOME=/tmp -e PYTHONDONTWRITEBYTECODE=1 \
+    -w /workspace "$IMAGE" python3 -m debugpy --listen "0.0.0.0:$PORT" --wait-for-client "$TARGET"

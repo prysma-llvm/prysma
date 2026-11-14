@@ -1,0 +1,83 @@
+name: CI Windows
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+  workflow_dispatch:
+
+jobs:
+  windows-native:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test dependencies
+        run: python -m pip install -r tests/environnement_dev_tests/requirements.txt
+      - name: Run native PowerShell tests without WSL
+        run: python tests/run_unit_tests.py --dev-env --family window --native-only
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-native-results
+          path: build/dev-env-results
+
+  # Experimental: Docker Engine inside WSL2, not Docker Desktop.
+  # This job must fail when nested virtualization or WSL preparation is unavailable.
+  wsl-docker:
+    runs-on: windows-2022
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare WSL2
+        id: wsl
+        shell: pwsh
+        timeout-minutes: 12
+        run: |
+          $ErrorActionPreference = "Stop"
+          wsl --install --no-distribution
+          if ($LASTEXITCODE -ne 0) { throw "WSL preparation failed; a reboot or nested virtualization may be required" }
+          wsl --update --web-download
+          if ($LASTEXITCODE -ne 0) { throw "WSL update failed" }
+          wsl --set-default-version 2
+          if ($LASTEXITCODE -ne 0) { throw "WSL2 is unavailable" }
+          $archive = Join-Path $env:RUNNER_TEMP "ubuntu-24.04.5.wsl"
+          Invoke-WebRequest "https://releases.ubuntu.com/noble/ubuntu-24.04.5-wsl-amd64.wsl" -OutFile $archive
+          wsl --import Prysma (Join-Path $env:RUNNER_TEMP "prysma-wsl") $archive --version 2
+          if ($LASTEXITCODE -ne 0) { throw "WSL2 distribution import failed" }
+          wsl -d Prysma -u root -- sh -ec 'uname -r; uname -r | grep -i microsoft-standard-WSL2'
+          if ($LASTEXITCODE -ne 0) { throw "WSL2 did not boot successfully" }
+
+      - name: Prepare Docker Engine inside WSL2
+        id: docker
+        shell: pwsh
+        timeout-minutes: 10
+        run: |
+          wsl -d Prysma -u root -- sh -ec 'apt-get update; DEBIAN_FRONTEND=noninteractive apt-get install -y docker.io python3-venv clangd-18; service docker start; docker info; docker run --rm ubuntu:24.04 true'
+          if ($LASTEXITCODE -ne 0) { throw "Docker preparation failed inside WSL2" }
+
+      - name: Build development image
+        shell: pwsh
+        timeout-minutes: 12
+        run: |
+          $root = (wsl -d Prysma -- wslpath -a $env:GITHUB_WORKSPACE).Trim()
+          wsl -d Prysma -u root --cd $root -- docker build --target debug -t prysma-debug -f docker/compiler/Dockerfile .
+          if ($LASTEXITCODE -ne 0) { throw "Development image build failed" }
+
+      - name: Run Linux and common tests inside WSL2
+        shell: pwsh
+        run: |
+          $root = (wsl -d Prysma -- wslpath -a $env:GITHUB_WORKSPACE).Trim()
+          wsl -d Prysma -u root --cd $root -- sh -ec 'python3 -m venv /tmp/prysma-test-venv; /tmp/prysma-test-venv/bin/pip install -r tests/environnement_dev_tests/requirements.txt; /tmp/prysma-test-venv/bin/python tests/run_unit_tests.py --dev-env --family common --family linux'
+          if ($LASTEXITCODE -ne 0) { throw "Tests failed after successful WSL2/Docker preparation" }
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wsl-docker-results
+          path: build/dev-env-results
+          if-no-files-found: warn

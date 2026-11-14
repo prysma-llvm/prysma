@@ -1,6 +1,13 @@
 # docker/environnement_dev/windows/docker-cli.ps1 - Transparent Docker runner and Clangd indexer for Windows 10/11
 $ErrorActionPreference = "Continue"
 
+# Lifecycle commands and isolated tests must not populate personal caches.
+if ($env:PRYSMA_DOCKER_RAW -eq "1") {
+    $rawArgs = @($args | Select-Object -Skip ([int]($args.Count -gt 0 -and $args[0] -eq '--')))
+    & docker.exe @rawArgs
+    exit $LASTEXITCODE
+}
+
 # Check Docker CLI availability
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
     [Console]::Error.WriteLine("Erreur: Docker CLI est introuvable sur le système hôte. Veuillez installer Docker Desktop.")
@@ -42,7 +49,7 @@ function Ensure-DockerDaemon {
     exit 1
 }
 
-Ensure-DockerDaemon
+Ensure-DockerDaemon | Out-Null
 
 # Capture all raw arguments without PowerShell parameter binding
 $rawArgs = @($args)
@@ -56,20 +63,22 @@ if ($rawArgs.Count -gt 0 -and $rawArgs[0] -eq '--') {
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $RootDir = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $ScriptDir))
-$ForwardRootDir = $RootDir.Replace("\", "/")
+$image = if ($env:PRYSMA_DEBUG_IMAGE) { $env:PRYSMA_DEBUG_IMAGE } else { "prysma-debug" }
 
-# Ensure persistent ccache volume exists with write permissions
-& docker.exe volume inspect prysma-ccache 2>$null | Out-Null
-if ($LASTEXITCODE -ne 0) {
-    & docker.exe volume create prysma-ccache 2>$null | Out-Null
-    & docker.exe run --rm -v prysma-ccache:/tmp/.ccache prysma-debug chmod 777 /tmp/.ccache 2>$null | Out-Null
+# Ensure persistent ccache only for commands that actually mount it.
+if ($rawArgs -contains "prysma-ccache:/tmp/.ccache") {
+    & docker.exe volume inspect prysma-ccache 2>$null | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        & docker.exe volume create prysma-ccache 2>$null | Out-Null
+        & docker.exe run --rm -v prysma-ccache:/tmp/.ccache $image chmod 777 /tmp/.ccache 2>$null | Out-Null
+    }
 }
 
 # Ensure .clangd-includes is populated for host Clangd indexing
 $ClangdIncludesDir = Join-Path $RootDir ".clangd-includes"
-if (-not (Test-Path (Join-Path $ClangdIncludesDir "llvm\Support\TargetSelect.h"))) {
+if ($rawArgs.Count -gt 0 -and $rawArgs[0] -eq "run" -and -not (Test-Path (Join-Path $ClangdIncludesDir "llvm\Support\TargetSelect.h"))) {
     try {
-        $tempContainer = (& docker.exe create prysma-debug 2>$null)
+        $tempContainer = (& docker.exe create $image 2>$null)
         if ($tempContainer -and $LASTEXITCODE -eq 0) {
             $tempContainer = $tempContainer.Trim()
             New-Item -ItemType Directory -Force -Path $ClangdIncludesDir | Out-Null
@@ -109,60 +118,9 @@ foreach ($arg in $rawArgs) {
 $exitCode = $LASTEXITCODE
 if ($null -eq $exitCode) { $exitCode = 0 }
 
-# UTF-8 without BOM encoder for Clangd compatibility
-$utf8NoBom = New-Object System.Text.UTF8Encoding $false
-
-# Update compile_commands.json for Clangd on the host
-$cdbFiles = @(
-    (Join-Path $RootDir "build\compile_commands.json"),
-    (Join-Path $RootDir "tests\unit_tests\build\compile_commands.json")
-)
-
-foreach ($cdb in $cdbFiles) {
-    if (Test-Path $cdb) {
-        try {
-            $content = [System.IO.File]::ReadAllText($cdb)
-            $modified = $false
-            if ($content.Contains("/workspace")) {
-                $content = $content.Replace("/workspace", $ForwardRootDir)
-                $modified = $true
-            }
-            if ($content.Contains("/home/zyph/prysma")) {
-                $content = $content.Replace("/home/zyph/prysma", $ForwardRootDir)
-                $modified = $true
-            }
-            if ($content.Contains("/usr/lib/llvm-18/include")) {
-                $content = $content.Replace("/usr/lib/llvm-18/include", "$ForwardRootDir/.clangd-includes")
-                $modified = $true
-            }
-            if ($modified) {
-                [System.IO.File]::WriteAllText($cdb, $content, $utf8NoBom)
-            }
-        } catch {}
-    }
+# Use the same structural JSON adaptation as Linux.
+if ($exitCode -eq 0 -and $rawArgs.Count -gt 0 -and $rawArgs[0] -eq "run") {
+    & python (Join-Path $ScriptDir "../compile_commands.py") $RootDir
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
-
-# Merge compile_commands.json if both exist
-$mainCdb = Join-Path $RootDir "build\compile_commands.json"
-$testsCdb = Join-Path $RootDir "tests\unit_tests\build\compile_commands.json"
-$rootCdb = Join-Path $RootDir "compile_commands.json"
-
-if ((Test-Path $mainCdb) -and (Test-Path $testsCdb)) {
-    try {
-        $jsonMain = Get-Content $mainCdb -Raw | ConvertFrom-Json
-        $jsonTests = Get-Content $testsCdb -Raw | ConvertFrom-Json
-        $files = @{}
-        foreach ($e in $jsonMain) { $files[$e.file] = $true }
-        $merged = [System.Collections.ArrayList]@($jsonMain)
-        foreach ($e in $jsonTests) {
-            if (-not $files.ContainsKey($e.file)) {
-                [void]$merged.Add($e)
-            }
-        }
-        $mergedJson = $merged | ConvertTo-Json -Depth 10
-        [System.IO.File]::WriteAllText($mainCdb, $mergedJson, $utf8NoBom)
-        [System.IO.File]::WriteAllText($rootCdb, $mergedJson, $utf8NoBom)
-    } catch {}
-}
-
 exit $exitCode

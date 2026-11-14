@@ -19,7 +19,7 @@ jobs:
           wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
           echo "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-18 main" | sudo tee /etc/apt/sources.list.d/llvm.list
           sudo apt-get update
-          sudo apt-get install -y llvm-18-dev cmake g++ make python3 bear
+          sudo apt-get install -y llvm-18-dev clang-18 clangd-18 cmake g++ make python3 python3-venv bear xvfb libasound2t64 libgbm1 libgtk-3-0
 
       - name: Configure LLVM
         run: |
@@ -35,11 +35,31 @@ jobs:
       - name: Install dependencies
         run: |
           source venv/bin/activate
-          pip install -r requirements.txt
+          pip install -r requirements.txt -r tests/environnement_dev_tests/requirements.txt
+
+      - name: Install VS Code test version
+        run: |
+          mkdir -p "$RUNNER_TEMP/vscode"
+          curl --fail --location https://update.code.visualstudio.com/1.96.4/linux-x64/stable -o "$RUNNER_TEMP/vscode.tar.gz"
+          tar -xzf "$RUNNER_TEMP/vscode.tar.gz" -C "$RUNNER_TEMP/vscode" --strip-components=1
+          echo "$RUNNER_TEMP/vscode/bin" >> "$GITHUB_PATH"
+
+      - name: Build debug container
+        run: docker build --target debug -t prysma-debug -f docker/compiler/Dockerfile .
 
       - name: Run tests
         working-directory: tests
-        run: python3 run_unit_tests.py
+        run: |
+          source ../venv/bin/activate
+          xvfb-run -a python3 run_unit_tests.py
+        env:
+          PRYSMA_BUILD_JOBS: "2"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ubuntu-development-environment-results
+          path: build/dev-env-results
 
   performance:
     runs-on: self-hosted

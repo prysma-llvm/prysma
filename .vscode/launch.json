@@ -7,11 +7,11 @@
             "request": "custom",
             "initCommands": [
                 "process handle -s false -p true -n true SIGSTOP",
-                "settings set target.source-map /workspace ${workspaceFolder}"
+                "settings set target.source-map /workspace \"${workspaceFolder}\""
             ],
             "targetCreateCommands": [
-                "target create ${workspaceFolder}/build/Prysma",
-                "settings set target.source-map /workspace ${workspaceFolder}"
+                "target create \"${workspaceFolder}/build/Prysma\"",
+                "settings set target.source-map /workspace \"${workspaceFolder}\""
             ],
             "processCreateCommands": [
                 "gdb-remote 127.0.0.1:1234",
@@ -39,7 +39,8 @@
                     "process handle -s false -p true -n true SIGSTOP"
                 ]
             },
-            "preLaunchTask": "Start LLDB Server (Docker)"
+            "preLaunchTask": "Prepare LLDB Debugging",
+            "postDebugTask": "Stop LLDB Server (Docker)"
         },
         {
             "name": "C++: Debug Unit Tests in Docker (LLDB)",
@@ -47,11 +48,11 @@
             "request": "custom",
             "initCommands": [
                 "process handle -s false -p true -n true SIGSTOP",
-                "settings set target.source-map /workspace ${workspaceFolder}"
+                "settings set target.source-map /workspace \"${workspaceFolder}\""
             ],
             "targetCreateCommands": [
-                "target create ${workspaceFolder}/tests/unit_tests/build/PrysmaTests",
-                "settings set target.source-map /workspace ${workspaceFolder}"
+                "target create \"${workspaceFolder}/tests/unit_tests/build/PrysmaTests\"",
+                "settings set target.source-map /workspace \"${workspaceFolder}\""
             ],
             "processCreateCommands": [
                 "gdb-remote 127.0.0.1:1234",
@@ -79,7 +80,8 @@
                     "process handle -s false -p true -n true SIGSTOP"
                 ]
             },
-            "preLaunchTask": "Start LLDB Server for Unit Tests (Docker)"
+            "preLaunchTask": "Prepare Unit Test Debugging",
+            "postDebugTask": "Stop LLDB Server (Docker)"
         },
         {
             "name": "Python: Debug in Docker",
@@ -96,7 +98,7 @@
                 }
             ],
             "justMyCode": false,
-            "preLaunchTask": "Start Python Debug Server (Docker)",
+            "preLaunchTask": "Prepare Python Debugging",
             "postDebugTask": "Stop Python Debug Server (Docker)"
         }
     ]
