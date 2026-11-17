@@ -50,7 +50,10 @@ function Start-PrysmaDebug {
     } else {
         $extension = if ($Kind -eq "python") { ".py" } else { ".p" }
         if (-not $Target -or -not $Target.EndsWith($extension)) {
-            $Target = if ($Kind -eq "python") { "debug.py" } else { "tests/prysma_code_tests/project_test_multi_thread_edge_case_file/test_depth/main.p" }
+            $Target = if ($Kind -eq "python") { "debug.py" } else { "tests/unit_tests/build/prysma_code_generation/scenarios/project_test_multi_thread_edge_case_file/test_depth/main.p" }
+            if ($Kind -eq "lldb" -and -not (Test-Path -LiteralPath (Join-Path $root $Target) -PathType Leaf)) {
+                Invoke-DebugDocker run --rm --pull=never -v "${forwardRoot}:/workspace" -w /workspace $image python3 tests/unit_tests/generate_tests.py | Out-Null
+            }
         }
         $Target = $Target.Replace("\", "/") -replace '^/?workspace/', ''
         $local = if ([IO.Path]::IsPathRooted($Target)) { [IO.Path]::GetFullPath($Target) } else { [IO.Path]::GetFullPath((Join-Path $root $Target)) }

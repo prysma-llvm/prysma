@@ -17,7 +17,11 @@ else
     CONTAINER_BIN=/workspace/build/Prysma
     TARGET="${1:-}"
     if [ -z "$TARGET" ] || [ "${TARGET##*.}" != "p" ]; then
-        TARGET="tests/prysma_code_tests/project_test_multi_thread_edge_case_file/test_depth/main.p"
+        TARGET="tests/unit_tests/build/prysma_code_generation/scenarios/project_test_multi_thread_edge_case_file/test_depth/main.p"
+        if [ ! -f "$ROOT_DIR/$TARGET" ]; then
+            docker_command run --rm --pull=never --user "$(id -u):$(id -g)" \
+                -v "$ROOT_DIR:/workspace" -w /workspace "$IMAGE" python3 tests/unit_tests/generate_tests.py
+        fi
     fi
     TARGET_ARGS+=("$(target_path "$TARGET")")
 fi

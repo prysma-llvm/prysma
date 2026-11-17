@@ -1,0 +1,18 @@
+include "child_a.p";
+include "child_b.p";
+include "child_c.p";
+include "child_d.p";
+include "child_e.p";
+include "parent_c/parent_c.p";
+
+fn void printParentB()
+{
+    {{ checkpoint(1, at=7) }}
+    call printChildA_B();
+    call printChildB_B();
+    call printChildC_B();
+    call printChildD_B();
+    call printChildE_B();
+    call printParentC();
+    {{ checkpoint(2, at=20) }}
+}

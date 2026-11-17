@@ -1,0 +1,19 @@
+fn bool testArgInIf(arg int32 value) {
+    {{ assert_eq(1, [100, 99], "value", at=[1, 4]) }}
+    if (value == 100) {
+        {{ checkpoint(2) }}
+        return true;
+    } else {
+        {{ checkpoint(3, at=5) }}
+        return false;
+    }
+    // The compiler currently emits a merge block even when both branches return.
+    return false;
+}
+fn int32 main() {
+    dec bool outcome = call testArgInIf(100);
+    {{ assert_eq(4, true, "outcome", at=3) }}
+    dec bool alternate_outcome = call testArgInIf(99);
+    {{ assert_eq(5, false, "alternate_outcome", at=6) }}
+    return 0;
+}

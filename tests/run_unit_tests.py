@@ -37,11 +37,11 @@ def main():
             print(f"Warning: Executable not found at {test_exe}")
 
         print(f"[4/{total}] Generating algorithmic integration tests (.p files)...")
-        subprocess.run(["python3", "tests/unit_tests/generate_tests.py"], cwd=root_dir, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run([sys.executable, "tests/unit_tests/generate_tests.py"], cwd=root_dir, check=True)
 
         print(f"[5/{total}] Running LLVM/Prysma integration test orchestrator...")
         try:
-            subprocess.run(["python3", "tests/unit_tests/orchestrator_test.py"], cwd=root_dir, check=True)
+            subprocess.run([sys.executable, "tests/unit_tests/orchestrator_test.py"], cwd=root_dir, check=True)
         except subprocess.CalledProcessError:
             sys.exit(1)
 

@@ -1,31 +1,24 @@
+import os
+import re
 import sys
-import multiprocessing
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from concurrent.futures import ProcessPoolExecutor, as_completed
-from typing import List
 
-from unit_test import UnitTest, TestResult
+from unit_test import UnitTest
 
-def execute_test(compiler_path: Path, test_file: Path) -> TestResult:
-    return UnitTest(compiler_path).run(test_file)
+MAIN = re.compile(r"(?m)^[ \t]*fn[ \t]+int32[ \t]+main[ \t]*\(")
+
 
 class TestLocator:
-    def __init__(self, directories: List[Path]):
+    def __init__(self, directories):
         self.directories = directories
 
-    def get_all_test_files(self) -> List[Path]:
-        valid_files = []
-        for d in self.directories:
-            if d.exists():
-                for f in d.rglob("*.p"):
-                    if f.is_file():
-                        try:
-                            # Only execute files that contain a main function
-                            if "main" in f.read_text(encoding="utf-8"):
-                                valid_files.append(f)
-                        except Exception:
-                            pass
-        return sorted(valid_files)
+    def get_all_test_files(self):
+        return [(root, path.relative_to(root))
+                for root in self.directories
+                for path in sorted(root.rglob("*.p"))
+                if MAIN.search(path.read_text(encoding="utf-8"))]
+
 
 class TestOrchestrator:
     def __init__(self, locator: TestLocator, compiler_path: Path):
@@ -34,36 +27,37 @@ class TestOrchestrator:
 
     def run_tests(self):
         test_files = self.locator.get_all_test_files()
-        
         if not test_files:
-            sys.exit(0)
-
-        if not self.compiler_path.exists():
+            print("No Prysma integration tests found.")
+            return 1
+        if not self.compiler_path.is_file():
             print(f"Compiler not found: {self.compiler_path}")
-            sys.exit(1)
+            return 1
 
-        fail_count = 0
+        for root in self.locator.directories:
+            if not any(source_root == root for source_root, _ in test_files):
+                print(f"No Prysma integration tests found in {root}")
+                return 1
 
-        with ProcessPoolExecutor(max_workers=max(1, multiprocessing.cpu_count() - 1)) as executor:
-            futures = [executor.submit(execute_test, self.compiler_path, f) for f in test_files]
-            for future in as_completed(futures):
-                result = future.result()
+        runner = UnitTest(self.compiler_path)
+        failures = 0
+        with ThreadPoolExecutor(max_workers=min(8, os.cpu_count() or 1)) as executor:
+            for result in executor.map(lambda test: runner.run(*test), test_files):
                 if not result.success:
-                    print(f"FAIL: {result.file_path.name}")
-                    if result.stdout.strip(): print(result.stdout)
-                    if result.stderr.strip(): print(result.stderr)
-                    fail_count += 1
+                    failures += 1
+                    if result.stdout.strip():
+                        print(result.stdout.rstrip())
+                    if result.stderr.strip():
+                        print(result.stderr.rstrip())
 
-        if fail_count > 0:
-            sys.exit(1)
-        else:
-            print(f"{len(test_files)} Prysma files successfully tested.")
+        print(f"{len(test_files) - failures}/{len(test_files)} Prysma files successfully tested.")
+        return int(failures > 0)
+
 
 if __name__ == "__main__":
     base_dir = Path(__file__).parent.resolve()
     gen_dir = base_dir / "build" / "prysma_code_generation"
-    manual_dir = base_dir.parent / "prysma_code_tests"
     compiler = base_dir.parent.parent / "build" / "Prysma"
 
-    locator = TestLocator([gen_dir, manual_dir])
-    TestOrchestrator(locator, compiler).run_tests()
+    locator = TestLocator([gen_dir])
+    sys.exit(TestOrchestrator(locator, compiler).run_tests())

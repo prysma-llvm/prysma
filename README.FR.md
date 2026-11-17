@@ -91,6 +91,7 @@ La documentation technique est disponible dans le répertoire `docs/` :
 * **Compilation et Environnement :**
   * [Architecture de centralisation et guide Docker](docs/fr/installation/docker_compilation.md)
   * [Environnement de travail et débogage sous VS Code](docs/fr/installation/vscode_environment.md)
+  * [Écrire des tests d’intégration Prysma](docs/fr/integration_tests.md)
   * Guides Docker : [Arch Linux](docs/fr/installation/docker/arch_linux.md) • [Debian](docs/fr/installation/docker/debian.md) • [Ubuntu](docs/fr/installation/docker/ubuntu.md) • [Windows](docs/fr/installation/docker/windows_powershell.md)
   * [Configuration native locale Ubuntu (legacy)](docs/fr/installation/setup_ubuntu.md)
 * **Architecture & Conception :**

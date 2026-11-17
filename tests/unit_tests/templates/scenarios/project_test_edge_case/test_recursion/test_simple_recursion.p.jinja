@@ -1,0 +1,41 @@
+fn int32 factorial(arg int32 n) {
+   {{ assert_eq(1, [5, 4, 3, 2, 1], "n", at=[1, 2, 3, 4, 5]) }}
+   if (n <= 1) {
+      {{ checkpoint(2, at=6) }}
+      return 1;
+   }
+   dec int32 m = n - 1;
+   return n * call factorial(m);
+}
+
+fn int32 fibonacci(arg int32 n) {
+   {{ assert_eq(3, [7, 6, 5, 4, 3, 2, 1, 0, 1, 2, 1, 0, 3, 2, 1, 0, 1, 4, 3, 2, 1, 0, 1, 2, 1, 0, 5, 4, 3, 2, 1, 0, 1, 2, 1, 0, 3, 2, 1, 0, 1], "n", at=[8, 9, 10, 11, 12, 13, 14, 16, 18, 20, 21, 23, 25, 26, 27, 29, 31, 33, 34, 35, 36, 38, 40, 42, 43, 45, 47, 48, 49, 50, 51, 53, 55, 57, 58, 60, 62, 63, 64, 66, 68]) }}
+   if (n <= 1) {
+      {{ assert_eq(4, [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1], "n", at=[15, 17, 19, 22, 24, 28, 30, 32, 37, 39, 41, 44, 46, 52, 54, 56, 59, 61, 65, 67, 69]) }}
+      return n;
+   }
+   dec int32 one = n - 1; dec int32 two = n - 2;
+   return call fibonacci(one) + call fibonacci(two);
+}
+
+fn bool testSimpleRecursion()
+{
+   dec int32 fact = call factorial(5);
+   {{ assert_eq(5, 120, "fact", at=7) }}
+   dec int32 fib = call fibonacci(7);
+   {{ assert_eq(6, 13, "fib", at=70) }}
+   if ((fact == 120) && (fib == 13)) {
+      {{ checkpoint(7, at=71) }}
+      return true;
+   } else {
+      {{ checkpoint(8, at=[]) }}
+      return false;
+   }
+   return false;
+}
+
+fn int32 main() {
+    dec bool outcome = call testSimpleRecursion();
+    {{ assert_eq(9, true, "outcome", at=72) }}
+    return 0;
+}

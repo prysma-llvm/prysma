@@ -11,13 +11,12 @@ fn {{ type_name }} readAndAdd_{{ type_name }}(arg ptr ptrA, arg ptr ptrB)
    dec {{ type_name }} a = unref ptrA;
    dec {{ type_name }} b = unref ptrB;
    dec {{ type_name }} sum = a + b;
+   {{ assert_eq(1, [typed(30), typed(70), typed(100)], ["a", "b", "sum"]) }}
    return sum;
 }
 
 fn bool testPassTwoPtrByArgument_{{ type_name }}()
 {
-   dec string[] feature = "2.test_pass_two_ptr_by_argument : ";
-   call print(ref feature);
    dec ptr p1 = new {{ type_name }};
    dec ptr p2 = new {{ type_name }};
    aff p1 = {{ val_30 }};
@@ -25,15 +24,19 @@ fn bool testPassTwoPtrByArgument_{{ type_name }}()
    dec {{ type_name }} result = call readAndAdd_{{ type_name }}(p1, p2);
    delete p1;
    delete p2;
+   {{ assert_eq(2, typed(100), "result") }}
    if (result == {{ val_100 }}) {
+      {{ checkpoint(3) }}
       return true;
    } else {
+      {{ checkpoint(4, at=[]) }}
       return false;
    }
    return false;
 }
 
 fn int32 main() {
-    call print(call testPassTwoPtrByArgument_{{ type_name }}());
+    dec bool outcome = call testPassTwoPtrByArgument_{{ type_name }}();
+    {{ assert_eq(5, true, "outcome", at=4) }}
     return 0;
 }

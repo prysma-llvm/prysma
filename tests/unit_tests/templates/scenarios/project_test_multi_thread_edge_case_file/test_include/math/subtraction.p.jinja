@@ -1,0 +1,13 @@
+fn int32 subtract(arg int32 a, arg int32 b)
+{
+    dec int32 result = a - b;
+    {{ assert_eq(1, [25, 10], "result", at=[4, 23]) }}
+    return result;
+}
+
+fn float subtractFloat(arg float a, arg float b)
+{
+    dec float result = a - b;
+    {{ assert_eq(2, 6.5, "result", at=13) }}
+    return result;
+}

@@ -8,20 +8,23 @@
 
 fn bool testNewDeleteExtreme_{{ type_name }}()
 {
-   dec string[] feature = "4.test_new_delete_extreme_value : ";
-   call print(ref feature);
    dec ptr p = new {{ type_name }};
    aff p = {{ val_extreme }};
    dec {{ type_name }} value = unref p;
+   {{ assert_eq(1, val_extreme|from_json, "value") }}
    delete p;
+   {{ checkpoint(2) }}
    if (value == {{ val_extreme }}) {
+      {{ checkpoint(3) }}
       return true;
    } else {
+      {{ checkpoint(4, at=[]) }}
       return false;
    }
    return false;
 }
 fn int32 main() {
-    call print(call testNewDeleteExtreme_{{ type_name }}());
+    dec bool outcome = call testNewDeleteExtreme_{{ type_name }}();
+    {{ assert_eq(5, true, "outcome", at=4) }}
     return 0;
 }
