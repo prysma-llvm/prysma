@@ -9,15 +9,19 @@
 fn {{ type_name }} readAndReturn_{{ type_name }}(arg ptr pointer)
 {
    dec {{ type_name }} value = unref pointer;
+   {{ assert_eq(1, typed(999), "value") }}
    return value;
 }
 
 fn bool verifyReturn_{{ type_name }}(arg ptr pointer)
 {
    dec {{ type_name }} value = call readAndReturn_{{ type_name }}(pointer);
+   {{ assert_eq(2, typed(999), "value") }}
    if (value == {{ val_999 }}) {
+      {{ checkpoint(3) }}
       return true;
    } else {
+      {{ checkpoint(4, at=[]) }}
       return false;
    }
    return false;
@@ -25,21 +29,23 @@ fn bool verifyReturn_{{ type_name }}(arg ptr pointer)
 
 fn bool testPassPtrToTwoFunctions_{{ type_name }}()
 {
-   dec string[] feature = "3.test_pass_ptr_to_two_functions : ";
-   call print(ref feature);
    dec ptr p = new {{ type_name }};
    aff p = {{ val_999 }};
    dec bool result = call verifyReturn_{{ type_name }}(p);
    delete p;
+   {{ assert_eq(5, true, "result", at=4) }}
    if (result == true) {
+      {{ checkpoint(6, at=5) }}
       return true;
    } else {
+      {{ checkpoint(7, at=[]) }}
       return false;
    }
    return false;
 }
 
 fn int32 main() {
-    call print(call testPassPtrToTwoFunctions_{{ type_name }}());
+    dec bool outcome = call testPassPtrToTwoFunctions_{{ type_name }}();
+    {{ assert_eq(8, true, "outcome", at=6) }}
     return 0;
 }

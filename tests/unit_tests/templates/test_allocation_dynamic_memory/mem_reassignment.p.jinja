@@ -8,21 +8,26 @@
 
 fn bool testNewDeleteReassignment_{{ type_name }}()
 {
-   dec string[] feature = "5.test_new_delete_reassignment : ";
-   call print(ref feature);
    dec ptr p = new {{ type_name }};
    aff p = {{ val_10 }};
+   dec {{ type_name }} first_value = unref p;
+   {{ assert_eq(1, typed(10), "first_value") }}
    aff p = {{ val_99 }};
    dec {{ type_name }} value = unref p;
+   {{ assert_eq(2, typed(99), "value") }}
    delete p;
+   {{ checkpoint(3) }}
    if (value == {{ val_99 }}) {
+      {{ checkpoint(4) }}
       return true;
    } else {
+      {{ checkpoint(5, at=[]) }}
       return false;
    }
    return false;
 }
 fn int32 main() {
-    call print(call testNewDeleteReassignment_{{ type_name }}());
+    dec bool outcome = call testNewDeleteReassignment_{{ type_name }}();
+    {{ assert_eq(6, true, "outcome", at=5) }}
     return 0;
 }

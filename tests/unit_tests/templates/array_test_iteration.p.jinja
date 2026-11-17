@@ -8,18 +8,20 @@
 
 fn bool arrayTestIteration_{{ type_name }}()
 {
-    dec string[] feature = "6.array_test_iteration : ";
-    call print(ref feature);
     dec {{ type_name }}[3] t = [{{ val2 }}, {{ val2 }}, {{ val2 }}];
     dec int32 i = 0;
+    {{ assert_eq(1, 0, "i") }}
 
     while (i < 3) {
         aff t[i] = {{ val1 }};
+        {{ assert_eq(2, [[0, typed(1)], [1, typed(1)], [2, typed(1)]], ["i", "t[i]"], at=[2, 3, 4]) }}
         aff i = i + 1;
     }
 
     aff i = 0;
+    {{ assert_eq(3, 0, "i", at=5) }}
     while (i < 3) {
+        {{ assert_eq(4, [[0, typed(1)], [1, typed(1)], [2, typed(1)]], ["i", "t[i]"], at=[6, 7, 8]) }}
         if(t[i] != {{ val1 }})
         {
             return false;
@@ -32,6 +34,7 @@ fn bool arrayTestIteration_{{ type_name }}()
 
 fn int32 main()
 {
-    call print(call arrayTestIteration_{{ type_name }}());
+    dec bool outcome = call arrayTestIteration_{{ type_name }}();
+    {{ assert_eq(5, true, "outcome", at=9) }}
     return 0;
 }

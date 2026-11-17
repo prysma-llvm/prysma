@@ -31,3 +31,18 @@ Le cœur du compilateur est écrit en C++23. Les règles suivantes sont obligato
    ```bash
    python3 debug.py
    ```
+
+## 4. Tests d’intégration Prysma
+
+Écrivez les scénarios dans `tests/unit_tests/templates/scenarios` avec l’extension `.p.jinja`. Les autres templates de `tests/unit_tests/templates` servent aux variantes paramétrées par type.
+
+```jinja2
+{{ assert_eq(1, 15, "value") }}
+{{ checkpoint(2) }}
+{{ checkpoint(3, at=[]) }}
+{{ assert_eq(4, [10, 20], "n", at=[3, 4]) }}
+```
+
+Le premier argument est l’identifiant du checkpoint dans le fichier. Par défaut, il donne aussi sa position dans la trace. `at=[]` indique qu’une branche ne doit pas être exécutée. Une liste de positions permet de vérifier les visites successives d’un même checkpoint. Pour observer plusieurs variables au même point, passez une liste d’expressions et une liste de valeurs correspondantes.
+
+Lancez `python3 tests/run_unit_tests.py --existing` pour générer les `.p` et exécuter la suite. Les fichiers générés se trouvent dans `tests/unit_tests/build/prysma_code_generation`.

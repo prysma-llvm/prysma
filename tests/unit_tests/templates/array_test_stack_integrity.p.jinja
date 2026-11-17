@@ -8,14 +8,14 @@
 
 fn bool arrayTestStackIntegrity_{{ type_name }}()
 {
-    dec string[] feature = "5.array_test_stack_integrity : ";
-    call print(ref feature);
     dec {{ type_name }} a = {{ val1 }};
     dec {{ type_name }}[2] t = [{{ val2 }}, {{ val2 }}];
     dec {{ type_name }} b = {{ val2 }};
+    {{ assert_eq(1, [typed(1), typed(0), typed(0), typed(0)], ["a", "t[0]", "t[1]", "b"]) }}
 
     aff t[0] = {{ val1 }};
     aff t[1] = {{ val1 }};
+    {{ assert_eq(2, [typed(1), typed(1), typed(1), typed(0)], ["a", "t[0]", "t[1]", "b"]) }}
 
     if (a != {{ val1 }}) { return false; }
     if (b != {{ val2 }}) { return false; }
@@ -24,6 +24,7 @@ fn bool arrayTestStackIntegrity_{{ type_name }}()
 
 fn int32 main()
 {
-    call print(call arrayTestStackIntegrity_{{ type_name }}());
+    dec bool outcome = call arrayTestStackIntegrity_{{ type_name }}();
+    {{ assert_eq(3, true, "outcome") }}
     return 0;
 }

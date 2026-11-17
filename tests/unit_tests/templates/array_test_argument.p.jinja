@@ -8,8 +8,7 @@
 
 fn bool arrayInjectionArgument_{{ type_name }}(arg {{ type_name }}[3] array)
 {
-    dec string[] feature = "9.array_injection_argument : ";
-    call print(ref feature);
+    {{ assert_eq(1, [typed(1), typed(0), typed(1)], ["array[0]", "array[1]", "array[2]"], at=2) }}
     if (array[0] != {{ val1 }}) {
         return false;
     }
@@ -24,14 +23,14 @@ fn bool arrayInjectionArgument_{{ type_name }}(arg {{ type_name }}[3] array)
 
 fn bool arrayTestArgument_{{ type_name }}()
 {
-    dec string[] feature = "10.array_test_argument : ";
-    call print(ref feature);
     dec {{ type_name }}[3] array = [{{ val1 }}, {{ val2 }}, {{ val1 }}];
+    {{ assert_eq(2, [typed(1), typed(0), typed(1)], ["array[0]", "array[1]", "array[2]"], at=1) }}
     return call arrayInjectionArgument_{{ type_name }}(array);
 }
 
 fn int32 main()
 {
-    call print(call arrayTestArgument_{{ type_name }}());
+    dec bool outcome = call arrayTestArgument_{{ type_name }}();
+    {{ assert_eq(3, true, "outcome") }}
     return 0;
 }

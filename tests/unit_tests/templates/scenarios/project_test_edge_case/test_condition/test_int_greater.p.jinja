@@ -1,0 +1,17 @@
+fn bool testIntGreater() {
+    dec int32 a = 5;
+    {{ assert_eq(1, 5, "a") }}
+    if (a > 3) {
+        {{ checkpoint(2) }}
+        return true;
+    } else {
+        {{ checkpoint(3, at=[]) }}
+        return false;
+    }
+    return false;
+}
+fn int32 main() {
+    dec bool outcome = call testIntGreater();
+    {{ assert_eq(4, true, "outcome", at=3) }}
+    return 0;
+}

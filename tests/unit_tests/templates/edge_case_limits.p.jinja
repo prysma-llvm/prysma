@@ -11,58 +11,59 @@ fn bool test_limits() {
     // INT32 boundaries
     dec int32 max = 2147483647;
     dec int32 min = -2147483648;
-    
+
     // Testing wrapping/underflow manually
     dec int32 overflow = max + 1;
+    {{ assert_eq(1, -2147483648, "overflow") }}
     if (overflow != min) {
         return false;
     }
-    
+
     dec int32 underflow = min - 1;
+    {{ assert_eq(2, 2147483647, "underflow") }}
     if (underflow != max) {
         return false;
     }
-    
+
     return true;
-    
+
     {% elif type_name == "int64" %}
     // INT64 boundaries
     dec int64 max = 9223372036854775807;
     dec int64 min = -9223372036854775807 - 1;
-    
+
     dec int64 overflow = max + 1;
+    // print uses a 32-bit integer format. Split the value into two observable parts.
+    {{ assert_eq(1, [-2147483648, 0], ["overflow / 4294967296", "overflow % 4294967296"]) }}
     if (overflow != min) {
         return false;
     }
     return true;
-    
+
     {% elif type_name == "float" %}
     // Float extreme scales
     dec float very_large = 10000000000.0;
     dec float very_small = 0.00000000001;
-    
+
     dec float r1 = very_large * very_small;
+    {{ assert_eq(1, 0.1, "r1") }}
     // Approximative check
-    if (r1 < 0.99 || r1 > 1.01) {
-        return false; // Actually 1.0 but precision can vary
+    if (r1 < 0.099 || r1 > 0.101) {
+        return false; // Actually 0.1 but precision can vary
     }
     return true;
     {% else %}
+    {{ checkpoint(1) }}
     return true;
     {% endif %}
 }
 
 fn int32 main() {
-    dec string[] intro = "==== Edge Cases Limits ({{ type_name }}) ====";
-    call print(ref intro); call backSlashN();
 
     if (call test_limits() == false) {
-        dec string[] failMsg = "FAIL: limits for type {{ type_name }} were not respected (wrap around failed).";
-        call print(ref failMsg); call backSlashN();
         return 1;
     }
 
-    dec string[] success = "==== SUCCESS ====";
-    call print(ref success); call backSlashN();
+    {{ checkpoint(3 if type_name == 'int32' else 2) }}
     return 0;
 }

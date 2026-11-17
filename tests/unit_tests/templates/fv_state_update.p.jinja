@@ -8,25 +8,29 @@
 
 fn bool testStateUpdate_{{ type_name }}()
 {
-   dec string[] feature = "3.test_state_update : ";
-   call print(ref feature);
    dec {{ type_name }} a = {{ val_1 }};
    dec {{ type_name }} b = {{ val_5 }};
-   
+   {{ assert_eq(1, [typed(1), typed(5)], ["a", "b"]) }}
+
    aff a = {{ val_10 }}; 
-   
+   {{ assert_eq(2, typed(10), "a") }}
+
    dec {{ type_name }} c = a + b;
+   {{ assert_eq(3, typed(15), "c") }}
    if (c == {{ val_15 }}) {
+      {{ checkpoint(4) }}
       return true;
    } else {
+      {{ checkpoint(5, at=[]) }}
       return false;
    }
-   
+
    return false;
 }
 
 fn int32 main()
 {
-    call print(call testStateUpdate_{{ type_name }}());
+    dec bool outcome = call testStateUpdate_{{ type_name }}();
+    {{ assert_eq(6, true, "outcome", at=5) }}
     return 0;
 }

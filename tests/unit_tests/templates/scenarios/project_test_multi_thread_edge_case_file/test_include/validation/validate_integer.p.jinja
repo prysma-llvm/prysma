@@ -1,0 +1,89 @@
+fn bool testEqualInteger()
+{
+    dec bool r = call isEqualInt(42, 42);
+    {{ assert_eq(1, true, "r", at=28) }}
+    if (r == true) {
+        return true;
+    }
+    return false;
+}
+
+fn bool testNotEqualInteger()
+{
+    dec bool r = call isEqualInt(10, 20);
+    {{ assert_eq(2, false, "r", at=30) }}
+    if (r == false) {
+        return true;
+    }
+    return false;
+}
+
+fn bool testGreaterInteger()
+{
+    dec bool r = call isGreaterInt(100, 50);
+    {{ assert_eq(3, true, "r", at=33) }}
+    if (r == true) {
+        return true;
+    }
+    return false;
+}
+
+fn bool testLessInteger()
+{
+    dec bool r = call isLessInt(3, 99);
+    {{ assert_eq(4, true, "r", at=36) }}
+    if (r == true) {
+        return true;
+    }
+    return false;
+}
+
+fn bool testAbsoluteValue()
+{
+    dec int32 neg = 0 - 42;
+    {{ assert_eq(5, -42, "neg", at=38) }}
+    dec int32 r = call absoluteValue(neg);
+    {{ assert_eq(6, 42, "r", at=40) }}
+    if (r == 42) {
+        return true;
+    }
+    return false;
+}
+
+fn bool testMaximum()
+{
+    dec int32 r = call maximum(15, 30);
+    {{ assert_eq(7, 30, "r", at=43) }}
+    if (r == 30) {
+        return true;
+    }
+    return false;
+}
+
+fn bool testMinimum()
+{
+    dec int32 r = call minimum(15, 30);
+    {{ assert_eq(8, 15, "r", at=47) }}
+    if (r == 15) {
+        return true;
+    }
+    return false;
+}
+
+fn void runIntegerTests()
+{
+    dec bool outcome_testequalinteger = call testEqualInteger();
+    {{ assert_eq(9, true, "outcome_testequalinteger", at=29) }}
+    dec bool outcome_testnotequalinteger = call testNotEqualInteger();
+    {{ assert_eq(10, true, "outcome_testnotequalinteger", at=31) }}
+    dec bool outcome_testgreaterinteger = call testGreaterInteger();
+    {{ assert_eq(11, true, "outcome_testgreaterinteger", at=34) }}
+    dec bool outcome_testlessinteger = call testLessInteger();
+    {{ assert_eq(12, true, "outcome_testlessinteger", at=37) }}
+    dec bool outcome_testabsolutevalue = call testAbsoluteValue();
+    {{ assert_eq(13, true, "outcome_testabsolutevalue", at=41) }}
+    dec bool outcome_testmaximum = call testMaximum();
+    {{ assert_eq(14, true, "outcome_testmaximum", at=44) }}
+    dec bool outcome_testminimum = call testMinimum();
+    {{ assert_eq(15, true, "outcome_testminimum", at=48) }}
+}

@@ -1,0 +1,17 @@
+fn bool testIntEqual() {
+    dec int32 a = 10;
+    {{ assert_eq(1, 10, "a") }}
+    if (a == 10) {
+        {{ checkpoint(2) }}
+        return true;
+    } else {
+        {{ checkpoint(3, at=[]) }}
+        return false;
+    }
+    return false;
+}
+fn int32 main() {
+    dec bool outcome = call testIntEqual();
+    {{ assert_eq(4, true, "outcome", at=3) }}
+    return 0;
+}
