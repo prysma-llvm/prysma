@@ -17,29 +17,35 @@ fn int32 main() {
     dec int32 a = 1;
     dec int32 b = 1;
 
-    {{ assert_eq(1, 1, "a") }}
-    {{ assert_eq(2, 1, "b") }}
+    {{ assert_eq(1, "a", trace_positions=1) }}
+    {{ assert_eq(1, "b", trace_positions=2) }}
 
     if (a == 1 && b == 1) {
-        {{ checkpoint(3) }}
+        {{ checkpoint(trace_positions=3) }}
     } else {
-        {{ checkpoint(4, at=[]) }}
+        {{ checkpoint(trace_positions=[]) }}
     }
 
     return 0;
 }
 ```
 
-`assert_eq(id, attendu, "expression")` vérifie la valeur affichée. On peut aussi vérifier plusieurs valeurs au même point avec `assert_eq(1, [1, 1], ["a", "b"])`. `checkpoint(id)` vérifie le passage à cet endroit. `at=[]` indique que la branche doit rester inactive.
+`assert_eq(attendu, "expression", trace_positions=...)` vérifie le passage et la valeur de l’expression. Pour vérifier plusieurs valeurs au même passage, écrivez par exemple `assert_eq([1, 1], ["a", "b"], trace_positions=1)`. `checkpoint(trace_positions=...)` vérifie uniquement le passage.
 
-Les IDs commencent à `1` et suivent l’ordre des checkpoints dans chaque fichier. Par défaut, l’ID indique aussi la position dans la trace. Utilisez `at` quand ces deux ordres diffèrent. Les positions de la trace commencent à `1` et se suivent sur toute l’exécution, fichiers inclus compris.
+**`trace_positions` est obligatoire.** Il donne la position attendue du passage pendant l’exécution du programme Prysma. La trace commence à `1` et ses positions se suivent sur toute l’exécution, fichiers inclus compris.
+
+- `trace_positions=3` attend un seul passage, au troisième événement de la trace.
+- `trace_positions=[2, 4]` attend deux passages, aux événements 2 et 4. Avec `assert_eq`, donnez une valeur attendue par passage, dans le même ordre.
+- `checkpoint(trace_positions=[])` attend zéro passage. Si le programme atteint ce point, le test échoue. Ce checkpoint ne réserve aucune position dans la trace attendue.
+
+Le générateur attribue aussi un identifiant à chaque checkpoint dans l’ordre du rendu de chaque fichier `.p`. Cet identifiant et la ligne du fichier servent à localiser le checkpoint dans les diagnostics. Le checkpoint qui vérifie `outcome` illustre cette distinction. Il porte l’identifiant 4 et utilise `trace_positions=3`, car la branche `else` doit rester inactive. [Voir le template](../../tests/unit_tests/templates/scenarios/project_test_edge_case/test_functional_variable_bool/test_logical_not_false.p.jinja).
 
 ### Vérifier une boucle
 
 Dans le [test de boucle simple](../../tests/unit_tests/templates/scenarios/project_test_edge_case/test_loop/test_loop_simple.p.jinja), le checkpoint `2` est placé après l’incrémentation. Il doit afficher `1`, puis `2`, jusqu’à `5` aux événements `2` à `6`.
 
 ```jinja2
-{{ assert_eq(2, [1, 2, 3, 4, 5], "i", at=[2, 3, 4, 5, 6]) }}
+{{ assert_eq([1, 2, 3, 4, 5], "i", trace_positions=[2, 3, 4, 5, 6]) }}
 ```
 
 ### Attendre une erreur de compilation

@@ -1,17 +1,17 @@
 fn bool testFloatLess() {
     dec float a = 2.5;
-    {{ assert_eq(1, 2.5, "a") }}
+    {{ assert_eq(2.5, "a", trace_positions=1) }}
     if (a < 5.0) {
-        {{ checkpoint(2) }}
+        {{ checkpoint(trace_positions=2) }}
         return true;
     } else {
-        {{ checkpoint(3, at=[]) }}
+        {{ checkpoint(trace_positions=[]) }}
         return false;
     }
     return false;
 }
 fn int32 main() {
     dec bool outcome = call testFloatLess();
-    {{ assert_eq(4, true, "outcome", at=3) }}
+    {{ assert_eq(true, "outcome", trace_positions=3) }}
     return 0;
 }

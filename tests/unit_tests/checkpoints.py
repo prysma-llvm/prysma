@@ -60,14 +60,14 @@ def render_assertion(number, expressions, events):
     return f"{statements} // @expect {json.dumps(events)}\n    call backSlashN();"
 
 
-def checkpoint(number, *, at=None):
+def checkpoint(number, *, trace_positions):
     """Assert where this checkpoint is reached. An empty list means never."""
-    if isinstance(at, list):
-        return render_assertion(number, (), [[position] for position in at])
-    return render_assertion(number, (), [number if at is None else at])
+    if isinstance(trace_positions, list):
+        return render_assertion(number, (), [[position] for position in trace_positions])
+    return render_assertion(number, (), [trace_positions])
 
 
-def assert_eq(number, expected, expression, *, at=None):
+def assert_eq(number, expected, expression, *, trace_positions):
     """Assert a scalar or a group of values, optionally across repeated visits."""
     multiple = not isinstance(expression, str)
     expressions = expression if multiple else (expression,)
@@ -75,12 +75,12 @@ def assert_eq(number, expected, expression, *, at=None):
         isinstance(item, str) and item.strip() for item in expressions
     ):
         raise ValueError(f"checkpoint {number}: give a Prysma expression or a list of expressions")
-    if isinstance(at, list):
-        if not isinstance(expected, list) or len(expected) != len(at):
-            raise ValueError(f"checkpoint {number}: give one expected result per event in at")
-        pairs = zip(at, expected)
+    if isinstance(trace_positions, list):
+        if not isinstance(expected, list) or len(expected) != len(trace_positions):
+            raise ValueError(f"checkpoint {number}: give one expected result per position in trace_positions")
+        pairs = zip(trace_positions, expected)
     else:
-        pairs = [(number if at is None else at, expected)]
+        pairs = [(trace_positions, expected)]
     rows = []
     for position, values in pairs:
         values = values if multiple else [values]

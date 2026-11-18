@@ -9,12 +9,12 @@
 fn bool verify_{{ type_name }}(arg ptr pointer)
 {
    dec {{ type_name }} value = unref pointer;
-   {{ assert_eq(1, typed(50), "value") }}
+   {{ assert_eq(typed(50), "value", trace_positions=1) }}
    if (value == {{ val_50 }}) {
-      {{ checkpoint(2) }}
+      {{ checkpoint(trace_positions=2) }}
       return true;
    } else {
-      {{ checkpoint(3, at=[]) }}
+      {{ checkpoint(trace_positions=[]) }}
       return false;
    }
    return false;
@@ -26,12 +26,12 @@ fn bool testPassPtrByArgument_{{ type_name }}()
    aff p = {{ val_50 }};
    dec bool result = call verify_{{ type_name }}(p);
    delete p;
-   {{ assert_eq(4, true, "result", at=3) }}
+   {{ assert_eq(true, "result", trace_positions=3) }}
    if (result == true) {
-      {{ checkpoint(5, at=4) }}
+      {{ checkpoint(trace_positions=4) }}
       return true;
    } else {
-      {{ checkpoint(6, at=[]) }}
+      {{ checkpoint(trace_positions=[]) }}
       return false;
    }
    return false;
@@ -39,6 +39,6 @@ fn bool testPassPtrByArgument_{{ type_name }}()
 
 fn int32 main() {
     dec bool outcome = call testPassPtrByArgument_{{ type_name }}();
-    {{ assert_eq(7, true, "outcome", at=5) }}
+    {{ assert_eq(true, "outcome", trace_positions=5) }}
     return 0;
 }

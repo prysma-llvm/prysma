@@ -17,29 +17,35 @@ fn int32 main() {
     dec int32 a = 1;
     dec int32 b = 1;
 
-    {{ assert_eq(1, 1, "a") }}
-    {{ assert_eq(2, 1, "b") }}
+    {{ assert_eq(1, "a", trace_positions=1) }}
+    {{ assert_eq(1, "b", trace_positions=2) }}
 
     if (a == 1 && b == 1) {
-        {{ checkpoint(3) }}
+        {{ checkpoint(trace_positions=3) }}
     } else {
-        {{ checkpoint(4, at=[]) }}
+        {{ checkpoint(trace_positions=[]) }}
     }
 
     return 0;
 }
 ```
 
-`assert_eq(id, expected, "expression")` checks the printed value. You can check several values at the same point with `assert_eq(1, [1, 1], ["a", "b"])`. `checkpoint(id)` checks that execution reaches that point. Use `at=[]` for a branch that should never run.
+`assert_eq(expected, "expression", trace_positions=...)` checks that execution reaches that point and verifies the expression's value. To check several values in one visit, use `assert_eq([1, 1], ["a", "b"], trace_positions=1)`. `checkpoint(trace_positions=...)` checks only that execution reaches the point.
 
-IDs start at `1` and follow the order of checkpoints in each file. By default, an ID also gives the position in the trace. Use `at` when these two orders differ. Trace positions start at `1` and run in sequence across the whole execution, including any files brought in with `include`.
+**`trace_positions` is required.** It gives the expected position of a visit during execution of the Prysma program. The trace starts at `1` and its positions run consecutively throughout execution, including visits in files brought in with `include`.
+
+- `trace_positions=3` expects one visit, as the third event in the trace.
+- `trace_positions=[2, 4]` expects two visits, at events 2 and 4. With `assert_eq`, supply one expected value per visit in the same order.
+- `checkpoint(trace_positions=[])` expects zero visits. If execution reaches that point, the test fails. This checkpoint takes up no position in the expected trace.
+
+The generator also assigns each checkpoint an ID in render order within each `.p` file. Diagnostics use the ID and source line to locate the checkpoint. For example, the checkpoint that checks `outcome` has ID 4 and uses `trace_positions=3` because the `else` branch should never run. [See the template](../../tests/unit_tests/templates/scenarios/project_test_edge_case/test_functional_variable_bool/test_logical_not_false.p.jinja).
 
 ### Checking a loop
 
 In the [simple loop test](../../tests/unit_tests/templates/scenarios/project_test_edge_case/test_loop/test_loop_simple.p.jinja), checkpoint `2` comes after the increment. It should print the values `1` through `5` at events `2` through `6`.
 
 ```jinja2
-{{ assert_eq(2, [1, 2, 3, 4, 5], "i", at=[2, 3, 4, 5, 6]) }}
+{{ assert_eq([1, 2, 3, 4, 5], "i", trace_positions=[2, 3, 4, 5, 6]) }}
 ```
 
 ### Expecting a compilation error

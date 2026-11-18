@@ -1,7 +1,7 @@
 fn bool isEqualInt(arg int32 a, arg int32 b)
 {
     if (a == b) {
-        {{ checkpoint(1, at=27) }}
+        {{ checkpoint(trace_positions=27) }}
         return true;
     }
     return false;
@@ -10,7 +10,7 @@ fn bool isEqualInt(arg int32 a, arg int32 b)
 fn bool isGreaterInt(arg int32 a, arg int32 b)
 {
     if (a > b) {
-        {{ checkpoint(2, at=32) }}
+        {{ checkpoint(trace_positions=32) }}
         return true;
     }
     return false;
@@ -19,7 +19,7 @@ fn bool isGreaterInt(arg int32 a, arg int32 b)
 fn bool isLessInt(arg int32 a, arg int32 b)
 {
     if (a < b) {
-        {{ checkpoint(3, at=[35, 45]) }}
+        {{ checkpoint(trace_positions=[35, 45]) }}
         return true;
     }
     return false;
@@ -28,7 +28,7 @@ fn bool isLessInt(arg int32 a, arg int32 b)
 fn bool isEqualFloat(arg float a, arg float b)
 {
     if (a == b) {
-        {{ checkpoint(4, at=[50, 65]) }}
+        {{ checkpoint(trace_positions=[50, 65]) }}
         return true;
     }
     return false;
@@ -37,7 +37,7 @@ fn bool isEqualFloat(arg float a, arg float b)
 fn bool isGreaterFloat(arg float a, arg float b)
 {
     if (a > b) {
-        {{ checkpoint(5, at=[55, 63]) }}
+        {{ checkpoint(trace_positions=[55, 63]) }}
         return true;
     }
     return false;
@@ -46,7 +46,7 @@ fn bool isGreaterFloat(arg float a, arg float b)
 fn bool isLessFloat(arg float a, arg float b)
 {
     if (a < b) {
-        {{ checkpoint(6, at=[58, 61]) }}
+        {{ checkpoint(trace_positions=[58, 61]) }}
         return true;
     }
     return false;

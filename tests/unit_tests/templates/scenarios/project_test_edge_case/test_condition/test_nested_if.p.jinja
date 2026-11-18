@@ -1,23 +1,23 @@
 fn bool testNestedIf() {
     dec int32 x = 50;
-    {{ assert_eq(1, 50, "x") }}
+    {{ assert_eq(50, "x", trace_positions=1) }}
     if (x > 10) {
-        {{ checkpoint(2) }}
+        {{ checkpoint(trace_positions=2) }}
         if (x < 100) {
-            {{ checkpoint(3) }}
+            {{ checkpoint(trace_positions=3) }}
             return true;
         } else {
-            {{ checkpoint(4, at=[]) }}
+            {{ checkpoint(trace_positions=[]) }}
             return false;
         }
     } else {
-        {{ checkpoint(5, at=[]) }}
+        {{ checkpoint(trace_positions=[]) }}
         return false;
     }
     return false;
 }
 fn int32 main() {
     dec bool outcome = call testNestedIf();
-    {{ assert_eq(6, true, "outcome", at=4) }}
+    {{ assert_eq(true, "outcome", trace_positions=4) }}
     return 0;
 }

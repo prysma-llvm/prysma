@@ -11,20 +11,20 @@ fn bool testNewDeleteZero_{{ type_name }}()
    dec ptr p = new {{ type_name }};
    aff p = {{ val_0 }};
    dec {{ type_name }} value = unref p;
-   {{ assert_eq(1, typed(0), "value") }}
+   {{ assert_eq(typed(0), "value", trace_positions=1) }}
    delete p;
-   {{ checkpoint(2) }}
+   {{ checkpoint(trace_positions=2) }}
    if (value == {{ val_0 }}) {
-      {{ checkpoint(3) }}
+      {{ checkpoint(trace_positions=3) }}
       return true;
    } else {
-      {{ checkpoint(4, at=[]) }}
+      {{ checkpoint(trace_positions=[]) }}
       return false;
    }
    return false;
 }
 fn int32 main() {
     dec bool outcome = call testNewDeleteZero_{{ type_name }}();
-    {{ assert_eq(5, true, "outcome", at=4) }}
+    {{ assert_eq(true, "outcome", trace_positions=4) }}
     return 0;
 }

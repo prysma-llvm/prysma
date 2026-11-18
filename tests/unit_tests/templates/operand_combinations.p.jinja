@@ -11,7 +11,7 @@ fn bool test_{{ op.id }}() {
     dec {{ type_name }} l = {{ op.left }};
     dec {{ type_name }} r = {{ op.right }};
     dec {{ type_name }} res = l {{ op.op }} r;
-    {{ assert_eq(loop.index, op.exp|from_json, "res", at=loop.index0 * 2 + 1) }}
+    {{ assert_eq(op.exp|from_json, "res", trace_positions=loop.index0 * 2 + 1) }}
     if (res != {{ op.exp }}) {
         return false;
     }
@@ -26,7 +26,7 @@ fn int32 main() {
     if (call test_{{ op.id }}() == false) {
         return 1;
     }
-    {{ checkpoint((combinations|length) + loop.index, at=loop.index * 2) }}
+    {{ checkpoint(trace_positions=loop.index * 2) }}
     {% endfor %}
 
     return 0;

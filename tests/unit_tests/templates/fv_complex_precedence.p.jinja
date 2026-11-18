@@ -13,13 +13,13 @@ fn bool testComplexPrecedence_{{ type_name }}()
    dec {{ type_name }} c = {{ val_4 }};
    dec {{ type_name }} d = {{ val_5 }};
    dec {{ type_name }} result = a * b + c * d;
-   {{ assert_eq(1, typed(26), "result") }}
+   {{ assert_eq(typed(26), "result", trace_positions=1) }}
 
    if (result == {{ val_26 }}) {
-      {{ checkpoint(2) }}
+      {{ checkpoint(trace_positions=2) }}
       return true;
    } else {
-      {{ checkpoint(3, at=[]) }}
+      {{ checkpoint(trace_positions=[]) }}
       return false;
    }
    return false;
@@ -28,6 +28,6 @@ fn bool testComplexPrecedence_{{ type_name }}()
 fn int32 main()
 {
     dec bool outcome = call testComplexPrecedence_{{ type_name }}();
-    {{ assert_eq(4, true, "outcome", at=3) }}
+    {{ assert_eq(true, "outcome", trace_positions=3) }}
     return 0;
 }

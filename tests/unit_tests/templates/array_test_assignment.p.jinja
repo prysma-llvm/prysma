@@ -9,13 +9,13 @@
 fn bool arrayTestAssignment_{{ type_name }}()
 {
     dec {{ type_name }}[4] array = [{{ val2 }}, {{ val2 }}, {{ val2 }}, {{ val2 }}];
-    {{ assert_eq(1, [typed(0), typed(0)], ["array[0]", "array[3]"]) }}
+    {{ assert_eq([typed(0), typed(0)], ["array[0]", "array[3]"], trace_positions=1) }}
 
     aff array[0] = {{ val1 }};
     aff array[1] = {{ val1 }};
     aff array[2] = {{ val2 }};
     aff array[3] = {{ val1 }};
-    {{ assert_eq(2, [typed(1), typed(1), typed(0), typed(1)], ["array[0]", "array[1]", "array[2]", "array[3]"]) }}
+    {{ assert_eq([typed(1), typed(1), typed(0), typed(1)], ["array[0]", "array[1]", "array[2]", "array[3]"], trace_positions=2) }}
 
     if (array[0] != {{ val1 }}) {
         return false;
@@ -35,6 +35,6 @@ fn bool arrayTestAssignment_{{ type_name }}()
 fn int32 main()
 {
     dec bool outcome = call arrayTestAssignment_{{ type_name }}();
-    {{ assert_eq(3, true, "outcome") }}
+    {{ assert_eq(true, "outcome", trace_positions=3) }}
     return 0;
 }

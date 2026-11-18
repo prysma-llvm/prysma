@@ -7,12 +7,12 @@ include "parent_b/parent_b.p";
 
 fn void printParentA()
 {
-    {{ checkpoint(1) }}
+    {{ checkpoint(trace_positions=1) }}
     call printChildA();
     call printChildB();
     call printChildC();
     call printChildD();
     call printChildE();
     call printParentB();
-    {{ checkpoint(2, at=21) }}
+    {{ checkpoint(trace_positions=21) }}
 }

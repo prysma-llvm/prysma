@@ -1,26 +1,26 @@
 fn int32 factorial(arg int32 n)
 {
-   {{ assert_eq(1, [5, 4, 3, 2, 1], "n", at=[1, 2, 3, 4, 5]) }}
+   {{ assert_eq([5, 4, 3, 2, 1], "n", trace_positions=[1, 2, 3, 4, 5]) }}
    if (n <= 1) {
-      {{ checkpoint(2, at=6) }}
+      {{ checkpoint(trace_positions=6) }}
       return 1;
    }
    dec int32 m = n - 1;
    dec int32 r = call factorial(m);
    dec int32 computed = n * r;
-   {{ assert_eq(3, [[2, 2], [3, 6], [4, 24], [5, 120]], ["n", "computed"], at=[7, 8, 9, 10]) }}
+   {{ assert_eq([[2, 2], [3, 6], [4, 24], [5, 120]], ["n", "computed"], trace_positions=[7, 8, 9, 10]) }}
    return computed;
 }
 
 fn bool testFactorial()
 {
    dec int32 result = call factorial(5);
-   {{ assert_eq(4, 120, "result", at=11) }}
+   {{ assert_eq(120, "result", trace_positions=11) }}
    if (result == 120) {
-      {{ checkpoint(5, at=12) }}
+      {{ checkpoint(trace_positions=12) }}
       return true;
    } else {
-      {{ checkpoint(6, at=[]) }}
+      {{ checkpoint(trace_positions=[]) }}
       return false;
    }
    return false;
@@ -28,6 +28,6 @@ fn bool testFactorial()
 
 fn int32 main() {
     dec bool outcome = call testFactorial();
-    {{ assert_eq(7, true, "outcome", at=13) }}
+    {{ assert_eq(true, "outcome", trace_positions=13) }}
     return 0;
 }

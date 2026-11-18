@@ -11,24 +11,24 @@
 fn bool test_logic() {
     dec bool a = true;
     dec bool b = false;
-    {{ assert_eq(1, [true, false], ["a", "b"]) }}
+    {{ assert_eq([true, false], ["a", "b"], trace_positions=1) }}
 
     // Direct Evaluation
     if ((a && b) == true) {
         return false;
     }
 
-    {{ checkpoint(2) }}
+    {{ checkpoint(trace_positions=2) }}
 
     if ((a || b) == false) {
         return false;
     }
 
-    {{ checkpoint(3) }}
+    {{ checkpoint(trace_positions=3) }}
 
     // Complex Parenthesis combinations
     if ((a || false) && (b || true)) {
-    {{ checkpoint(4) }}
+    {{ checkpoint(trace_positions=4) }}
         return true;
     }
 
@@ -44,7 +44,7 @@ fn int32 main() {
         return 1;
     }
 
-    {{ checkpoint(5) }}
+    {{ checkpoint(trace_positions=5) }}
     {% endif %}
 
     return 0;

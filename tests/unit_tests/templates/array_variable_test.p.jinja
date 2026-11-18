@@ -11,7 +11,7 @@ fn bool arrayVariableTest_{{ type_name }}()
     dec {{ type_name }} a = {{ val1 }}; 
     dec {{ type_name }} b = {{ val2 }}; 
     dec {{ type_name }}[5] array = [a, b, {{ val1 }}, {{ val2 }}, {{ val1 }}];
-    {{ assert_eq(1, [typed(1), typed(0), typed(1), typed(0), typed(1)], ["array[0]", "array[1]", "array[2]", "array[3]", "array[4]"]) }}
+    {{ assert_eq([typed(1), typed(0), typed(1), typed(0), typed(1)], ["array[0]", "array[1]", "array[2]", "array[3]", "array[4]"], trace_positions=1) }}
 
     if (array[0] != {{ val1 }}) {
         return false;
@@ -34,6 +34,6 @@ fn bool arrayVariableTest_{{ type_name }}()
 fn int32 main()
 {
     dec bool outcome = call arrayVariableTest_{{ type_name }}();
-    {{ assert_eq(2, true, "outcome") }}
+    {{ assert_eq(true, "outcome", trace_positions=2) }}
     return 0;
 }

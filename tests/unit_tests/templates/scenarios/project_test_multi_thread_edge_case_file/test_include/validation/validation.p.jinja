@@ -5,7 +5,7 @@ include "validate_float.p";
 fn void runValidationTests()
 {
     call runIntegerTests();
-    {{ checkpoint(1, at=49) }}
+    {{ checkpoint(trace_positions=49) }}
     call runFloatTests();
-    {{ checkpoint(2, at=68) }}
+    {{ checkpoint(trace_positions=68) }}
 }

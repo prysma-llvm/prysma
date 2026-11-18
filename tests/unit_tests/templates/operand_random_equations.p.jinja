@@ -9,7 +9,7 @@
 {% for eq in equations %}
 fn bool test_eq_{{ eq.id }}() {
     dec {{ type_name }} res = {{ eq.expression }};
-    {{ assert_eq(loop.index, eq.expected|from_json, "res", at=loop.index0 * 2 + 1) }}
+    {{ assert_eq(eq.expected|from_json, "res", trace_positions=loop.index0 * 2 + 1) }}
     if (res != {{ eq.expected }}) {
         return false;
     }
@@ -24,7 +24,7 @@ fn int32 main() {
     if (call test_eq_{{ eq.id }}() == false) {
         return 1;
     }
-    {{ checkpoint((equations|length) + loop.index, at=loop.index * 2) }}
+    {{ checkpoint(trace_positions=loop.index * 2) }}
     {% endfor %}
 
     return 0;

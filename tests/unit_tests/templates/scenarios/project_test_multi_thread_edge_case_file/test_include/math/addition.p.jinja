@@ -1,13 +1,13 @@
 fn int32 add(arg int32 a, arg int32 b)
 {
     dec int32 result = a + b;
-    {{ assert_eq(1, [30, 8], "result", at=[1, 19]) }}
+    {{ assert_eq([30, 8], "result", trace_positions=[1, 19]) }}
     return result;
 }
 
 fn float addFloat(arg float a, arg float b)
 {
     dec float result = a + b;
-    {{ assert_eq(2, 4.0, "result", at=10) }}
+    {{ assert_eq(4.0, "result", trace_positions=10) }}
     return result;
 }

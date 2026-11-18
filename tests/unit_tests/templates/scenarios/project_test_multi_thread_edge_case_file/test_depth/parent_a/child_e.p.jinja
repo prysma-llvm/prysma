@@ -2,5 +2,5 @@
 fn void printChildE()
 {
     dec string[] maChaine = "child_e";
-    {{ assert_eq(1, "child_e", "ref maChaine", at=6) }}
+    {{ assert_eq("child_e", "ref maChaine", trace_positions=6) }}
 }

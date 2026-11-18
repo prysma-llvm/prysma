@@ -13,8 +13,8 @@
 fn void checkDivision_{{ type_name }}(arg {{ type_name }} dividend, arg {{ type_name }} divisor) {
     dec {{ type_name }} quotient = dividend / divisor;
     dec {{ type_name }} remainder = dividend % divisor;
-    {{ assert_eq(loop.index, cases, ["dividend", "divisor", "quotient", "remainder"],
-                 at=range(loop.index0 * (cases|length) + 1, loop.index * (cases|length) + 1)|list) }}
+    {{ assert_eq(cases, ["dividend", "divisor", "quotient", "remainder"],
+                 trace_positions=range(loop.index0 * (cases|length) + 1, loop.index * (cases|length) + 1)|list) }}
 }
 {% endfor %}
 
@@ -30,8 +30,8 @@ fn int32 main() {
     dec int64 quotient = wide / divisor;
     dec int64 remainder = wide % divisor;
     // Split the 64-bit quotient because print uses a 32-bit integer format.
-    {{ assert_eq(3, [1, 1, 1], ["quotient / 4294967296", "quotient % 4294967296", "remainder"],
-                 at=(types|length) * (cases|length) + 1) }}
+    {{ assert_eq([1, 1, 1], ["quotient / 4294967296", "quotient % 4294967296", "remainder"],
+                 trace_positions=(types|length) * (cases|length) + 1) }}
 
     return 0;
 }

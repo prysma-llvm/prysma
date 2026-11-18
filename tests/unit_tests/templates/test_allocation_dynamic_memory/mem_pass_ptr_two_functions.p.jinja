@@ -9,19 +9,19 @@
 fn {{ type_name }} readAndReturn_{{ type_name }}(arg ptr pointer)
 {
    dec {{ type_name }} value = unref pointer;
-   {{ assert_eq(1, typed(999), "value") }}
+   {{ assert_eq(typed(999), "value", trace_positions=1) }}
    return value;
 }
 
 fn bool verifyReturn_{{ type_name }}(arg ptr pointer)
 {
    dec {{ type_name }} value = call readAndReturn_{{ type_name }}(pointer);
-   {{ assert_eq(2, typed(999), "value") }}
+   {{ assert_eq(typed(999), "value", trace_positions=2) }}
    if (value == {{ val_999 }}) {
-      {{ checkpoint(3) }}
+      {{ checkpoint(trace_positions=3) }}
       return true;
    } else {
-      {{ checkpoint(4, at=[]) }}
+      {{ checkpoint(trace_positions=[]) }}
       return false;
    }
    return false;
@@ -33,12 +33,12 @@ fn bool testPassPtrToTwoFunctions_{{ type_name }}()
    aff p = {{ val_999 }};
    dec bool result = call verifyReturn_{{ type_name }}(p);
    delete p;
-   {{ assert_eq(5, true, "result", at=4) }}
+   {{ assert_eq(true, "result", trace_positions=4) }}
    if (result == true) {
-      {{ checkpoint(6, at=5) }}
+      {{ checkpoint(trace_positions=5) }}
       return true;
    } else {
-      {{ checkpoint(7, at=[]) }}
+      {{ checkpoint(trace_positions=[]) }}
       return false;
    }
    return false;
@@ -46,6 +46,6 @@ fn bool testPassPtrToTwoFunctions_{{ type_name }}()
 
 fn int32 main() {
     dec bool outcome = call testPassPtrToTwoFunctions_{{ type_name }}();
-    {{ assert_eq(8, true, "outcome", at=6) }}
+    {{ assert_eq(true, "outcome", trace_positions=6) }}
     return 0;
 }

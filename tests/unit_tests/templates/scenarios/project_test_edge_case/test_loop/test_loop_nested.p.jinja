@@ -12,27 +12,27 @@
 fn bool testLoopNested()
 {
     dec int32 i = 0; dec int32 j = 0; dec int32 total = 0;
-    {{ assert_eq(1, [0, 0, 0], ["i", "j", "total"]) }}
+    {{ assert_eq([0, 0, 0], ["i", "j", "total"], trace_positions=1) }}
     while(i < 5) {
         aff j = 0;
-        {{ assert_eq(2, outer_states, ["i", "j", "total"], at=outer_events) }}
+        {{ assert_eq(outer_states, ["i", "j", "total"], trace_positions=outer_events) }}
         while(j < 5) {
             aff total = total + 1;
             aff j = j + 1;
-            {{ assert_eq(3, inner_states, ["i", "j", "total"], at=inner_events) }}
+            {{ assert_eq(inner_states, ["i", "j", "total"], trace_positions=inner_events) }}
         }
         aff i = i + 1;
     }
-    {{ assert_eq(4, [5, 5, 25], ["i", "j", "total"], at=32) }}
+    {{ assert_eq([5, 5, 25], ["i", "j", "total"], trace_positions=32) }}
     if(total == 25) {
-        {{ checkpoint(5, at=33) }}
+        {{ checkpoint(trace_positions=33) }}
         return true;
     }
-    {{ checkpoint(6, at=[]) }}
+    {{ checkpoint(trace_positions=[]) }}
     return false;
 }
 fn int32 main() {
     dec bool outcome = call testLoopNested();
-    {{ assert_eq(7, true, "outcome", at=34) }}
+    {{ assert_eq(true, "outcome", trace_positions=34) }}
     return 0;
 }

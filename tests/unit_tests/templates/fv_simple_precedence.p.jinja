@@ -12,12 +12,12 @@ fn bool testSimplePrecedence_{{ type_name }}()
    dec {{ type_name }} b = {{ val_2 }};
    dec {{ type_name }} c = {{ val_5 }};
    dec {{ type_name }} d = a + b * c; 
-   {{ assert_eq(1, typed(20), "d") }}
+   {{ assert_eq(typed(20), "d", trace_positions=1) }}
    if (d == {{ val_20 }}) {
-      {{ checkpoint(2) }}
+      {{ checkpoint(trace_positions=2) }}
       return true;
    } else {
-      {{ checkpoint(3, at=[]) }}
+      {{ checkpoint(trace_positions=[]) }}
       return false;
    }
    return false;
@@ -26,6 +26,6 @@ fn bool testSimplePrecedence_{{ type_name }}()
 fn int32 main()
 {
     dec bool outcome = call testSimplePrecedence_{{ type_name }}();
-    {{ assert_eq(4, true, "outcome", at=3) }}
+    {{ assert_eq(true, "outcome", trace_positions=3) }}
     return 0;
 }

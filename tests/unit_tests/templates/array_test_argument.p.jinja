@@ -8,7 +8,7 @@
 
 fn bool arrayInjectionArgument_{{ type_name }}(arg {{ type_name }}[3] array)
 {
-    {{ assert_eq(1, [typed(1), typed(0), typed(1)], ["array[0]", "array[1]", "array[2]"], at=2) }}
+    {{ assert_eq([typed(1), typed(0), typed(1)], ["array[0]", "array[1]", "array[2]"], trace_positions=2) }}
     if (array[0] != {{ val1 }}) {
         return false;
     }
@@ -24,13 +24,13 @@ fn bool arrayInjectionArgument_{{ type_name }}(arg {{ type_name }}[3] array)
 fn bool arrayTestArgument_{{ type_name }}()
 {
     dec {{ type_name }}[3] array = [{{ val1 }}, {{ val2 }}, {{ val1 }}];
-    {{ assert_eq(2, [typed(1), typed(0), typed(1)], ["array[0]", "array[1]", "array[2]"], at=1) }}
+    {{ assert_eq([typed(1), typed(0), typed(1)], ["array[0]", "array[1]", "array[2]"], trace_positions=1) }}
     return call arrayInjectionArgument_{{ type_name }}(array);
 }
 
 fn int32 main()
 {
     dec bool outcome = call arrayTestArgument_{{ type_name }}();
-    {{ assert_eq(3, true, "outcome") }}
+    {{ assert_eq(true, "outcome", trace_positions=3) }}
     return 0;
 }

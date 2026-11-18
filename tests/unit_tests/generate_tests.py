@@ -1,6 +1,7 @@
 import json
 import os
 import random
+from itertools import count
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
@@ -89,14 +90,21 @@ def generate_tests():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     env = Environment(loader=FileSystemLoader(TEMPLATE_DIR), undefined=StrictUndefined)
 
-    env.globals.update(checkpoint=checkpoint, assert_eq=assert_eq)
     env.filters["from_json"] = json.loads
 
     output = Path(OUTPUT_DIR)
     generated = set()
 
     def write_test(filename, template, context):
-        source = template.render(**context)
+        checkpoint_ids = count(1)
+
+        def render_checkpoint(*, trace_positions):
+            return checkpoint(next(checkpoint_ids), trace_positions=trace_positions)
+
+        def render_assert_eq(expected, expression, *, trace_positions):
+            return assert_eq(next(checkpoint_ids), expected, expression, trace_positions=trace_positions)
+
+        source = template.render(checkpoint=render_checkpoint, assert_eq=render_assert_eq, **context)
         read_checkpoints(source, filename)
         target = output / filename
         target.parent.mkdir(parents=True, exist_ok=True)
