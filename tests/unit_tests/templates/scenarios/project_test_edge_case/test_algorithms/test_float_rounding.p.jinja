@@ -1,0 +1,18 @@
+fn int32 main() {
+    dec float even = 16777216.0;
+    dec float odd = 16777218.0;
+    dec float one = 1.0;
+
+    dec float roundedDown = even + one;
+    dec float roundedUp = odd + one;
+    {{ assert_eq(1, [16777216.0, 16777220.0], ["roundedDown", "roundedUp"]) }}
+
+    dec float lost = (even + one) - even;
+    dec float kept = (even - even) + one;
+    {{ assert_eq(2, [0.0, 1.0], ["lost", "kept"]) }}
+
+    // At this scale, one is halfway between two representable float values.
+    // The differences isolate the rounding and make a one-unit error visible.
+    {{ assert_eq(3, [0.0, 2.0], ["roundedDown - even", "roundedUp - odd"]) }}
+    return 0;
+}

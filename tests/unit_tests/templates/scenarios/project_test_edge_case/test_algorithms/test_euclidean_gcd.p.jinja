@@ -1,0 +1,42 @@
+{% set cases = [
+    [1071, 462, [[462, 147], [147, 21], [21, 0]], 21],
+    [462, 0, [], 462],
+    [0, 21, [[21, 0]], 21],
+    [42, 42, [[42, 0]], 42],
+    [35, 12, [[12, 11], [11, 1], [1, 0]], 1]
+] -%}
+{% set inputs, input_events, steps, step_events, outcomes = [], [], [], [], [] -%}
+{% set trace = namespace(next_event=1) -%}
+{% for a, b, states, expected in cases -%}
+    {% set _ = inputs.append([a, b]) -%}
+    {% set _ = input_events.append(trace.next_event) -%}
+    {% set trace.next_event = trace.next_event + 1 -%}
+    {% for state in states -%}
+        {% set _ = steps.append(state) -%}
+        {% set _ = step_events.append(trace.next_event) -%}
+        {% set trace.next_event = trace.next_event + 1 -%}
+    {% endfor -%}
+    {% set _ = outcomes.append(trace.next_event) -%}
+    {% set trace.next_event = trace.next_event + 1 -%}
+{% endfor -%}
+
+fn int32 gcd(arg int32 first, arg int32 second) {
+    dec int32 a = first;
+    dec int32 b = second;
+    {{ assert_eq(1, inputs, ["a", "b"], at=input_events) }}
+    while (b != 0) {
+        dec int32 remainder = a % b;
+        aff a = b;
+        aff b = remainder;
+        {{ assert_eq(2, steps, ["a", "b"], at=step_events) }}
+    }
+    return a;
+}
+
+fn int32 main() {
+    {% for a, b, states, expected in cases %}
+    dec int32 result_{{ loop.index }} = call gcd({{ a }}, {{ b }});
+    {{ assert_eq(loop.index + 2, expected, "result_" ~ loop.index, at=outcomes[loop.index0]) }}
+    {% endfor %}
+    return 0;
+}

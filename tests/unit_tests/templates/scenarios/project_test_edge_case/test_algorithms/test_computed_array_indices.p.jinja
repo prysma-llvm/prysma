@@ -1,0 +1,16 @@
+fn int32 main() {
+    dec int32[5] values = [3, 7, 11, 19, 14];
+    dec int32[4] reversed = [0, 0, 0, 0];
+    dec int32 i = 0;
+
+    while (i < 4) {
+        dec int32 delta = values[i + 1] - values[i];
+        aff reversed[3 - i] = delta;
+        {{ assert_eq(1, [[0, 4, 4], [1, 4, 4], [2, 8, 8], [3, -5, -5]],
+                     ["i", "delta", "reversed[3 - i]"], at=[1, 2, 3, 4]) }}
+        aff i = i + 1;
+    }
+
+    {{ assert_eq(2, [4, -5, 8, 4, 4], ["i", "reversed[0]", "reversed[1]", "reversed[2]", "reversed[3]"], at=5) }}
+    return 0;
+}
