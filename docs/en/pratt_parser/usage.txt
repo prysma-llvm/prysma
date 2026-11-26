@@ -1,13 +1,13 @@
 You cannot use free() or delete on the strings this gives you.
 If you do, the universe (or at least your heap) will explode in a flame of glory.
-ONLY 32 maximum varibles per equation. 
+ONLY 32 maximum variables per equation. 
 This is because it's a fixed-size array for variables (vars: [(&str, f64); 32]).
-So to use this theres a few things you can call
-ya got input_equation(eq) Gives you the steps and answer, no varibles.
-ya got solve_with_context(eq, vars) gives you the steps and answers, with varibles.
-ya got emit_ir(eq) gives you the steps and stuff, no answer.
-ya got eval(equation, vars) gives you the answer with no steps, pass NULL after the comma and space to have no varibles.s
-you got one more, not sure if you need it free_result(ptr) this just cleans the memory.
+So to use this there's a few things you can call
+You got input_equation(eq) Gives you the steps and answer, no variables.
+You got solve_with_context(eq, vars) gives you the steps and answers, with variables.
+You got emit_ir(eq) gives you the steps and stuff, no answer.
+You got eval(equation, vars) gives you the answer with no steps, pass NULL after the comma and space to have no variables.
+You got one more, not sure if you need it free_result(ptr) this just cleans the memory.
 
 Examples:
 
@@ -21,7 +21,7 @@ step 1: 5 * 2 = 10
 step 2: 10 + 10 = 20
 result: 20
 
-emit_ir("(1 + 2) * (3 + 4)") shoudl do
+emit_ir("(1 + 2) * (3 + 4)") should do
 order=0 priority=3 1 + 2 = 3
 order=1 priority=3 3 + 4 = 7
 order=2 priority=2 3 * 7 = 21
@@ -33,8 +33,8 @@ eval("a * b + 10", "a=5, b=2") should do
 eval("2 @ 3", NULL) should do
 "ERROR: unknown char '@'"
 
-free_result is different, you probably wont call it
-It's mainly used already internally but it's avalible
+free_result is different, you probably won't call it
+It's mainly used already internally but it's available
 All it is, is 
 
     #[no_mangle]
@@ -49,7 +49,7 @@ All it is, is
         }
     }
 
-so yaeh it's better then your free, but hey it's also scary.
+so yeah it's better than your free, but hey it's also scary.
 
-P.S if thou shall to call a function that returns a string, string, or a even bigger string,
+P.S if thou shall to call a function that returns a string, string, or an even bigger string,
 THOU are to be responsible and liable for calling free_result on that pointer when thou shall be done.
