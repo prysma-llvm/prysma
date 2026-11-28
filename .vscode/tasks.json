@@ -19,11 +19,11 @@
             "type": "shell",
             "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug /workspace/build/Prysma \"${relativeFile}\"",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-cli.ps1\" -- run --rm -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v \"${workspaceFolder}:/workspace\" -w /workspace prysma-debug /workspace/build/Prysma \"${relativeFile}\""
+                "command": "& ./docker/environnement_dev/windows/docker-cli.ps1 -- run --rm -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v ($PWD.Path + ':/workspace') -w /workspace prysma-debug /workspace/build/Prysma $env:PRYSMA_TASK_FILE"
             },
             "group": {
                 "kind": "build",
-                "isDefault": true
+                "isDefault": "**/*.p"
             },
             "presentation": {
                 "reveal": "always",
@@ -44,6 +44,11 @@
                     "column": 3,
                     "message": 4
                 }
+            },
+            "options": {
+                "env": {
+                    "PRYSMA_TASK_FILE": "${relativeFile}"
+                }
             }
         },
         {
@@ -51,11 +56,11 @@
             "type": "shell",
             "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug python3 debug.py",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-cli.ps1\" -- run --rm -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v \"${workspaceFolder}:/workspace\" -w /workspace prysma-debug python3 debug.py"
+                "command": "& ./docker/environnement_dev/windows/docker-cli.ps1 -- run --rm -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v ($PWD.Path + ':/workspace') -w /workspace prysma-debug python3 debug.py"
             },
             "group": {
                 "kind": "build",
-                "isDefault": false
+                "isDefault": "**/*.{c,cc,cpp,cxx,h,hpp}"
             },
             "presentation": {
                 "reveal": "always",
@@ -68,7 +73,7 @@
             "type": "shell",
             "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-debug-python.sh\" \"${relativeFile}\"",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-debug-python.ps1\" -- \"${relativeFile}\""
+                "command": "& ./docker/environnement_dev/windows/docker-debug-python.ps1 -- $env:PRYSMA_TASK_FILE"
             },
             "presentation": {
                 "reveal": "never",
@@ -84,14 +89,19 @@
                     "endsPattern": "^debugpy server ready on "
                 }
             },
-            "isBackground": true
+            "isBackground": true,
+            "options": {
+                "env": {
+                    "PRYSMA_TASK_FILE": "${relativeFile}"
+                }
+            }
         },
         {
             "label": "Stop Python Debug Server (Docker)",
             "type": "shell",
             "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-debug-python.sh\" --stop",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-debug-python.ps1\" -- --stop"
+                "command": "& ./docker/environnement_dev/windows/docker-debug-python.ps1 -- --stop"
             },
             "presentation": {
                 "reveal": "never",
@@ -104,35 +114,45 @@
             "type": "shell",
             "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-cli.sh\" run --rm -it --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug python3 -m pdb \"${relativeFile}\"",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-cli.ps1\" -- run --rm -it -e HOME=/tmp -v \"${workspaceFolder}:/workspace\" -w /workspace prysma-debug python3 -m pdb \"${relativeFile}\""
+                "command": "& ./docker/environnement_dev/windows/docker-cli.ps1 -- run --rm -it -e HOME=/tmp -v ($PWD.Path + ':/workspace') -w /workspace prysma-debug python3 -m pdb $env:PRYSMA_TASK_FILE"
             },
             "presentation": {
                 "reveal": "always",
                 "panel": "shared",
                 "focus": true
             },
-            "problemMatcher": []
+            "problemMatcher": [],
+            "options": {
+                "env": {
+                    "PRYSMA_TASK_FILE": "${relativeFile}"
+                }
+            }
         },
         {
             "label": "Run Python (Docker)",
             "type": "shell",
             "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -v \"${workspaceFolder}\":/workspace -w /workspace prysma-debug python3 \"${relativeFile}\"",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-cli.ps1\" -- run --rm -e HOME=/tmp -v \"${workspaceFolder}:/workspace\" -w /workspace prysma-debug python3 \"${relativeFile}\""
+                "command": "& ./docker/environnement_dev/windows/docker-cli.ps1 -- run --rm -e HOME=/tmp -v ($PWD.Path + ':/workspace') -w /workspace prysma-debug python3 $env:PRYSMA_TASK_FILE"
             },
             "presentation": {
                 "reveal": "always",
                 "panel": "shared",
                 "focus": true
             },
-            "problemMatcher": []
+            "problemMatcher": [],
+            "options": {
+                "env": {
+                    "PRYSMA_TASK_FILE": "${relativeFile}"
+                }
+            }
         },
         {
             "label": "Start LLDB Server (Docker)",
             "type": "shell",
             "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-debug-lldb.sh\" \"${relativeFile}\"",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-debug-lldb.ps1\" -- \"${relativeFile}\""
+                "command": "& ./docker/environnement_dev/windows/docker-debug-lldb.ps1 -- $env:PRYSMA_TASK_FILE"
             },
             "isBackground": true,
             "presentation": {
@@ -150,8 +170,13 @@
                 ],
                 "background": {
                     "activeOnStart": true,
-                    "beginsPattern": "^.*lldb-server ready.*$",
-                    "endsPattern": "^.*lldb-server ready.*$"
+                    "beginsPattern": "^lldb-server starting$",
+                    "endsPattern": "^lldb-server ready on [0-9]+$"
+                }
+            },
+            "options": {
+                "env": {
+                    "PRYSMA_TASK_FILE": "${relativeFile}"
                 }
             }
         },
@@ -164,7 +189,7 @@
             ],
             "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-cli.sh\" run --rm --user $(id -u):$(id -g) -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v \"${workspaceFolder}\":/workspace -w /workspace/tests/unit_tests prysma-debug sh -c \"cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j \\$(nproc)\"",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-cli.ps1\" -- run --rm -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v \"${workspaceFolder}:/workspace\" -w /workspace/tests/unit_tests prysma-debug sh -c 'cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(nproc)'"
+                "command": "& ./docker/environnement_dev/windows/docker-cli.ps1 -- run --rm -e HOME=/tmp -e CCACHE_DIR=/tmp/.ccache -v prysma-ccache:/tmp/.ccache -v ($PWD.Path + ':/workspace') -w /workspace/tests/unit_tests prysma-debug sh -c 'cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(nproc)'"
             },
             "presentation": {
                 "reveal": "always",
@@ -177,7 +202,7 @@
             "type": "shell",
             "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-debug-lldb.sh\" --tests",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-debug-lldb.ps1\" -- --tests"
+                "command": "& ./docker/environnement_dev/windows/docker-debug-lldb.ps1 -- --tests"
             },
             "isBackground": true,
             "presentation": {
@@ -195,8 +220,8 @@
                 ],
                 "background": {
                     "activeOnStart": true,
-                    "beginsPattern": "^.*lldb-server ready.*$",
-                    "endsPattern": "^.*lldb-server ready.*$"
+                    "beginsPattern": "^lldb-server starting$",
+                    "endsPattern": "^lldb-server ready on [0-9]+$"
                 }
             }
         },
@@ -205,7 +230,7 @@
             "type": "shell",
             "command": "\"${workspaceFolder}/docker/environnement_dev/linux/docker-debug-lldb.sh\" --stop",
             "windows": {
-                "command": "& \"${workspaceFolder}/docker/environnement_dev/windows/docker-debug-lldb.ps1\" -- --stop"
+                "command": "& ./docker/environnement_dev/windows/docker-debug-lldb.ps1 -- --stop"
             },
             "problemMatcher": []
         },

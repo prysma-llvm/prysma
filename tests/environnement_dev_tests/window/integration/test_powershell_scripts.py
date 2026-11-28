@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 
@@ -31,6 +32,45 @@ def test_missing_target_fails(workspace):
     assert result.returncode != 0
     assert "Target does not exist" in result.stderr
     assert "ready on" not in result.stdout
+
+
+@pytest.mark.parametrize("build_exit", [0, 42])
+def test_build_without_host_python(workspace, repo_root, tmp_path, build_exit):
+    # Exercise the actual VS Code command in Windows PowerShell, even on runners
+    # that cannot boot WSL. The full VS Code suite exercises the real engine.
+    tasks = json.loads((repo_root / ".vscode/tasks.json").read_text(encoding="utf-8"))["tasks"]
+    command = next(task["windows"]["command"] for task in tasks if task["label"] == "Build")
+    header = workspace / ".clangd-includes/llvm/Support/TargetSelect.h"
+    header.parent.mkdir(parents=True)
+    header.touch()
+    script = tmp_path / "build-task.ps1"
+    script.write_text(r'''
+function python { throw "Build invoked host Python" }
+function docker.exe {
+    $global:LASTEXITCODE = 0
+    if ($args[0] -in @("volume", "version")) { return }
+    if ($args -contains "debug.py") {
+        Write-Output "compiler executed"
+        $global:LASTEXITCODE = [int]$env:TEST_BUILD_EXIT
+        return
+    }
+    if ($args -contains "/workspace/docker/environnement_dev/compile_commands.py" -and
+        $args -contains "python3" -and $args[-1] -ceq $env:TEST_HOST_ROOT) {
+        Write-Output "container indexer executed"
+        return
+    }
+    throw "Unexpected Docker invocation: $args"
+}
+Set-Alias docker docker.exe
+Set-Location -LiteralPath $env:TEST_HOST_ROOT
+''' + command.replace("${workspaceFolder}", str(workspace)) + "\nexit $LASTEXITCODE\n",
+                      encoding="utf-8-sig")
+    env = dict(os.environ, PRYSMA_DOCKER_RAW="0", TEST_BUILD_EXIT=str(build_exit),
+               TEST_HOST_ROOT=workspace.as_posix())
+    result = powershell(script, env=env)
+    assert result.returncode == build_exit, result.stderr
+    assert "compiler executed" in result.stdout
+    assert ("container indexer executed" in result.stdout) == (build_exit == 0)
 
 
 @pytest.mark.docker

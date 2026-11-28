@@ -88,6 +88,7 @@ start_debug() {
         labels+=(--label "prysma.test=$PRYSMA_TEST_RUN_ID")
     fi
     # Docker atomically rejects duplicate names and occupied ports. Never remove an existing session.
+    echo "${message% ready} starting"
     CONTAINER_ID="$(docker_command create --pull=never --name "$CONTAINER_NAME" "${labels[@]}" \
         -p "127.0.0.1:$port:$port" -v "$ROOT_DIR:/workspace" "$@")"
     docker_command start "$CONTAINER_ID" >/dev/null

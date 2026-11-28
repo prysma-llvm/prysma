@@ -34,6 +34,16 @@ exports.run = async function () {
         })
     ];
 
+    async function runDefaultBuild(relative, expectedTask) {
+        const document = await vscode.workspace.openTextDocument(path.join(root, relative));
+        await vscode.window.showTextDocument(document);
+        const before = tasks.length;
+        await vscode.commands.executeCommand('workbench.action.tasks.build');
+        const finished = await until(() => tasks.slice(before).find(task =>
+            task.name === expectedTask && task.state === 'end'), `default build for ${relative}`, 180);
+        assert.strictEqual(finished.code, 0, `${expectedTask} failed`);
+    }
+
     async function debug(name, relative, instruction, expectedVariable, expectedValue) {
         stage = name;
         save();
@@ -49,7 +59,8 @@ exports.run = async function () {
         let launchResult;
         let launchError;
         vscode.debug.startDebugging(folder, name).then(result => { launchResult = result; }, error => { launchError = error; });
-        await until(() => launchResult !== undefined || launchError, `${name} launch`, 600);
+        const launchTimeout = process.platform === 'win32' && name.startsWith('C++') ? 2000 : 600;
+        await until(() => launchResult !== undefined || launchError, `${name} launch`, launchTimeout);
         if (launchError) throw launchError;
         assert(launchResult, `Cannot start ${name}`);
         const session = await until(() => sessions[before], `${name} session`);
@@ -58,7 +69,7 @@ exports.run = async function () {
         const threadId = stop.message.body.threadId;
         const stack = await session.customRequest('stackTrace', { threadId });
         const frame = stack.stackFrames[0];
-        assert.strictEqual(path.resolve(frame.source.path), path.resolve(source));
+        assert.strictEqual(path.relative(source, frame.source.path), '', frame.source.path);
         assert.strictEqual(frame.line, line + 1);
         const value = await session.customRequest('evaluate', { frameId: frame.id, expression: expectedVariable, context: 'watch' });
         assert.strictEqual(value.result, expectedValue);
@@ -84,18 +95,33 @@ exports.run = async function () {
         const build = tasks.findIndex(task => task.name === 'Build' && task.state === 'end' && task.code === 0);
         const launch = tasks.findIndex(task => task.name === 'Start LLDB Server (Docker)' && task.state === 'start');
         assert(build >= 0 && launch > build, 'Build must finish before starting LLDB');
+        if (process.platform === 'win32') {
+            const entries = JSON.parse(fs.readFileSync(path.join(root, 'build/compile_commands.json'), 'utf8'));
+            const main = entries.find(entry => path.relative(path.join(root, 'src/main.cpp'), entry.file) === '');
+            assert(main, 'clangd index must contain the native Windows path to src/main.cpp');
+            assert.strictEqual(path.relative(path.join(root, 'build'), main.directory), '', main.directory);
+            stage = 'Windows default build tasks';
+            save();
+            await runDefaultBuild('tests/prysma_code_tests/project_test_multi_thread_edge_case_file/test_depth/main.p',
+                                  'Compile Prysma Program');
+            await runDefaultBuild('src/main.cpp', 'Build');
+        }
 
         // Keep the successful binary, then deliberately break the source in this temporary copy.
         fs.appendFileSync(path.join(root, 'src/main.cpp'), '\n#error deliberate integration test failure\n');
         stage = 'failed build';
         save();
         const before = sessions.length;
+        const beforeFailedBuild = tasks.length;
         let failedLaunchResult;
-        vscode.debug.startDebugging(folder, 'C++: Debug Prysma in Docker (LLDB)').then(result => { failedLaunchResult = result; });
+        vscode.debug.startDebugging(folder, 'C++: Debug Prysma in Docker (LLDB)').then(
+            result => { failedLaunchResult = result; }, () => { failedLaunchResult = false; });
         await until(() => failedLaunchResult !== undefined, 'failed build aborts launch', 120);
         assert.strictEqual(failedLaunchResult, false);
         assert.strictEqual(sessions.length, before, 'Failed build launched a stale binary');
-        assert(tasks.some(task => task.name === 'Build' && task.state === 'end' && task.code !== 0));
+        const failedTasks = tasks.slice(beforeFailedBuild);
+        assert(failedTasks.some(task => task.name === 'Build' && task.state === 'end' && Number.isInteger(task.code) && task.code !== 0));
+        assert(!failedTasks.some(task => task.name === 'Start LLDB Server (Docker)' && task.state === 'start'));
         report.push({ name: 'Failed build blocks stale binary', status: 'passed' });
         stage = 'complete';
     } catch (error) {

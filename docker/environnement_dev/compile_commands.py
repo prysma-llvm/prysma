@@ -4,10 +4,11 @@ import sys
 from pathlib import Path
 
 
-def adapt(root):
+def adapt(root, host_root=None):
     root = root.resolve()
-    mappings = {"/workspace": root.as_posix(),
-                "/usr/lib/llvm-18/include": (root / ".clangd-includes").as_posix()}
+    host_root = host_root or root.as_posix()
+    mappings = {"/workspace": host_root,
+                "/usr/lib/llvm-18/include": host_root + "/.clangd-includes"}
 
     def path(value):
         for old, new in mappings.items():
@@ -47,6 +48,6 @@ def adapt(root):
 
 if __name__ == "__main__":
     try:
-        adapt(Path(sys.argv[1]))
+        adapt(Path(sys.argv[1]), *sys.argv[2:])
     except (OSError, ValueError, KeyError, TypeError) as error:
         sys.exit(f"ERROR: Cannot adapt compile_commands.json: {error}")

@@ -20,14 +20,22 @@ function Start-PrysmaDebug {
     }
     $name = "prysma-$Kind-" + $digest.Substring(0, 16)
     if ($Target -eq "--stop") {
-        $ErrorActionPreference = "Continue"
-        $id = & docker.exe inspect --format '{{.Id}}' $name 2>$null
-        $ErrorActionPreference = "Stop"
-        if ($LASTEXITCODE -ne 0) { return }
-        $labels = Invoke-DebugDocker inspect --format '{{json .Config.Labels}}' $id | ConvertFrom-Json
-        $owner = $labels.'prysma.workspace'
-        if ($owner -ne $root) { throw "Refusing to stop a container owned by another workspace" }
-        Invoke-DebugDocker stop --time 2 $id | Out-Null
+        $nameFilter = "name=^/${name}$"
+        # Docker compares the Unicode label directly. Only ASCII IDs cross
+        # the Windows PowerShell console's output encoding boundary.
+        $id = Invoke-DebugDocker ps -aq --no-trunc --filter $nameFilter --filter "label=prysma.workspace=$root"
+        if (-not $id) {
+            if (Invoke-DebugDocker ps -aq --filter $nameFilter) {
+                throw "Refusing to stop a container owned by another workspace"
+            }
+            return
+        }
+        try {
+            Invoke-DebugDocker stop --time 2 $id | Out-Null
+        } catch {
+            # The launch task can remove this exact container after disconnect.
+            if (Invoke-DebugDocker ps -aq --filter "id=$id") { throw }
+        }
         return
     }
 
@@ -74,6 +82,7 @@ function Start-PrysmaDebug {
     if ($env:PRYSMA_TEST_RUN_ID) { $labels += @("--label", "prysma.test=$env:PRYSMA_TEST_RUN_ID") }
     $id = $null
     try {
+        Write-Output ($ready -replace ' ready$', ' starting')
         $id = Invoke-DebugDocker create --pull=never --name $name @labels @options $image @command
         $id = $id.Trim()
         Invoke-DebugDocker start $id | Out-Null

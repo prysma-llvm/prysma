@@ -120,7 +120,8 @@ if ($null -eq $exitCode) { $exitCode = 0 }
 
 # Use the same structural JSON adaptation as Linux.
 if ($exitCode -eq 0 -and $rawArgs.Count -gt 0 -and $rawArgs[0] -eq "run") {
-    & python (Join-Path $ScriptDir "../compile_commands.py") $RootDir
+    $hostRoot = $RootDir.Replace("\", "/")
+    & docker.exe run --rm -v "${hostRoot}:/workspace" $image python3 /workspace/docker/environnement_dev/compile_commands.py /workspace $hostRoot
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 exit $exitCode

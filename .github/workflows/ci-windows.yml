@@ -31,7 +31,7 @@ jobs:
   # This job must fail when nested virtualization or WSL preparation is unavailable.
   wsl-docker:
     runs-on: windows-2025
-    timeout-minutes: 60
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - name: Check preinstalled WSL2
@@ -80,6 +80,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "The test user cannot access Docker" }
 
       - name: Build development image
+        id: image
         shell: pwsh
         timeout-minutes: 12
         run: |
@@ -93,6 +94,48 @@ jobs:
         run: |
           wsl -d Prysma -u prysma --cd /home/prysma/workspace -- env DONT_PROMPT_WSL_INSTALL=1 PRYSMA_VSCODE_BIN=/opt/prysma-vscode/bin/code xvfb-run -a /opt/prysma-tests/bin/python tests/run_unit_tests.py --dev-env --family common --family linux --family vscode --family-timeout 1200
           if ($LASTEXITCODE -ne 0) { throw "Tests failed after successful WSL2/Docker preparation" }
+
+      - uses: actions/setup-python@v5
+        if: ${{ !cancelled() && steps.image.outcome == 'success' }}
+        with:
+          python-version: "3.12"
+
+      - name: Prepare native Windows VS Code and Docker CLI transport
+        id: native_setup
+        if: ${{ !cancelled() && steps.image.outcome == 'success' }}
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $project = Join-Path $env:RUNNER_TEMP "docker-transport"
+          dotnet new console -n docker -o $project
+          if ($LASTEXITCODE) { throw "Cannot create Docker transport project" }
+          Copy-Item tests/environnement_dev_tests/window/WslDocker.cs "$project/Program.cs" -Force
+          dotnet publish $project -o "$project/bin-ci"
+          if ($LASTEXITCODE) { throw "Cannot build Docker transport" }
+          "$project/bin-ci" >> $env:GITHUB_PATH
+          & "$project/bin-ci/docker.exe" info
+          if ($LASTEXITCODE) { throw "Windows cannot reach the Linux Docker engine" }
+          $editor = Join-Path $env:RUNNER_TEMP "vscode-windows"
+          $archive = Join-Path $env:RUNNER_TEMP "vscode-windows.zip"
+          Invoke-WebRequest https://update.code.visualstudio.com/1.96.4/win32-x64-archive/stable -OutFile $archive
+          Expand-Archive $archive $editor
+          "PRYSMA_VSCODE_BIN=$editor/bin/code.cmd" >> $env:GITHUB_ENV
+          python -m pip install -r tests/environnement_dev_tests/requirements.txt
+
+      - name: Test native Windows PowerShell builds and VS Code breakpoints
+        if: ${{ !cancelled() && steps.native_setup.outcome == 'success' }}
+        shell: pwsh
+        timeout-minutes: 50
+        env:
+          PYTHONUTF8: "1"
+        run: python tests/run_unit_tests.py --dev-env --family window --family vscode --family-timeout 2700
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() && steps.native_setup.outcome == 'success' }}
+        with:
+          name: windows-vscode-results
+          path: build/dev-env-results
+          if-no-files-found: error
 
       - name: Collect WSL reports and diagnostics
         if: always() && steps.wsl.outcome == 'success'
