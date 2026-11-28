@@ -1,0 +1,11 @@
+{
+  "name": "prysma-documentation",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "31.0.1"
+  }
+}

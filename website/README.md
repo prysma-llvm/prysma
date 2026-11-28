@@ -1,28 +1,30 @@
 # Site de documentation Prysma / Prysma documentation site
 
-Site statique bilingue. Aucun Markdown du projet n’est copié dans le site.
-Le navigateur découvre les README et les fichiers `.md` sous `docs/fr` et `docs/en`
-sur GitHub `main`, puis charge la page demandée. L’index et les fichiers sont
-lus au même commit pour éviter de mélanger deux versions. Le lien « Voir la
-source » ouvre le fichier sur `main`.
+[Documentation officielle / Official documentation](https://prysma-llvm.github.io/prysma/)
 
-Static and bilingual. The browser indexes GitHub `main` and fetches only the
-requested article. No bundled Markdown, token, build, or database. If GitHub
-is unavailable, the reader offers a direct link; already opened documents may
-remain in memory for the current tab. The open tab rechecks `main` every five
-minutes and when it becomes active, with a five-minute cooldown.
+GitHub Pages génère une page HTML par README ou guide Markdown avec `website/build.mjs`.
+Les fichiers Markdown restent la seule source. Le workflow republie le site et
+son sitemap lorsque les docs changent sur `main`. Les anciens liens avec `#fr/`
+ou `#en/` redirigent vers les nouvelles adresses.
+
+GitHub Pages publishes HTML directly from the Markdown on `main`. Each page
+has its own address and works without JavaScript. To preview the published
+version locally (Node.js 24.15+):
 
 ```sh
 cd website
-python3 -m http.server 8765 --bind 127.0.0.1
-# http://127.0.0.1:8765
-node --test
+npm ci --ignore-scripts
+npm test
+npm run build
+python3 -m http.server 8765 --bind 127.0.0.1 --directory dist
 ```
+
+Pour lire la dernière version de GitHub en direct sans générer le site, servez
+`website/` au lieu de `website/dist/`.
 
 ## Organiser la navigation / Organize navigation
 
-Ajoutez le fichier **`docs/site.nav` sur GitHub, branche `main`**. Le site le
-détecte sans redéploiement. Il est facultatif : les pages qui ne sont pas
+Ajoutez le fichier **`docs/site.nav` sur GitHub, branche `main`**. Il est lu au prochain déploiement automatique. Il est facultatif : les pages qui ne sont pas
 mentionnées restent dans les catégories automatiques.
 
 Add **`docs/site.nav` to GitHub `main`**. Sections and pages are displayed in
@@ -44,7 +46,7 @@ page docs/en/prysma.md | Language reference
 
 Un chemin doit exister et correspondre à la langue de la section. Une page ne
 peut figurer qu’une fois. Les lignes invalides sont ignorées et signalées
-par numéro dans la barre latérale. A missing navigation file never hides a page.
+par numéro dans le journal du build. A missing navigation file never hides a page.
 
 ## Structurer une page / Structure an article
 

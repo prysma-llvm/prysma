@@ -24,7 +24,7 @@ function repoTarget(path, href) {
     return resolveRelative(path, '/' + match[2] + url.search + url.hash);
   } catch { return null; }
 }
-export function renderMarkdown(markdown, {path, lang, sha, pages, home, labels}) {
+export function renderMarkdown(markdown, {path, lang, sha, pages, home, labels, pageURL = routeURL}) {
   const dom = DOMPurify.sanitize(marked.parse(markdown, {gfm:true, async:false}), {
     RETURN_DOM_FRAGMENT:true,
     USE_PROFILES:{html:true},
@@ -66,7 +66,7 @@ export function renderMarkdown(markdown, {path, lang, sha, pages, home, labels})
     const target = repoTarget(path, href);
     if (target) {
       const candidate = known.get(target.path);
-      if (candidate && !target.search) anchor.href = routeURL(candidate.lang, candidate.path, target.section);
+      if (candidate && !target.search) anchor.href = pageURL(candidate.lang, candidate.path, target.section);
       else anchor.href = blobURL(sha, target.path) + target.search + (target.section ? '#' + encodeURIComponent(target.section) : '');
     } else if (!/^(?:https?:|mailto:)/i.test(href)) anchor.removeAttribute('href');
   }
