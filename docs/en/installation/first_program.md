@@ -57,6 +57,6 @@ The first command compiles the source file. The second runs the executable at `b
 
 ## Video: Fibonacci in Prysma
 
-[Watch the Fibonacci walkthrough](https://youtu.be/0pbe04c52Qw) (1:05). It uses an already-built compiler in VS Code and shows the generated LLVM IR and the first ten terms.
+This [video tutorial](https://youtu.be/0pbe04c52Qw) shows how to write, compile, and run a Prysma program that prints the first ten terms of the Fibonacci sequence (1:05).
 
 Next: [language specification](../prysma.md).
