@@ -9,6 +9,8 @@
 
 Prysma est un langage de programmation système compilé vers l'infrastructure **LLVM 18**. Le projet se concentre sur le contrôle déterministe des ressources sans ramasse-miettes (garbage collector), une tokenisation optimisée par tables précalculées à la compilation, l'allocation contiguë par arènes et la compilation multi-fichiers parallélisée.
 
+[Documentation officielle](https://prysma-llvm.github.io/prysma/#fr/README.FR.md)
+
 ## Capacités Techniques
 
 * **Backend LLVM :** Génération de code intermédiaire LLVM 18 en forme SSA (Single Static Assignment) exploitant les pointeurs opaques.
