@@ -55,4 +55,8 @@ La première commande compile le fichier. La seconde exécute le binaire `build/
 42
 ```
 
+## Vidéo : Fibonacci en Prysma
+
+[Voir la démonstration de Fibonacci](https://youtu.be/0pbe04c52Qw) (1 min 5 s, texte à l’écran en anglais). La vidéo part d’un compilateur déjà construit dans VS Code et montre l’IR LLVM généré ainsi que les dix premiers termes.
+
 Pour aller plus loin : [spécification du langage](../language_specification.md).
