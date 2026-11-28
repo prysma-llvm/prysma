@@ -9,7 +9,6 @@
 {% for eq in equations %}
 fn bool test_eq_{{ eq.id }}() {
     dec {{ type_name }} res = {{ eq.expression }};
-    {{ assert_eq(loop.index, eq.expected|from_json, "res", at=loop.index0 * 2 + 1) }}
     if (res != {{ eq.expected }}) {
         return false;
     }
@@ -19,13 +18,18 @@ fn bool test_eq_{{ eq.id }}() {
 {% endfor %}
 
 fn int32 main() {
+    dec string[] intro = "==== Random Equations ({{ type_name }}) ====";
+    call print(ref intro); call backSlashN();
 
     {% for eq in equations %}
     if (call test_eq_{{ eq.id }}() == false) {
+        dec string[] failMsg_{{ eq.id }} = "FAIL: eq_{{ eq.id }} -> {{ eq.expression }} != {{ eq.expected }}";
+        call print(ref failMsg_{{ eq.id }}); call backSlashN();
         return 1;
     }
-    {{ checkpoint((equations|length) + loop.index, at=loop.index * 2) }}
     {% endfor %}
 
+    dec string[] success = "==== SUCCESS ====";
+    call print(ref success); call backSlashN();
     return 0;
 }

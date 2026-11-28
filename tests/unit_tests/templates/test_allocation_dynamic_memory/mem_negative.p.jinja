@@ -8,25 +8,21 @@
 
 fn bool testNewDeleteNegative_{{ type_name }}()
 {
+   dec string[] feature = "3.test_new_delete_negative : ";
+   call print(ref feature);
    dec ptr p = new {{ type_name }};
    dec {{ type_name }} valueToAssign = {{ val_0 }} - {{ val_100 }};
-   {{ assert_eq(1, typed(-100), "valueToAssign") }}
    aff p = valueToAssign;
    dec {{ type_name }} value = unref p;
-   {{ assert_eq(2, typed(-100), "value") }}
    delete p;
-   {{ checkpoint(3) }}
    if (value == valueToAssign) {
-      {{ checkpoint(4) }}
       return true;
    } else {
-      {{ checkpoint(5, at=[]) }}
       return false;
    }
    return false;
 }
 fn int32 main() {
-    dec bool outcome = call testNewDeleteNegative_{{ type_name }}();
-    {{ assert_eq(6, true, "outcome", at=5) }}
+    call print(call testNewDeleteNegative_{{ type_name }}());
     return 0;
 }

@@ -4,7 +4,7 @@ Guide to validate VS Code workflows (build tasks, LLDB, and debugpy) using Docke
 
 ## 1. Prysma Compilation (Ctrl+Shift+B)
 
-1. Run the fixture generator in Docker (`python3 tests/unit_tests/generate_tests.py`), then open `tests/unit_tests/build/prysma_code_generation/scenarios/project_test_multi_thread_edge_case_file/test_depth/main.p`.
+1. Open a Prysma source file: `tests/prysma_code_tests/project_test_multi_thread_edge_case_file/test_depth/main.p`.
 2. Press `Ctrl+Shift+B` to run the default build task (`Compile Prysma Program`).
 3. Check the integrated terminal: `docker-cli.sh` runs the compiler inside the container and produces the compiled output without errors.
 

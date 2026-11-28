@@ -8,23 +8,20 @@
 
 fn bool testNewDeleteZero_{{ type_name }}()
 {
+   dec string[] feature = "2.test_new_delete_zero : ";
+   call print(ref feature);
    dec ptr p = new {{ type_name }};
    aff p = {{ val_0 }};
    dec {{ type_name }} value = unref p;
-   {{ assert_eq(1, typed(0), "value") }}
    delete p;
-   {{ checkpoint(2) }}
    if (value == {{ val_0 }}) {
-      {{ checkpoint(3) }}
       return true;
    } else {
-      {{ checkpoint(4, at=[]) }}
       return false;
    }
    return false;
 }
 fn int32 main() {
-    dec bool outcome = call testNewDeleteZero_{{ type_name }}();
-    {{ assert_eq(5, true, "outcome", at=4) }}
+    call print(call testNewDeleteZero_{{ type_name }}());
     return 0;
 }

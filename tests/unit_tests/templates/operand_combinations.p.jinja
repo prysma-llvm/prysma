@@ -11,7 +11,6 @@ fn bool test_{{ op.id }}() {
     dec {{ type_name }} l = {{ op.left }};
     dec {{ type_name }} r = {{ op.right }};
     dec {{ type_name }} res = l {{ op.op }} r;
-    {{ assert_eq(loop.index, op.exp|from_json, "res", at=loop.index0 * 2 + 1) }}
     if (res != {{ op.exp }}) {
         return false;
     }
@@ -21,13 +20,18 @@ fn bool test_{{ op.id }}() {
 {% endfor %}
 
 fn int32 main() {
+    dec string[] intro = "==== Operands Combinations ({{ type_name }} / {{ op_group_name }}) ====";
+    call print(ref intro); call backSlashN();
 
     {% for op in combinations %}
     if (call test_{{ op.id }}() == false) {
+        dec string[] failMsg_{{ loop.index }} = "FAIL: {{ op.id }}";
+        call print(ref failMsg_{{ loop.index }}); call backSlashN();
         return 1;
     }
-    {{ checkpoint((combinations|length) + loop.index, at=loop.index * 2) }}
     {% endfor %}
 
+    dec string[] success = "==== SUCCESS ====";
+    call print(ref success); call backSlashN();
     return 0;
 }

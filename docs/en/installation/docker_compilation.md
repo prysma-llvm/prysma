@@ -72,8 +72,7 @@ docker run --rm -v "$(pwd)":/workspace prysma-debug python3 debug.py
 docker run --rm -v "$(pwd)":/workspace prysma-debug python3 tests/run_unit_tests.py --existing
 
 # Execute the compiled binary
-docker run --rm -v "$(pwd)":/workspace prysma-debug python3 tests/unit_tests/generate_tests.py
-docker run --rm -v "$(pwd)":/workspace prysma-debug ./build/Prysma tests/unit_tests/build/prysma_code_generation/scenarios/project_test_edge_case/test_recursion/test_simple_recursion.p
+docker run --rm -v "$(pwd)":/workspace prysma-debug ./build/Prysma tests/prysma_code_tests/project_test_edge_case/test_recursion/test_simple_recursion.p
 ```
 
 > **Windows PowerShell:** Replace `"$(pwd)"` with `"${PWD}"`.
@@ -99,8 +98,7 @@ python3 debug.py
 python3 tests/run_unit_tests.py --existing
 
 # Test the compiled executable
-python3 tests/unit_tests/generate_tests.py
-./build/Prysma tests/unit_tests/build/prysma_code_generation/scenarios/project_test_edge_case/test_recursion/test_simple_recursion.p
+./build/Prysma tests/prysma_code_tests/project_test_edge_case/test_recursion/test_simple_recursion.p
 
 # Exit the container
 exit

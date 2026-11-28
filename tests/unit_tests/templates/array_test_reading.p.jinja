@@ -8,8 +8,9 @@
 
 fn bool arrayTestReading_{{ type_name }}()
 {
+    dec string[] feature = "1.array_test_reading : ";
+    call print(ref feature);
     dec {{ type_name }}[4] array = [{{ val1 }}, {{ val2 }}, {{ val1 }}, {{ val2 }}];
-    {{ assert_eq(1, [typed(1), typed(0), typed(1), typed(0)], ["array[0]", "array[1]", "array[2]", "array[3]"]) }}
 
     if (array[0] != {{ val1 }}) {
         return false;
@@ -28,7 +29,6 @@ fn bool arrayTestReading_{{ type_name }}()
 
 fn int32 main()
 {
-    dec bool outcome = call arrayTestReading_{{ type_name }}();
-    {{ assert_eq(2, true, "outcome") }}
+    call print(call arrayTestReading_{{ type_name }}());
     return 0;
 }

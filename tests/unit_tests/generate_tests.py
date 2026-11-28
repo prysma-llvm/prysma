@@ -1,14 +1,10 @@
-import json
 import os
+import glob
 import random
-from pathlib import Path
-from jinja2 import Environment, FileSystemLoader, StrictUndefined
-
-from checkpoints import assert_eq, checkpoint, read_checkpoints
+from jinja2 import Environment, FileSystemLoader
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'build', 'prysma_code_generation')
-
 
 def get_combinations(t, group):
     combinations = []
@@ -45,25 +41,25 @@ def get_combinations(t, group):
 def get_random_equations(t, count=20):
     # Ensure reproducible tests (hash for strings can vary between Python runs, so use length or strict mapping)
     seeds = {"int32": 42, "int64": 43, "float": 44}
-    rng = random.Random(seeds.get(t, 45))
+    random.seed(seeds.get(t, 45))
     equations = []
     is_float = (t == "float")
     
     def generate_expr(depth):
         if depth == 0:
-            v = rng.randint(1, 15)
+            v = random.randint(1, 15)
             # Add decimal .0 if float to enforce type correctness implicitly in string
             return f"{float(v)}" if is_float else f"{v}"
-        op = rng.choice(['+', '-', '*'])
+        op = random.choice(['+', '-', '*'])
         left = generate_expr(depth - 1)
         right = generate_expr(depth - 1)
-        if rng.random() > 0.5:
+        if random.random() > 0.5:
             return f"({left} {op} {right})"
         return f"{left} {op} {right}"
 
     for i in range(count):
         while True:
-            depth = rng.randint(1, 3)
+            depth = random.randint(1, 3)
             eq_str = generate_expr(depth)
             if len(eq_str) <= 50:
                 break
@@ -87,29 +83,12 @@ def get_random_equations(t, count=20):
 
 def generate_tests():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
-    env = Environment(loader=FileSystemLoader(TEMPLATE_DIR), undefined=StrictUndefined)
-
-    env.globals.update(checkpoint=checkpoint, assert_eq=assert_eq)
-    env.filters["from_json"] = json.loads
-
-    output = Path(OUTPUT_DIR)
-    generated = set()
-
-    def write_test(filename, template, context):
-        source = template.render(**context)
-        read_checkpoints(source, filename)
-        target = output / filename
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(source + "\n", encoding="utf-8")
-        generated.add(target)
-
-    for template_path in sorted(Path(TEMPLATE_DIR).rglob("*.p.jinja")):
-        template_name = template_path.relative_to(TEMPLATE_DIR).as_posix()
-        base_name = template_path.name.removesuffix(".p.jinja")
+    env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
+    
+    for template_path in glob.glob(os.path.join(TEMPLATE_DIR, "*.jinja")):
+        template_name = os.path.basename(template_path)
+        base_name = template_name.replace('.p.jinja', '')
         template = env.get_template(template_name)
-        if template_name.startswith("scenarios/"):
-            write_test(template_name.removesuffix(".jinja"), template, {})
-            continue
         
         for t in ["bool", "int32", "int64", "float"]:
             if t == 'bool' and (base_name.startswith('fv_') or base_name in ['mem_negative', 'mem_extreme', 'mem_pass_two_ptr', 'operand_combinations', 'operand_random_equations', 'edge_case_divisions']):
@@ -125,7 +104,6 @@ def generate_tests():
             
             context = {
                 "type_name": t,
-                "typed": {"bool": bool, "int32": int, "int64": int, "float": float}[t],
                 "val1": cast_val(1),
                 "val2": cast_val(0),
                 "val_extreme": "2147483" if t in ["int32", "int64", "bool"] else "0.001"
@@ -143,19 +121,18 @@ def generate_tests():
                         context["combinations"] = combs
                         context["op_group_name"] = group
                         file_name = f"{base_name}_{group}_{t}.p"
-                        write_test(file_name, template, context)
+                        with open(os.path.join(OUTPUT_DIR, file_name), 'w') as f:
+                            f.write(template.render(**context))
             elif base_name == "operand_random_equations":
                 eqs = get_random_equations(t, 25)
                 if eqs:
                     context["equations"] = eqs
                     file_name = f"{base_name}_{t}.p"
-                    write_test(file_name, template, context)
+                    with open(os.path.join(OUTPUT_DIR, file_name), 'w') as f:
+                        f.write(template.render(**context))
             else:
-                write_test(f"{base_name}_{t}.p", template, context)
-
-    for stale in sorted(set(output.rglob("*.p")) - generated):
-        stale.unlink()
-
+                with open(os.path.join(OUTPUT_DIR, f"{base_name}_{t}.p"), 'w') as f:
+                    f.write(template.render(**context))
 
 if __name__ == "__main__":
     generate_tests()

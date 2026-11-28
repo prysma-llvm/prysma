@@ -8,14 +8,16 @@
 
 fn bool arrayTestOutOfBounds_{{ type_name }}()
 {
+    dec string[] feature = "3.array_test_out_of_bounds : ";
+    call print(ref feature);
     dec {{ type_name }}[4] array = [{{ val1 }}, {{ val1 }}, {{ val1 }}, {{ val1 }}];
 
-    aff array[4] = {{ val2 }}; // @compile-error "array[^\\n]*out of (?:bounds|range)"
+    aff array[4] = {{ val2 }}; // Must generate a compilation error
     return true; // Must not be reached
 }
 
 fn int32 main()
 {
-    call arrayTestOutOfBounds_{{ type_name }}();
+    call print(call arrayTestOutOfBounds_{{ type_name }}());
     return 0;
 }

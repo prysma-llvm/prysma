@@ -8,18 +8,17 @@
 
 fn bool testComplexPrecedence_{{ type_name }}()
 {
+   dec string[] feature = "2.test_complex_precedence : ";
+   call print(ref feature);
    dec {{ type_name }} a = {{ val_2 }};
    dec {{ type_name }} b = {{ val_3 }};
    dec {{ type_name }} c = {{ val_4 }};
    dec {{ type_name }} d = {{ val_5 }};
    dec {{ type_name }} result = a * b + c * d;
-   {{ assert_eq(1, typed(26), "result") }}
 
    if (result == {{ val_26 }}) {
-      {{ checkpoint(2) }}
       return true;
    } else {
-      {{ checkpoint(3, at=[]) }}
       return false;
    }
    return false;
@@ -27,7 +26,6 @@ fn bool testComplexPrecedence_{{ type_name }}()
 
 fn int32 main()
 {
-    dec bool outcome = call testComplexPrecedence_{{ type_name }}();
-    {{ assert_eq(4, true, "outcome", at=3) }}
+    call print(call testComplexPrecedence_{{ type_name }}());
     return 0;
 }

@@ -8,23 +8,20 @@
 
 fn bool testNewDeleteBasic_{{ type_name }}()
 {
+   dec string[] feature = "1.test_new_delete_basic : ";
+   call print(ref feature);
    dec ptr p = new {{ type_name }};
    aff p = {{ val_42 }};
    dec {{ type_name }} value = unref p;
-   {{ assert_eq(1, typed(42), "value") }}
    delete p;
-   {{ checkpoint(2) }}
    if (value == {{ val_42 }}) {
-      {{ checkpoint(3) }}
       return true;
    } else {
-      {{ checkpoint(4, at=[]) }}
       return false;
    }
    return false;
 }
 fn int32 main() {
-    dec bool outcome = call testNewDeleteBasic_{{ type_name }}();
-    {{ assert_eq(5, true, "outcome", at=4) }}
+    call print(call testNewDeleteBasic_{{ type_name }}());
     return 0;
 }

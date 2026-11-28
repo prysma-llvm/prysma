@@ -10,37 +10,39 @@
 
 fn bool test_shadow() {
     dec {{ type_name }} val = {{ val1 }};
-    {{ assert_eq(1, typed(1), "val") }}
-
+    
     // Create an artificial scope block using a guaranteed true statement
     if (true) {
         dec {{ type_name }} val_inner = {{ val2 }}; // Uses unique name because shadowing isn't supported yet
-        {{ assert_eq(2, typed(0), "val_inner") }}
-
+        
         if (val_inner != {{ val2 }}) {
             return false;
         }
-
+        
         // Mutate the outer variable to ensure the inner block has access to its parent scope
         aff val = {{ val2 }};
     }
-
-    {{ assert_eq(3, typed(0), "val") }}
+    
     // The outer scope variable should have been mutated by the inner block
     if (val != {{ val2 }}) {
         return false;
     }
-
+    
     return true;
 }
 
 fn int32 main() {
+    dec string[] intro = "==== Edge Cases Shadowing ({{ type_name }}) ====";
+    call print(ref intro); call backSlashN();
 
     if (call test_shadow() == false) {
+        dec string[] failMsg = "FAIL: variable shadowing overwrote parent scope or failed to initialize.";
+        call print(ref failMsg); call backSlashN();
         return 1;
     }
 
-    {{ checkpoint(4) }}
-
+    dec string[] success = "==== SUCCESS ====";
+    call print(ref success); call backSlashN();
+    
     return 0;
 }

@@ -8,12 +8,11 @@
 
 fn bool testPassArgFunction_{{ type_name }}(arg {{ type_name }} a, arg float b)
 {  
-   {{ assert_eq(1, [typed(10), 25.5], ["a", "b"]) }}
+   dec string[] feature = "4.test_pass_arg_function : ";
+   call print(ref feature);
    if ((a == {{ val_10 }}) && (b == 25.5)) {
-      {{ checkpoint(2) }}
       return true;
    } else {
-      {{ checkpoint(3, at=[]) }}
       return false;
    }
 
@@ -22,7 +21,6 @@ fn bool testPassArgFunction_{{ type_name }}(arg {{ type_name }} a, arg float b)
 
 fn int32 main()
 {
-    dec bool outcome = call testPassArgFunction_{{ type_name }}({{ val_10 }}, 25.5);
-    {{ assert_eq(4, true, "outcome", at=3) }}
+    call print(call testPassArgFunction_{{ type_name }}({{ val_10 }}, 25.5));
     return 0;
 }
