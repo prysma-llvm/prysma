@@ -30,7 +30,7 @@ jobs:
       - name: Prepare website files
         run: |
           mkdir -p _site
-          cp -R website/index.html website/assets _site/
+          cp -R website/index.html website/sitemap.xml website/assets _site/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

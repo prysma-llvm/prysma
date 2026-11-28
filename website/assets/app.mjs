@@ -27,6 +27,7 @@ const ui = {
 };
 const $ = id => document.getElementById(id);
 const q = $('search');
+const homeIntro = $('article').firstElementChild.cloneNode(true);
 const cacheAge = 5 * 60 * 1000;
 const compactOutline = matchMedia('(max-width:1100px)');
 let index, sourceState = 'latest', active, renderId = 0, syncBusy = false, lastCheck = 0;
@@ -117,12 +118,12 @@ async function render({preserveScroll = false} = {}) {
   languageLinks(lang,entry);
   sourceLabel(lang);
   $('crumb').textContent = t.docs + (entry ? ' / ' + ((version.sections?.[lang] || []).find(([id]) => id === entry.group)?.[1] || t.groups[entry.group]) : '');
-  document.title = home ? 'Prysma · ' + t.docs : (entry?.title || t.docs) + ' · Prysma';
+  document.title = home ? (lang === 'fr' ? 'Prysma : langage et compilateur LLVM | Documentation officielle' : 'Prysma Language and LLVM Compiler | Official Documentation') : (entry?.title || t.docs) + ' · Prysma';
   $('document').setAttribute('aria-busy','true');
   $('edit-source').hidden = true;
   $('outline').hidden = true;
   const article = $('article');
-  if (!preserveScroll) article.replaceChildren(element('p',t.loading));
+  if (!preserveScroll) article.replaceChildren(home ? homeIntro.cloneNode(true) : element('p',t.loading));
   try {
     if (!entry) {
       visiblePage = '';
@@ -145,7 +146,8 @@ async function render({preserveScroll = false} = {}) {
   } catch {
     if (ticket !== renderId) return;
     visiblePage = '';
-    article.replaceChildren(element('p', t.unavailable, 'notice'),link(t.source,blobURL(BRANCH,path)));
+    article.replaceChildren(...(home ? [homeIntro.cloneNode(true)] : []),
+      element('p', t.unavailable, 'notice'), link(t.source,blobURL(BRANCH,path)));
   } finally {if (ticket === renderId) $('document').setAttribute('aria-busy','false');}
 }
 async function refresh(force = false) {
@@ -172,14 +174,15 @@ function failToLoad() {
   const route = readRoute(location.hash, preferredLanguage()), t = ui[route.lang];
   localLabels(route.lang);
   sourceLabel(route.lang);
-  $('article').replaceChildren(element('p', t.unavailable, 'notice'),
+  $('article').replaceChildren(...(route.path === HOME[route.lang] ? [homeIntro.cloneNode(true)] : []),
+    element('p', t.unavailable, 'notice'),
     link(t.git, blobURL(BRANCH, route.path)));
   $('document').setAttribute('aria-busy','false');
 }
 async function start() {
-  const {lang} = readRoute(location.hash, preferredLanguage());
+  const {lang,path} = readRoute(location.hash, preferredLanguage());
   localLabels(lang);
-  $('article').replaceChildren(element('p',ui[lang].loading));
+  if (path !== HOME[lang]) $('article').replaceChildren(element('p',ui[lang].loading));
   $('source-status').textContent = ui[lang].loading;
   await refresh(true);
 }
