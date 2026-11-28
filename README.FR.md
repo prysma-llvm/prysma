@@ -89,6 +89,7 @@ Voir le [Guide de l'environnement VS Code](docs/fr/installation/vscode_environme
 La documentation technique est disponible dans le répertoire `docs/` :
 
 * **Compilation et Environnement :**
+  * [Écrire et lancer ton premier programme Prysma](docs/fr/installation/first_program.md)
   * [Architecture de centralisation et guide Docker](docs/fr/installation/docker_compilation.md)
   * [Environnement de travail et débogage sous VS Code](docs/fr/installation/vscode_environment.md)
   * Guides Docker : [Arch Linux](docs/fr/installation/docker/arch_linux.md) • [Debian](docs/fr/installation/docker/debian.md) • [Ubuntu](docs/fr/installation/docker/ubuntu.md) • [Windows](docs/fr/installation/docker/windows_powershell.md)

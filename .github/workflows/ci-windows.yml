@@ -112,8 +112,9 @@ jobs:
           Copy-Item tests/environnement_dev_tests/window/WslDocker.cs "$project/Program.cs" -Force
           dotnet publish $project -o "$project/bin-ci"
           if ($LASTEXITCODE) { throw "Cannot build Docker transport" }
-          "$project/bin-ci" >> $env:GITHUB_PATH
-          & "$project/bin-ci/docker.exe" info
+          $transport = (Get-Item -LiteralPath (Join-Path $project "bin-ci")).FullName
+          $transport >> $env:GITHUB_PATH
+          & (Join-Path $transport "docker.exe") info
           if ($LASTEXITCODE) { throw "Windows cannot reach the Linux Docker engine" }
           $editor = Join-Path $env:RUNNER_TEMP "vscode-windows"
           $archive = Join-Path $env:RUNNER_TEMP "vscode-windows.zip"
@@ -122,19 +123,18 @@ jobs:
           "PRYSMA_VSCODE_BIN=$editor/bin/code.cmd" >> $env:GITHUB_ENV
           python -m pip install -r tests/environnement_dev_tests/requirements.txt
 
-      - name: Test native Windows PowerShell builds and VS Code breakpoints
+      - name: Check native Windows Docker transport
+        id: native_transport
         if: ${{ !cancelled() && steps.native_setup.outcome == 'success' }}
         shell: pwsh
-        timeout-minutes: 50
-        env:
-          PYTHONUTF8: "1"
         run: |
-          $transport = Join-Path $env:RUNNER_TEMP "docker-transport/bin-ci"
-          $env:PATH = "$transport;$env:PATH"
-          $expectedCli = (Get-Item (Join-Path $transport "docker.exe")).FullName
-          $psCli = (Get-Command docker.exe -CommandType Application -ErrorAction Stop).Source
-          $pythonCli = python -c 'import os, shutil; print(os.path.abspath(shutil.which("docker") or ""))'
-          if ($LASTEXITCODE -ne 0 -or $pythonCli -ne $expectedCli -or $psCli -ne $expectedCli) {
+          $ErrorActionPreference = "Stop"
+          $expectedCli = (Get-Item -LiteralPath (Join-Path $env:RUNNER_TEMP "docker-transport/bin-ci/docker.exe")).FullName
+          $psCli = (Get-Command docker.exe -CommandType Application -All -ErrorAction Stop | Select-Object -First 1).Source
+          $pythonCli = python -c 'import shutil; print(shutil.which("docker") or "")'
+          if ($LASTEXITCODE -ne 0 -or !$pythonCli -or
+              [IO.Path]::GetFullPath($pythonCli) -ine $expectedCli -or
+              [IO.Path]::GetFullPath($psCli) -ine $expectedCli) {
             throw "Expected WSL Docker transport at $expectedCli; Python resolved '$pythonCli' and PowerShell resolved '$psCli'"
           }
           $wslImage = wsl -d Prysma -u prysma -- docker image inspect prysma-debug --format '{{.Id}}'
@@ -143,11 +143,20 @@ jobs:
           if ($LASTEXITCODE -ne 0 -or $windowsImage -cne $wslImage) {
             throw "The Windows Docker transport does not see the prysma-debug image built inside WSL"
           }
+
+      - name: Test native Windows PowerShell builds and VS Code breakpoints
+        id: native_tests
+        if: ${{ !cancelled() && steps.native_transport.outcome == 'success' }}
+        shell: pwsh
+        timeout-minutes: 50
+        env:
+          PYTHONUTF8: "1"
+        run: |
           python tests/run_unit_tests.py --dev-env --family window --family vscode --family-timeout 2700
           exit $LASTEXITCODE
 
       - uses: actions/upload-artifact@v4
-        if: ${{ always() && steps.native_setup.outcome == 'success' }}
+        if: ${{ always() && (steps.native_tests.outcome == 'success' || steps.native_tests.outcome == 'failure') }}
         with:
           name: windows-vscode-results
           path: build/dev-env-results

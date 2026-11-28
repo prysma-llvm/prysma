@@ -93,6 +93,7 @@ See the [VS Code Environment Guide](docs/en/installation/vscode_environment.md).
 Technical documentation is available in `docs/`:
 
 * **Compilation & Environment:**
+  * [Write and run your first Prysma program](docs/en/installation/first_program.md)
   * [Centralized Architecture & Docker Guide](docs/en/installation/docker_compilation.md)
   * [VS Code Development & Debugging Guide](docs/en/installation/vscode_environment.md)
   * Platform Guides: [Arch Linux](docs/en/installation/docker/arch_linux.md) • [Debian](docs/en/installation/docker/debian.md) • [Ubuntu](docs/en/installation/docker/ubuntu.md) • [Windows](docs/en/installation/docker/windows_powershell.md)

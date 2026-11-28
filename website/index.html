@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Official documentation for Prysma, a systems programming language targeting LLVM.">
+  <meta name="theme-color" content="#181818" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#fcfcfc" media="(prefers-color-scheme: light)">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' https://raw.githubusercontent.com; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; base-uri 'none'; form-action 'none'">
+  <title>Prysma · Documentation</title>
+  <link rel="icon" href="assets/prysma.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+  <script type="module" src="assets/app.mjs"></script>
+</head>
+<body>
+  <a id="skip" class="skip" href="#document">Skip to content</a>
+  <header class="top">
+    <div class="top-inner">
+      <a id="brand" class="brand" href="#en/README.md"><img src="assets/prysma.svg" alt="" width="25" height="25">Prysma</a>
+      <nav class="top-actions" aria-label="Site">
+        <div class="languages" aria-label="Language">
+          <a id="en" href="#en/README.md" hreflang="en" lang="en">EN</a>
+          <a id="fr" href="#fr/README.FR.md" hreflang="fr" lang="fr">FR</a>
+        </div>
+        <a href="https://github.com/prysma-llvm/prysma">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Documentation">
+      <button id="menu" class="menu" type="button" aria-controls="navigation" aria-expanded="false">Browse docs</button>
+      <div id="navigation" class="navigation">
+        <label class="search-label" for="search" id="search-label">Find a page</label>
+        <div class="search-box">
+          <input id="search" type="search" autocomplete="off" placeholder="Find a page…">
+          <kbd aria-hidden="true">/</kbd>
+        </div>
+        <nav id="nav" aria-label="Documentation pages"></nav>
+        <p id="filter-status" class="sr-only" role="status"></p>
+        <p id="source-status" class="source-state" role="status">Loading documentation…</p>
+      </div>
+    </aside>
+
+    <main id="document" tabindex="-1" aria-busy="true">
+      <div class="context"><span id="crumb">Documentation</span><a id="edit-source" hidden>View source</a></div>
+      <div id="article-grid" class="article-grid">
+        <article id="article"><p>Loading documentation…</p></article>
+        <nav id="outline" class="outline" aria-label="On this page" hidden>
+          <details id="outline-details"><summary id="outline-title">On this page</summary>
+          <div id="outline-links"></div></details>
+        </nav>
+      </div>
+      <footer class="footer"><a id="footer-license" href="https://github.com/prysma-llvm/prysma/blob/main/LICENSE"></a></footer>
+    </main>
+  </div>
+  <noscript>
+    <p class="no-js">JavaScript is required to display the interactive documentation. Read it on GitHub:
+    <a href="https://github.com/prysma-llvm/prysma/tree/main/docs/en">English</a> ·
+    <a href="https://github.com/prysma-llvm/prysma/tree/main/docs/fr">Français</a>.</p>
+  </noscript>
+</body>
+</html>
