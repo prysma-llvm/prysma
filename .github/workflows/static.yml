@@ -35,6 +35,18 @@ jobs:
       - run: npm ci --ignore-scripts --no-fund --no-audit
       - run: npm test
       - run: npm run build
+      - name: Add IndexNow verification file
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: |
+          if [[ -z "$INDEXNOW_KEY" ]]; then
+            exit 0
+          fi
+          if [[ ! "$INDEXNOW_KEY" =~ ^[a-f0-9]{32}$ ]]; then
+            echo "::error::INDEXNOW_KEY must contain 32 hexadecimal characters"
+            exit 1
+          fi
+          printf '%s' "$INDEXNOW_KEY" > "dist/$INDEXNOW_KEY.txt"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: website/dist
