@@ -128,7 +128,23 @@ jobs:
         timeout-minutes: 50
         env:
           PYTHONUTF8: "1"
-        run: python tests/run_unit_tests.py --dev-env --family window --family vscode --family-timeout 2700
+        run: |
+          $transport = Join-Path $env:RUNNER_TEMP "docker-transport/bin-ci"
+          $env:PATH = "$transport;$env:PATH"
+          $expectedCli = (Get-Item (Join-Path $transport "docker.exe")).FullName
+          $psCli = (Get-Command docker.exe -CommandType Application -ErrorAction Stop).Source
+          $pythonCli = python -c 'import os, shutil; print(os.path.abspath(shutil.which("docker") or ""))'
+          if ($LASTEXITCODE -ne 0 -or $pythonCli -ne $expectedCli -or $psCli -ne $expectedCli) {
+            throw "Expected WSL Docker transport at $expectedCli; Python resolved '$pythonCli' and PowerShell resolved '$psCli'"
+          }
+          $wslImage = wsl -d Prysma -u prysma -- docker image inspect prysma-debug --format '{{.Id}}'
+          if ($LASTEXITCODE -ne 0 -or !$wslImage) { throw "prysma-debug is missing in WSL" }
+          $windowsImage = & $expectedCli image inspect prysma-debug --format '{{.Id}}'
+          if ($LASTEXITCODE -ne 0 -or $windowsImage -cne $wslImage) {
+            throw "The Windows Docker transport does not see the prysma-debug image built inside WSL"
+          }
+          python tests/run_unit_tests.py --dev-env --family window --family vscode --family-timeout 2700
+          exit $LASTEXITCODE
 
       - uses: actions/upload-artifact@v4
         if: ${{ always() && steps.native_setup.outcome == 'success' }}

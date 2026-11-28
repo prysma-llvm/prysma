@@ -1,0 +1,6 @@
+# Docker toolchain only: Ubuntu 24.04, CPython 3.12, linux/amd64.
+# Keep package versions aligned with the portable root requirements.txt.
+Jinja2==3.1.4 --hash=sha256:bc5dd2abb727a5319567b7a813e6a2e7318c39f4f487cfe6c89c6f9c7d25197d
+MarkupSafe==2.1.5 --hash=sha256:f5dfb42c4604dddc8e4305050aa6deb084540643ed5804d7455b5df8fe16f5e5
+PyYAML==6.0.2 --hash=sha256:80bab7bfc629882493af4aa31a4cfa43a4c57c83813253626916b8c7ada83476
+debugpy==1.8.22 --hash=sha256:8a697acec45dbc70d17fb5d9f4f61989fc294d273c69de487fd10cb35fdd75eb

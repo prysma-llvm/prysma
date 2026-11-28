@@ -16,7 +16,7 @@ Prysma is a system compiler requiring a complete toolchain:
 Manual local installation of these components frequently leads to toolchain divergence, ABI mismatches, and portability issues across different operating systems.
 
 The official build workflow relies on **Docker as a centralized architecture**:
-- **Reproducible environment**: the Dockerfile defines a shared toolchain. Rebuilding can select newer Ubuntu packages; use the same image digest when identical versions are required.
+- **Locked toolchain**: the Dockerfile uses a digest-pinned Ubuntu image, a dated APT archive, and SHA-256-verified Python wheels. Rebuilding the same revision does not implicitly upgrade dependencies.
 - **No heavy host dependencies**: no LLVM packages or specialized libraries are required on the host system. Docker is sufficient for container compilation; host integration tests and VS Code require additional tools.
 - **Ready to use**: pre-configured environment variables, LLVM paths, and Python virtual environment ready for immediate use.
 
@@ -31,7 +31,7 @@ Refer to your operating system's guide to install and configure Docker:
 
 ## 3. Building the Docker Images
 
-> **Important:** The build command must be executed from the root of the `prysma` project so the Dockerfile can access the complete build context (`requirements.txt`, sources, etc.).
+> **Important:** Build from the root of `prysma`. Both targets are locked to `linux/amd64`, including on Windows/WSL2. ARM machines need x86-64 emulation.
 
 The Dockerfile is structured using a multi-stage build to produce tailored targets:
 
@@ -44,6 +44,10 @@ docker build --target benchmark -t prysma-benchmark -f docker/compiler/Dockerfil
 ```
 
 Both targets share the same base layer (Ubuntu 24.04, LLVM 18, Clang, Python), maximizing Docker layer caching during rebuilds.
+
+To update the toolchain, review the Ubuntu digest and the snapshot date in `docker/compiler/ubuntu-snapshot.sources`, and update the bootstrap CA package URL and SHA-256 if needed. Keep `docker/compiler/requirements.lock` aligned with the host `requirements.txt` and verify the wheel hashes for CPython 3.12 on Linux x86-64. Rebuild and test the images before rolling out the update.
+
+These locks fix the build inputs, not the binary digest of a rebuilt image: build metadata can differ. To distribute the exact same image, publish the validated image and use its registry digest.
 
 ## 4. Compilation Orchestration (`build.py` & `debug.py`)
 

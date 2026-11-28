@@ -1,0 +1,8 @@
+Types: deb
+URIs: https://snapshot.ubuntu.com/ubuntu/20261127T000000Z/
+Suites: noble noble-updates noble-security
+Components: main restricted universe multiverse
+Architectures: amd64
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+# This archive is deliberately frozen. Its Release signatures are still checked.
+Check-Valid-Until: no

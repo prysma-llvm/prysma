@@ -28,10 +28,12 @@ def main(argv=None):
     output = args.results_dir.resolve() / run_id
     output.mkdir(parents=True)
     env = dict(os.environ, PRYSMA_TEST_RUN_ID=run_id, PRYSMA_TEST_RESULTS_DIR=str(output), PYTHONUNBUFFERED="1")
+    docker_path = shutil.which("docker")
+    docker = os.path.abspath(docker_path) if docker_path else "docker"
     report = {"system": platform.platform(), "python": sys.version,
               "selection": families, "native_only": args.native_only, "families": []}
-    for command in ([sys.executable, "-m", "pytest", "--version"], ["docker", "version"],
-                    ["docker", "image", "inspect", env.get("PRYSMA_TEST_IMAGE", "prysma-debug")]):
+    for command in ([sys.executable, "-m", "pytest", "--version"], [docker, "version"],
+                    [docker, "image", "inspect", env.get("PRYSMA_TEST_IMAGE", "prysma-debug")]):
         try:
             result = subprocess.run(command, capture_output=True, text=True, timeout=20)
             report[" ".join(command)] = {"exit_code": result.returncode, "stdout": result.stdout, "stderr": result.stderr}
@@ -76,14 +78,14 @@ def main(argv=None):
                                        "duration": time.monotonic() - started,
                                        "status": "passed" if code == 0 else "not selected" if success else "failed"})
     finally:
-        if shutil.which("docker") and not args.native_only:
+        if docker_path and not args.native_only:
             for resource in ("container", "volume"):
                 try:
-                    command = ["docker", "ps", "-aq"] if resource == "container" else ["docker", "volume", "ls", "-q"]
+                    command = [docker, "ps", "-aq"] if resource == "container" else [docker, "volume", "ls", "-q"]
                     result = subprocess.run([*command, "--filter", f"label=prysma.test={run_id}"],
                                             capture_output=True, text=True, timeout=15)
                     for name in result.stdout.split() if result.returncode == 0 else []:
-                        removed = subprocess.run(["docker", resource, "rm", "-f", name], timeout=15)
+                        removed = subprocess.run([docker, resource, "rm", "-f", name], timeout=15)
                         failed |= removed.returncode != 0
                 except (OSError, subprocess.TimeoutExpired) as error:
                     print(f"Cleanup unavailable: {error}", file=sys.stderr)

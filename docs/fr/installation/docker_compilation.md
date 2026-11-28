@@ -16,7 +16,7 @@ Prysma est un compilateur système qui s'appuie sur une chaîne d'outils (toolch
 L'installation locale manuelle de ces composants engendre régulièrement des dérives de versions, des problèmes de configuration d'ABI et des difficultés de portabilité selon les distributions.
 
 L'environnement officiel utilise **Docker comme architecture de centralisation** :
-- **Environnement reproductible** : le Dockerfile définit une chaîne commune. Une reconstruction peut installer des paquets Ubuntu plus récents ; utilisez le même digest d’image pour conserver des versions identiques.
+- **Chaîne d’outils verrouillée** : le Dockerfile utilise une image Ubuntu référencée par digest, une archive APT datée et des paquets Python vérifiés par SHA-256. Reconstruire la même révision ne met pas les dépendances à jour implicitement.
 - **Aucune dépendance lourde sur l'hôte** : aucun paquet LLVM ou bibliothèque tierce n'est requis sur le système hôte. Docker suffit pour compiler dans le conteneur ; les tests sur l’hôte et VS Code demandent des outils supplémentaires.
 - **Prêt à l'emploi** : le conteneur intègre les variables d'environnement, les chemins LLVM et le venv Python préconfigurés.
 
@@ -31,7 +31,7 @@ Consultez le guide correspondant à votre système pour installer et activer le 
 
 ## 3. Construction des images Docker
 
-> **Important :** Le build doit impérativement être lancé depuis la racine du projet `prysma` afin de transmettre le contexte complet au Dockerfile (`requirements.txt`, sources, etc.).
+> **Important :** Lancez le build depuis la racine de `prysma`. Les deux cibles sont verrouillées sur `linux/amd64`, y compris sous Windows/WSL2. Une machine ARM doit disposer d’une émulation x86-64.
 
 Le Dockerfile est structuré en multi-stage build afin de produire des cibles adaptées à chaque usage :
 
@@ -44,6 +44,10 @@ docker build --target benchmark -t prysma-benchmark -f docker/compiler/Dockerfil
 ```
 
 Les deux cibles partagent la même couche de base (Ubuntu 24.04, LLVM 18, Clang, Python), ce qui optimise l'utilisation du cache Docker lors de la reconstruction.
+
+Pour mettre la chaîne à jour, révisez le digest Ubuntu et la date du snapshot dans `docker/compiler/ubuntu-snapshot.sources`, ainsi que l’URL et le SHA-256 du paquet de certificats utilisé au démarrage si nécessaire. Synchronisez `docker/compiler/requirements.lock` avec le `requirements.txt` de l’hôte et vérifiez les hashes des roues pour CPython 3.12 et Linux x86-64. Reconstruisez puis testez les images avant de déployer la mise à jour.
+
+Ce verrouillage fixe les entrées de build, pas l’empreinte binaire de l’image reconstruite : les métadonnées de build peuvent différer. Pour distribuer exactement la même image, publiez l’image validée et utilisez son digest de registre.
 
 ## 4. Orchestration de la compilation (`build.py` et `debug.py`)
 

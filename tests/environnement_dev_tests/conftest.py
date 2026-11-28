@@ -40,7 +40,8 @@ def workspace(tmp_path):
 
 
 class Docker:
-    def __init__(self):
+    def __init__(self, executable):
+        self.executable = executable
         self.image = os.environ.get("PRYSMA_TEST_IMAGE", "prysma-debug")
         self.run_id = os.environ.get("PRYSMA_TEST_RUN_ID", uuid.uuid4().hex)
         self.containers = []
@@ -48,7 +49,7 @@ class Docker:
 
     def command(self, *args, check=True, timeout=None):
         started = time.monotonic()
-        result = subprocess.run(["docker", *map(str, args)], capture_output=True, text=True,
+        result = subprocess.run([self.executable, *map(str, args)], capture_output=True, text=True,
                                 encoding="utf-8", errors="replace",
                                 timeout=timeout or float(os.environ.get("PRYSMA_TEST_COMMAND_TIMEOUT", "90")))
         print(f"docker {args}: exit={result.returncode}, duration={time.monotonic() - started:.2f}s")
@@ -89,9 +90,11 @@ class Docker:
 
 @pytest.fixture
 def docker():
-    if not shutil.which("docker"):
+    executable = shutil.which("docker")
+    if not executable:
         pytest.fail("Docker CLI is required for this family")
-    client = Docker()
+    # On Windows, CreateProcess may find a system docker.exe before PATH.
+    client = Docker(os.path.abspath(executable))
     client.command("info", "--format", "{{.ServerVersion}}", timeout=15)
     client.command("image", "inspect", client.image, "--format", "{{.Id}}", timeout=15)
     try:
